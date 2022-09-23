@@ -39,10 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django.contrib.sites",
 
     #3rd party apps
     "rest_framework",
     "corsheaders",
+    "rest_framework.authtoken",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
     
     #Local
     "accounts.apps.AccountsConfig",
@@ -75,6 +82,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 "django.template.context_processors.media",
+                "django.template.context_processors.request",
             ],
         },
     },
@@ -148,7 +156,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
-    ]
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
 }
 
 CORS_ORIGIN_WHITELIST = (
@@ -157,3 +169,7 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+SITE_ID = 1

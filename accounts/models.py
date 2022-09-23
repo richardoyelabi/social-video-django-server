@@ -61,9 +61,9 @@ class Account (AbstractUser):
         super().save(*args, **kwargs)
 
 
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    EMAIL_FIELD = "email"
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     objects = AccountManager()
 
