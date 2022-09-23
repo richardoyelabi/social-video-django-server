@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import AccountCreationForm, AccountChangeForm
-from .models import Account
+from .models import Account, CreatorInfo
 
 class AccountAdmin(UserAdmin):
     add_form = AccountCreationForm
@@ -51,6 +51,10 @@ class AccountAdmin(UserAdmin):
     )
 
 
-    add_fieldsets = UserAdmin.add_fieldsets
+    add_fieldsets = (
+        (None, {
+            "fields": ("username", "email", "is_creator", "password1", "password2")
+            }),)
 
 admin.site.register(Account, AccountAdmin)
+admin.site.register(CreatorInfo)

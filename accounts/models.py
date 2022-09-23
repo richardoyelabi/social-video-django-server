@@ -5,6 +5,8 @@ from django.contrib.auth.base_user import BaseUserManager
 
 from django.db.models import JSONField
 
+from django.conf import settings
+
 class AccountManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         """Create and save an Account with the given email and password."""
@@ -55,7 +57,7 @@ class Account (AbstractUser):
         #Set display_name to username by default
         if not self.display_name:
             self.display_name = self.username
-        
+
         super().save(*args, **kwargs)
 
 
@@ -67,3 +69,13 @@ class Account (AbstractUser):
 
     def __str__(self):
         return self.username
+
+class CreatorInfo(models.Model):
+    creator = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
+    subscribers_number = models.PositiveIntegerField(default=0)
+    subscription_fee = JSONField(null=True)
+    is_verified = models.BooleanField(default=False)
+    identity = JSONField(null=True)
+
+    def __str___(self):
+        return f"{self.creator}'s creator info"
