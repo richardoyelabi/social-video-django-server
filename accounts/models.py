@@ -7,6 +7,8 @@ from django.db.models import JSONField
 
 from django.conf import settings
 
+import uuid
+
 class AccountManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         """Create and save an Account with the given email and password."""
@@ -34,6 +36,8 @@ class AccountManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 class Account (AbstractUser):
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    
     email = models.EmailField("email address", unique=True)
 
     display_name = models.CharField(max_length=150, blank=True, null=True)
@@ -73,9 +77,9 @@ class Account (AbstractUser):
 class CreatorInfo(models.Model):
     creator = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     subscribers_number = models.PositiveIntegerField(default=0)
-    subscription_fee = JSONField(null=True)
+    subscription_fee = JSONField(null=True, blank=True)
     is_verified = models.BooleanField(default=False)
-    identity = JSONField(null=True)
+    identity = JSONField(null=True, blank=True)
 
     def __str___(self):
         return f"{self.creator}'s creator info"

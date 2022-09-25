@@ -9,6 +9,7 @@ class AccountAdmin(UserAdmin):
     form = AccountChangeForm
     model = Account
     list_display = [
+        "id",
         "email",
         "username",
         "is_staff",
@@ -17,7 +18,8 @@ class AccountAdmin(UserAdmin):
         "profile_photo", 
         "cover_photo",
         "notification_settings",
-        "is_creator"
+        "is_creator",
+        "public_id"
         ]
     fieldsets = (
         (None, {"fields": ("username", "password")}),
@@ -56,5 +58,14 @@ class AccountAdmin(UserAdmin):
             "fields": ("username", "email", "is_creator", "password1", "password2")
             }),)
 
+class CreatorInfoAdmin(admin.ModelAdmin):
+    list_display = (
+        "creator",
+        "subscribers_number",
+        "subscription_fee",
+        "is_verified",
+        "identity"
+    )
+
 admin.site.register(Account, AccountAdmin)
-admin.site.register(CreatorInfo)
+admin.site.register(CreatorInfo, CreatorInfoAdmin)
