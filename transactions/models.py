@@ -73,7 +73,7 @@ class Transaction(models.Model):
                     self.receiver.save(update_fields=["btc_wallet_balance"])
                 
             elif (amount<0):
-                raise TransactionInputError("You've entered a negative input as amount_received.")
+                raise TransactionInputError("You've entered a negative input as amount_received. This can be as a result of platform_fee exceeding amount_sent.")
 
     def is_record_balanced(self):
         self.record_is_balanced = self.amount_sent==self.amount_received+self.platform_fee
@@ -81,6 +81,7 @@ class Transaction(models.Model):
     def save(self, *args, **kwargs):
 
         self.take_from_wallet(self.transaction_currency, self.amount_sent)
+        self.amount_received = self.amount_sent - self.platform_fee
         self.add_to_wallet(self.transaction_currency, self.amount_received)
         self.is_record_balanced()
 
