@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     
     #Local
     "accounts.apps.AccountsConfig",
+    "transactions.apps.TransactionsConfig",
 ]
 
 

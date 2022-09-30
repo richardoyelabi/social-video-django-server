@@ -19,7 +19,9 @@ class AccountAdmin(UserAdmin):
         "cover_photo",
         "notification_settings",
         "is_creator",
-        "public_id"
+        "public_id",
+        "btc_wallet_balance",
+        "usd_wallet_balance"
         ]
     fieldsets = (
         (None, {"fields": ("username", "password")}),
