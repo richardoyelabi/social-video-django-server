@@ -80,10 +80,11 @@ class Transaction(models.Model):
 
     def save(self, *args, **kwargs):
 
-        self.take_from_wallet(self.transaction_currency, self.amount_sent)
-        self.amount_received = self.amount_sent - self.platform_fee
-        self.add_to_wallet(self.transaction_currency, self.amount_received)
-        self.is_record_balanced()
+        if self._state.adding:
+            self.take_from_wallet(self.transaction_currency, self.amount_sent)
+            self.amount_received = self.amount_sent - self.platform_fee
+            self.add_to_wallet(self.transaction_currency, self.amount_received)
+            self.is_record_balanced()
 
         super().save(*args, **kwargs)
 
