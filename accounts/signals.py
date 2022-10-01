@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from .models import CreatorInfo
 
-#Create a CreatorInfo model for each new instance of AUTH_USER_MODEL
+#Create a CreatorInfo model for each new instance of AUTH_USER_MODEL when is_creator is true
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_creator_info(sender, instance, created, **kwargs):
     if created:

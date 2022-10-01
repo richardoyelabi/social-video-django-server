@@ -37,9 +37,7 @@ class AccountManager(BaseUserManager):
 
 class Account (AbstractUser):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    
     email = models.EmailField("email address", unique=True)
-
     display_name = models.CharField(max_length=150, blank=True, null=True)
     bio = models.TextField(max_length=300, blank=True, null=True)
     profile_photo = models.ImageField(upload_to="profile_photos/", blank=True, null=True)
@@ -51,9 +49,8 @@ class Account (AbstractUser):
     btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
     usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=0.00)
     payment_info = JSONField(null=True)
-    notification_settings = JSONField(null=True)
+    notification_settings = JSONField(null=True, blank=True)
     blocked_accounts_number = models.PositiveIntegerField(default=0)
-
     is_creator = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -81,5 +78,8 @@ class CreatorInfo(models.Model):
     is_verified = models.BooleanField(default=False)
     identity = JSONField(null=True, blank=True)
 
-    def __str___(self):
-        return f"{self.creator}'s creator info"
+    def __str__(self):
+        return f"Creator {self.creator.username}"
+
+from subscriptions.models import Subscription
+Account.subscriptions = models.ManyToManyField(CreatorInfo, through=Subscription, related_name="subscribers", symmetrical=False)
