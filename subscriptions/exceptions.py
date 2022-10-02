@@ -1,0 +1,2 @@
+class SubscriptionNotACreatorError(Exception):
+    pass

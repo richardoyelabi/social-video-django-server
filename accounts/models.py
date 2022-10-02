@@ -6,6 +6,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.db.models import JSONField
 
 from django.conf import settings
+from subscriptions.models import Subscription
 
 import uuid
 
@@ -53,6 +54,8 @@ class Account (AbstractUser):
     blocked_accounts_number = models.PositiveIntegerField(default=0)
     is_creator = models.BooleanField(default=False)
 
+    subscriptions = models.ManyToManyField("self", through=Subscription, related_name="subscribers", symmetrical=False)
+
     def save(self, *args, **kwargs):
 
         #Set display_name to username by default
@@ -80,6 +83,3 @@ class CreatorInfo(models.Model):
 
     def __str__(self):
         return f"Creator {self.creator.username}"
-
-from subscriptions.models import Subscription
-Account.subscriptions = models.ManyToManyField(CreatorInfo, through=Subscription, related_name="subscribers", symmetrical=False)
