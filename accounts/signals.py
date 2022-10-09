@@ -9,3 +9,4 @@ def create_creator_info(sender, instance, created, **kwargs):
     if created:
         if instance.is_creator:
             CreatorInfo.objects.create(creator=instance)
+        

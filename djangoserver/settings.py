@@ -57,6 +57,9 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "transactions.apps.TransactionsConfig",
     "subscriptions.apps.SubscriptionsConfig",
+
+    #3rd party apps that have to come last
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 

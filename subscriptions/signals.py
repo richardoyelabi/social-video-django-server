@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from .models import Subscription, CancelledSubscription, NullifiedSubscription
 from django.conf import settings
 
+#Update subscription data for each new subscription
 @receiver(post_save, sender=Subscription)
 def increase_subscriptions_numbers(sender, instance, created, **kwargs):
 
@@ -13,6 +14,7 @@ def increase_subscriptions_numbers(sender, instance, created, **kwargs):
         instance.subscribed_to.creatorinfo.save(update_fields=["subscribers_number"])
         instance.subscriber.save(update_fields=["active_subscriptions_number"])
 
+#Update subscription data for each new unsubscription
 @receiver(pre_delete, sender=Subscription)
 def decrease_subscriptions_numbers_and_archive_subscription(sender, instance, **kwargs):
     
