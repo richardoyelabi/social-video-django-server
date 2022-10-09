@@ -9,6 +9,7 @@ dj-rest-auth==2.2.5
 Django==4.0.7
 django-allauth==0.51.0
 django-cors-headers==3.10.1
+django-versatileimagefield==2.2
 djangorestframework==3.14.0
 drf-spectacular==0.24.1
 idna==3.4
@@ -20,6 +21,7 @@ psycopg2==2.9.3
 pycparser==2.21
 PyJWT==2.5.0
 pyrsistent==0.18.1
+python-magic==0.4.27
 python3-openid==3.2.0
 pytz==2022.2.1
 PyYAML==6.0

@@ -8,6 +8,8 @@ from django.db.models import JSONField
 from django.conf import settings
 from subscriptions.models import Subscription
 
+from versatileimagefield.fields import VersatileImageField
+
 import uuid
 
 class AccountManager(BaseUserManager):
@@ -36,13 +38,14 @@ class AccountManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-class Account (AbstractUser):
+class Account(AbstractUser):
+
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     email = models.EmailField("email address", unique=True)
     display_name = models.CharField(max_length=150, blank=True, null=True)
     bio = models.TextField(max_length=300, blank=True, null=True)
-    profile_photo = models.ImageField(upload_to="profile_photos/", blank=True, null=True)
-    cover_photo = models.ImageField(upload_to="cover_photos/", blank=True, null=True)
+    profile_photo = VersatileImageField(upload_to="profile_photos/%Y/%m/%d", blank=True, null=True)
+    cover_photo = VersatileImageField(upload_to="cover_photos/%Y/%m/%d", blank=True, null=True)
     active_subscriptions_number = models.PositiveIntegerField(default=0)
     expired_subscriptions_number = models.PositiveIntegerField(default=0)
     purchased_videos_number = models.PositiveIntegerField(default=0)
