@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "drf_spectacular",
     "versatileimagefield",
+    "sage_stream",
     
     #Local
     "accounts.apps.AccountsConfig",
