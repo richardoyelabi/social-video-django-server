@@ -1,7 +1,6 @@
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from .models import Subscription, CancelledSubscription, NullifiedSubscription
-from django.conf import settings
 
 #Update subscription data for each new subscription
 @receiver(post_save, sender=Subscription)
