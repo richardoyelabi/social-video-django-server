@@ -52,13 +52,14 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "drf_spectacular",
     "versatileimagefield",
-    "sage_stream",
     
     #Local
     "accounts.apps.AccountsConfig",
     "transactions.apps.TransactionsConfig",
     "subscriptions.apps.SubscriptionsConfig",
     "photos.apps.PhotosConfig",
+    "sage_stream.apps.SageStreamConfig",
+    "videos.apps.VideosConfig",
 
     #3rd party apps that have to come last
     "django_cleanup.apps.CleanupConfig",
