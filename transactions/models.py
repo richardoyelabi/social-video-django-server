@@ -3,7 +3,7 @@ from django.db import models
 
 import uuid
 
-from exceptions import TransactionInputError, TransactionInsufficientBalanceError
+from transactions.exceptions import TransactionInputError, TransactionInsufficientBalanceError
 
 class Transaction(models.Model):
 
