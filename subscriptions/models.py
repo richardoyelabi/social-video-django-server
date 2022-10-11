@@ -21,6 +21,7 @@ class CancelledSubscription(models.Model):
     subscribed_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="cancelled_sub_subscribed_to_set", null=True, blank=True, on_delete=models.SET_NULL)
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="cancelled_sub_subscriber_set", null=True, blank=True, on_delete=models.SET_NULL)
     time_of_cancellation = models.DateTimeField(auto_now_add=True)
+    time_of_initial_subscription = models.DateTimeField()
 
     def __str__(self):
         return f"{self.subscriber} cancelled their subscription to {self.subscribed_to}"
@@ -30,6 +31,7 @@ class NullifiedSubscription(models.Model):
     subscribed_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="nullified_sub_subscribed_to_set", null=True, blank=True, on_delete=models.SET_NULL)
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="nullified_sub_subscriber_set", null=True, blank=True, on_delete=models.SET_NULL)
     time_of_nullification = models.DateTimeField(auto_now_add=True)
+    time_of_initial_subscription = models.DateTimeField()
 
     def __str__(self):
         return f"{self.subscriber}'s subscription to {self.subscribed_to} has been nullified"

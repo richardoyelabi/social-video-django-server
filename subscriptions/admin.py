@@ -13,6 +13,7 @@ class CancelledSubscriptionAdmin(admin.ModelAdmin):
         "subscribed_to",
         "subscriber",
         "time_of_cancellation",
+        "time_of_initial_subscription",
     )
 
 class NullifiedSubscriptionAdmin(admin.ModelAdmin):
@@ -20,6 +21,7 @@ class NullifiedSubscriptionAdmin(admin.ModelAdmin):
         "subscribed_to",
         "subscriber",
         "time_of_nullification",
+        "time_of_initial_subscription",
     )
 
 admin.site.register(Subscription, SubscriptionAdmin)

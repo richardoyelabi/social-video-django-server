@@ -26,6 +26,7 @@ def decrease_subscriptions_numbers_and_archive_subscription(sender, instance, **
     #Move active subscription to CancelledSubscription before deleting from Subscription
     CancelledSubscription.objects.create(
         subscribed_to=instance.subscribed_to,
-        subscriber=instance.subscriber
+        subscriber=instance.subscriber,
+        time_of_initial_subscription=instance.time_of_subscription
     )
 
