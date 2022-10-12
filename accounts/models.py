@@ -1,3 +1,4 @@
+from email.policy import default
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -7,6 +8,7 @@ from django.db.models import JSONField
 
 from django.conf import settings
 from subscriptions.models import Subscription
+from transactions.models import Transaction
 
 from versatileimagefield.fields import VersatileImageField
 
@@ -90,7 +92,8 @@ class Account(AbstractUser):
 class CreatorInfo(models.Model):
     creator = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     subscribers_number = models.PositiveIntegerField(default=0)
-    subscription_fee = JSONField(null=True, blank=True)
+    subscription_fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
+    subscription_fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
     is_verified = models.BooleanField(default=False)
     identity = JSONField(null=True, blank=True)
 

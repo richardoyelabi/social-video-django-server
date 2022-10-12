@@ -6,6 +6,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "subscribed_to",
         "subscriber",
         "time_of_subscription",
+        "fee_currency",
+        "fee_amount",
     )
 
 class CancelledSubscriptionAdmin(admin.ModelAdmin):
@@ -14,6 +16,8 @@ class CancelledSubscriptionAdmin(admin.ModelAdmin):
         "subscriber",
         "time_of_cancellation",
         "time_of_initial_subscription",
+        "fee_currency",
+        "fee_amount",
     )
 
 class NullifiedSubscriptionAdmin(admin.ModelAdmin):
@@ -22,6 +26,8 @@ class NullifiedSubscriptionAdmin(admin.ModelAdmin):
         "subscriber",
         "time_of_nullification",
         "time_of_initial_subscription",
+        "fee_currency",
+        "fee_amount",
     )
 
 admin.site.register(Subscription, SubscriptionAdmin)

@@ -66,7 +66,8 @@ class CreatorInfoAdmin(admin.ModelAdmin):
     list_display = (
         "creator",
         "subscribers_number",
-        "subscription_fee",
+        "subscription_fee_currency",
+        "subscription_fee_amount",
         "is_verified",
         "identity"
     )
