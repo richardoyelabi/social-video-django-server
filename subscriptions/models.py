@@ -1,8 +1,7 @@
-from email.policy import default
 from django.db import models
 from django.conf import settings
 from .exceptions import SubscriptionNotACreatorError
-from .subscription_cut import cut
+from .subscriptions_cut import cut
 from transactions.models import Transaction
 
 from decimal import Decimal
