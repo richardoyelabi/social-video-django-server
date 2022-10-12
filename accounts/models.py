@@ -67,7 +67,7 @@ class Account(AbstractUser):
     
     is_creator = models.BooleanField(default=False)
 
-    #subscriptions = models.ManyToManyField("self", through=Subscription, related_name="subscribers", symmetrical=False)
+    subscriptions = models.ManyToManyField("self", through=Subscription, related_name="subscribers", symmetrical=False)
 
     def save(self, *args, **kwargs):
 
