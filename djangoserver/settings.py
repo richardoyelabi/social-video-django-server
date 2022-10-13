@@ -59,9 +59,8 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "transactions.apps.TransactionsConfig",
     "subscriptions.apps.SubscriptionsConfig",
-    "photos.apps.PhotosConfig",
+    "media.apps.MediaConfig",
     "sage_stream.apps.SageStreamConfig",
-    "videos.apps.VideosConfig",
     "video_purchases.apps.VideoPurchasesConfig",
 
     #3rd party apps that have to come last
@@ -164,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "accounts.Account"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media_files")
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [

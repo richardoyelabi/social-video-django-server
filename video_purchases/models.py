@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from videos.models import Video
+from media.models import Video
 from .video_purchases_cut import cut
 from transactions.models import Transaction
 
