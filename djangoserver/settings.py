@@ -14,6 +14,8 @@ from pathlib import Path
 
 import os.path
 
+from rest_framework.permissions import IsAuthenticated
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -185,3 +187,5 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 SITE_ID = 1
+
+STREAM_DEFAULT_PERMISSION_CLASSES = (IsAuthenticated,)
