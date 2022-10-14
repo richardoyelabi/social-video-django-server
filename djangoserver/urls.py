@@ -22,10 +22,14 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
+    path("media_files/video_uploads", include("media.video_streams.urls")),
+
     path('admin/', admin.site.urls),
+
     path("api-auth/", include("rest_framework.urls"),),
     path("rest-auth/", include("dj_rest_auth.urls")),
     path("rest-auth/registration/", include("dj_rest_auth.registration.urls"),),
+
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("schema/redoc/", SpectacularRedocView.as_view(
     url_name="schema"), name="redoc",),

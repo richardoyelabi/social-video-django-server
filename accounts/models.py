@@ -1,44 +1,15 @@
-from email.policy import default
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from django.contrib.auth.base_user import BaseUserManager
-
-from django.db.models import JSONField
-
 from django.conf import settings
+from .account_manager import AccountManager
+from media.media_paths import profile_photos_path, cover_photos_path
 from subscriptions.models import Subscription
 from transactions.models import Transaction
 
 from versatileimagefield.fields import VersatileImageField
-
+from django.db.models import JSONField
 import uuid
-
-class AccountManager(BaseUserManager):
-    def _create_user(self, email, password, **extra_fields):
-        """Create and save an Account with the given email and password."""
-        if not email:
-            raise ValueError("Email must be set")
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_user(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_superuser", False)
-        return self._create_user(email, password, **extra_fields)
-
-    def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-
-        return self._create_user(email, password, **extra_fields)
 
 class Account(AbstractUser):
 
@@ -48,8 +19,8 @@ class Account(AbstractUser):
     display_name = models.CharField(max_length=150, blank=True, null=True)
     bio = models.TextField(max_length=300, blank=True, null=True)
 
-    profile_photo = VersatileImageField(upload_to="profile_photos/%Y/%m/%d", blank=True, null=True)
-    cover_photo = VersatileImageField(upload_to="cover_photos/%Y/%m/%d", blank=True, null=True)
+    profile_photo = VersatileImageField(upload_to=profile_photos_path, blank=True, null=True)
+    cover_photo = VersatileImageField(upload_to=cover_photos_path, blank=True, null=True)
     
     active_subscriptions_number = models.PositiveIntegerField(default=0)
     expired_subscriptions_number = models.PositiveIntegerField(default=0)

@@ -1,9 +1,10 @@
 from django.db import models
+
 from django.conf import settings
+from media.media_paths import photo_uploads_path, video_uploads_path
 
 from versatileimagefield.fields import VersatileImageField
 from django.core.validators import FileExtensionValidator
-
 import uuid
 
 class Photo(models.Model):
@@ -14,7 +15,7 @@ class Photo(models.Model):
         ("chat","Private message")
     ])
     upload_time = models.DateTimeField(auto_now=True)
-    image = VersatileImageField(upload_to="photos/%Y/%m/%d")
+    image = VersatileImageField(upload_to=photo_uploads_path)
 
     def __str__(self):
         return f"{self.uploader}'s photo {self.public_id}"
@@ -29,7 +30,7 @@ class Video(models.Model):
         ("free_chat", "Free Message")
     ])
     upload_time = models.DateTimeField(auto_now=True)
-    video = models.FileField(upload_to="videos/%Y/%m/%d", validators=[FileExtensionValidator(["mp4"])])
+    video = models.FileField(upload_to=video_uploads_path, validators=[FileExtensionValidator(["mp4"])])
 
     def __str__(self):
         return f"{self.uploader}'s video {self.public_id}"
