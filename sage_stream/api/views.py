@@ -7,11 +7,13 @@ from sage_stream import settings
 from sage_stream.utils.log_services import log_watch_request, get_request_ip
 from sage_stream.utils.stream_services import get_streaming_response
 
+from media.video_streams.permissions import HasSubscribedOrPurchasedVideo
+
 
 class VideoStreamAPIView(APIView):
     """return StreamingHTTPResponse"""
 
-    permission_classes = settings.STREAM_DEFAULT_PERMISSION_CLASSES
+    permission_classes = (HasSubscribedOrPurchasedVideo,)
 
     def get(self, request, *args, **kwargs):
         """get range header & create streaming response"""

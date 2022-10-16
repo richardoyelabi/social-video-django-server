@@ -163,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "accounts.Account"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media_files")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media_files/")
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [

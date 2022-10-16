@@ -22,7 +22,9 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
+    path("media/video_uploads", include("media.video_streams.urls")),
     path("media_files/video_uploads", include("media.video_streams.urls")),
+    path("video-api/", include("sage_stream.api.urls")),
 
     path('admin/', admin.site.urls),
 
@@ -36,7 +38,7 @@ urlpatterns = [
     path("schema/swagger-ui/", SpectacularSwaggerView.as_view(
     url_name="schema"), name="swagger-ui"),
     
-    path('video-api/', include('sage_stream.api.urls')),
+    
 ]
 
 if settings.DEBUG:

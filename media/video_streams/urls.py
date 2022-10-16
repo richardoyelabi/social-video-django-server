@@ -1,7 +1,7 @@
 from django.urls import path
 
-from media.video_streams.views import VideoStreamAPIView
+from media.video_streams.views import VideoStreamAPIRedirectView
 
 urlpatterns = [
-    path("", VideoStreamAPIView.as_view(), name="video-stream")
+    path("", VideoStreamAPIRedirectView.as_view(), name="video-stream")
 ]
