@@ -15,9 +15,15 @@ class Subscription(models.Model):
 
     def save(self, *args, **kwargs):
 
+        creator_account =  self.subscribed_to
+
         #Check that the account subscribed to is a creator's
-        if not(self.subscribed_to.is_creator):
-            raise SubscriptionNotACreatorError(f"{self.subscribed_to.username} is not a creator. Can not subscribe to non-creator account.")
+        if not(creator_account.is_creator):
+            raise SubscriptionNotACreatorError(f"{creator_account.username} is not a creator. Can not subscribe to non-creator account.")
+
+        #Get subscription fee
+        creator_info = creator_account.creatorinfo
+        self.fee_currency, self.fee_amount = (creator_info.subscription_fee_currency, creator_info.subscription_fee_amount)
 
         #Execute required transaction for subscription
         Transaction.objects.create(

@@ -14,6 +14,10 @@ class Purchase(models.Model):
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
 
     def save(self, *args, **kwargs):
+
+        #Get purchase fee
+        video = self.video
+        self.fee_currency, self.fee_amount = (video.purchase_cost_currency, video.purchase_cost_amount)
         
         #Execute required transaction for purchase
         Transaction.objects.create(
