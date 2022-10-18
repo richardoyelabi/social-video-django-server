@@ -1,0 +1,2 @@
+class MediaUseError(Exception):
+    pass
