@@ -11,6 +11,7 @@ def check_media_ownership(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Post)
 def check_media_consistency(sender, instance, **kwargs):
+    """Make sure photo media doesn't get into video posts and vice versa"""
     if not(instance.post_type=="photo" and instance.media_type.model=="photo") \
         or not((instance.post_type=="free_video" or instance.post_type=="paid_video" )and instance.media_type.model=="video"):
         raise MediaUseError("Post type does not match media type. Please, correct the discrepancy.")
