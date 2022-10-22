@@ -199,6 +199,10 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer'
+}
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 STREAM_DEFAULT_PERMISSION_CLASSES = (IsAuthenticated,)
