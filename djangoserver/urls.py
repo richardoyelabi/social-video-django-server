@@ -17,21 +17,30 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from dj_rest_auth.views import (
+    LoginView, LogoutView, PasswordChangeView, PasswordResetConfirmView,
+    PasswordResetView,
+)
 from drf_spectacular.views import (
     SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 )
 
 urlpatterns = [
+    #Media
     path("media/video_uploads", include("media.video_streams.urls")),
     path("media_files/video_uploads", include("media.video_streams.urls")),
     path("video-api/", include("sage_stream.api.urls")),
 
+    #Admin
     path('admin/', admin.site.urls),
 
-    path("api-auth/", include("rest_framework.urls"),),
-    path("rest-auth/", include("dj_rest_auth.urls")),
-    path("rest-auth/registration/", include("dj_rest_auth.registration.urls"),),
+    #Account and auth
+    path("account/", include("accounts.urls")),
 
+    #Browsable API
+    path("api-auth/", include("rest_framework.urls"),),
+
+    #Schema
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("schema/redoc/", SpectacularRedocView.as_view(
     url_name="schema"), name="redoc",),
