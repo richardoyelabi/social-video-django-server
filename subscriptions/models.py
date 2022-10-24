@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse
+
 from django.conf import settings
 from .exceptions import SubscriptionNotACreatorError
 from .subscriptions_cut import cut
@@ -39,6 +41,9 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.subscriber} subscribes to {self.subscribed_to}"
+
+    def get_absolute_url(self):
+        return reverse("subscription", kwargs={"creator_username": self.subscribed_to.username})
 
 class CancelledSubscription(models.Model):
     subscribed_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="cancelled_sub_subscribed_to_set", null=True, blank=True, on_delete=models.SET_NULL)

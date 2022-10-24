@@ -17,10 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from dj_rest_auth.views import (
-    LoginView, LogoutView, PasswordChangeView, PasswordResetConfirmView,
-    PasswordResetView,
-)
+
 from drf_spectacular.views import (
     SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 )
@@ -36,6 +33,9 @@ urlpatterns = [
 
     #Account and auth
     path("account/", include("accounts.urls")),
+
+    #Subscription
+    path("subscriptions/", include("subscriptions.urls")),
 
     #Browsable API
     path("api-auth/", include("rest_framework.urls"),),

@@ -72,7 +72,7 @@ class Account(AbstractUser):
         return reverse("profile", kwargs={"public_id": self.public_id}) 
 
 class CreatorInfo(models.Model):
-    creator = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name="creator_info")
+    creator = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name="creatorinfo")
     subscribers_number = models.PositiveIntegerField(default=0)
     subscription_fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
     subscription_fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
