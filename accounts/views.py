@@ -7,18 +7,18 @@ from accounts.models import Account
 from accounts.serializers import UserPublicProfileSerializer, UserPrivateProfileSerializer, CreatorPublicProfileSerializer, CreatorPrivateProfileSerializer
 
 class ProfileView(APIView):
-    """Profile information for user whose id the url points to.
+    """Profile information for user whose username the url points to.
     Accepts GET and POST.
     """
 
-    def get_object(self, public_id):
+    def get_object(self, username):
         """Get the account object corresponding to parameter from url"""
         try:
-            return Account.objects.get(public_id=public_id)
+            return Account.objects.get(username=username)
         except Account.DoesNotExist:
             raise Http404
 
-    def get(self, request, public_id, format=None):
+    def get(self, request, username, format=None):
 
         def get_serializer(account):
             """Choose the appropriate serializer according to privacy and user type (creator or not)"""
@@ -36,11 +36,11 @@ class ProfileView(APIView):
                 else:
                     return UserPublicProfileSerializer(account)
 
-        account = self.get_object(public_id)
+        account = self.get_object(username)
         serializer = get_serializer(account)
         return Response(serializer.data)
 
-    def post(self, request, public_id, format=None):
+    def post(self, request, username, format=None):
         
         def get_serializer(account):
             """Choose the appropriate serializer according to privacy and user_type (creator or not)"""
@@ -55,7 +55,7 @@ class ProfileView(APIView):
             else:
                 return status.HTTP_403_FORBIDDEN
 
-        account = self.get_object(public_id)
+        account = self.get_object(username)
         serializer = get_serializer(account, data=request.data)
         if serializer.is_valid():
             serializer.save()

@@ -24,9 +24,9 @@ from drf_spectacular.views import (
 
 urlpatterns = [
     #Media
-    path("media/video_uploads", include("media.video_streams.urls")),
-    path("media_files/video_uploads", include("media.video_streams.urls")),
-    path("video-api/", include("sage_stream.api.urls")),
+    #path("media/video_uploads", include("media.video_streams.urls")),
+    #path("media_files/video_uploads", include("media.video_streams.urls")),
+    #path("video-api/", include("sage_stream.api.urls")),
 
     #Admin
     path('admin/', admin.site.urls),
@@ -35,7 +35,7 @@ urlpatterns = [
     path("account/", include("accounts.urls")),
 
     #Subscription
-    path("subscriptions/", include("subscriptions.urls")),
+    path("subscription/", include("subscriptions.urls")),
 
     #Browsable API
     path("api-auth/", include("rest_framework.urls"),),

@@ -15,5 +15,5 @@ urlpatterns = [
     path("signup/", include("dj_rest_auth.registration.urls"),),
 
     #Profile
-    path("<uuid:public_id>/", ProfileView.as_view(), name="profile"),
+    path("<username>/", ProfileView.as_view(), name="profile"),
 ]

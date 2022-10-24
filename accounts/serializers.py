@@ -63,10 +63,10 @@ class CreatorPublicInfoSerializer(serializers.ModelSerializer):
 
 class CreatorPublicProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by other users"""
-    creator_info = CreatorPublicInfoSerializer()
+    creatorinfo = CreatorPublicInfoSerializer()
     class Meta:
         model = get_user_model()
-        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "creator_info"]
+        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "creatorinfo"]
 
 class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
     """Serializer for creator-specific info to be nested in CreatorPrivateProfileSerializer"""
@@ -77,8 +77,8 @@ class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
 
 class CreatorPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by the creator"""
-    creator_info = CreatorPublicInfoSerializer()
+    creatorinfo = CreatorPublicInfoSerializer()
     class Meta:
         model = get_user_model()
-        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance", "creator_info"]
+        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
         read_only_fields = ["btc_wallet_balance", "usd_wallet_balance"]
