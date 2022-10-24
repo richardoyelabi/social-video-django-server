@@ -36,6 +36,9 @@ urlpatterns = [
 
     #Subscription
     path("subscription/", include("subscriptions.urls")),
+    
+    #Video Purchase
+    path("video-purchase/", include("video_purchases.urls")),
 
     #Browsable API
     path("api-auth/", include("rest_framework.urls"),),
