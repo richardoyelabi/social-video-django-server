@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
@@ -44,12 +45,20 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 class UserPublicProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by other users"""
+
+    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo")
+    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo")
+
     class Meta:
         model = get_user_model()
         fields = ["username", "display_name", "bio", "profile_photo", "cover_photo"]
 
 class UserPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by the user"""
+
+    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo")
+    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo")
+
     class Meta:
         model = get_user_model()
         fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance"]
@@ -63,7 +72,12 @@ class CreatorPublicInfoSerializer(serializers.ModelSerializer):
 
 class CreatorPublicProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by other users"""
+
+    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo")
+    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo")
+
     creatorinfo = CreatorPublicInfoSerializer()
+
     class Meta:
         model = get_user_model()
         fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "creatorinfo"]
@@ -77,7 +91,12 @@ class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
 
 class CreatorPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by the creator"""
+
+    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo")
+    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo")
+
     creatorinfo = CreatorPublicInfoSerializer()
+
     class Meta:
         model = get_user_model()
         fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]

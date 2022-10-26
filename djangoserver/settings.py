@@ -205,4 +205,21 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    'profile_photo': [
+        ('full_size', 'thumbnail__400x400'),
+        ('thumbnail', 'thumbnail__100x100')
+    ],
+
+    'cover_photo': [
+        ('full_size', 'thumbnail__1500x500'),
+        ('thumbnail', 'thumbnail__600x200')
+    ],
+
+    'photo_upload': [
+        ('full_size', 'url'),
+        ('thumbnail', 'thumbnail__300x300')
+    ]
+}
+
 STREAM_DEFAULT_PERMISSION_CLASSES = (IsAuthenticated,)
