@@ -50,7 +50,7 @@ class UserPublicProfileSerializer(UserDetailsSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo"]
+        fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo"]
 
 class UserPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by the user"""
@@ -60,8 +60,8 @@ class UserPrivateProfileSerializer(UserDetailsSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance"]
-        read_only_fields = ["btc_wallet_balance", "usd_wallet_balance"]
+        fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance"]
+        read_only_fields = ["public_id", "btc_wallet_balance", "usd_wallet_balance"]
 
 class CreatorPublicInfoSerializer(serializers.ModelSerializer):
     """Serializer for creator-specific info to be nested in CreatorPublicProfileSerializer"""
@@ -75,11 +75,11 @@ class CreatorPublicProfileSerializer(UserDetailsSerializer):
     profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True)
     cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True)
 
-    creatorinfo = CreatorPublicInfoSerializer(allow_null=True)
+    creatorinfo = CreatorPublicInfoSerializer(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "creatorinfo"]
+        fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo", "creatorinfo"]
 
 class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
     """Serializer for creator-specific info to be nested in CreatorPrivateProfileSerializer"""
@@ -94,10 +94,28 @@ class CreatorPrivateProfileSerializer(UserDetailsSerializer):
     profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True)
     cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True)
 
-    creatorinfo = CreatorPublicInfoSerializer(allow_null=True)
+    creatorinfo = CreatorPublicInfoSerializer(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
-        read_only_fields = ["btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
+        fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
+        read_only_fields = ["public_id", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
 
+    def validate_username(self, value):
+        user = self.context['request'].user
+        if get_user_model().objects.exclude(pk=user.pk).filter(username=value).exists():
+            raise serializers.ValidationError({"username": "This username is already in use."})
+        return value
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data["username"]
+        instance.display_name = validated_data["display_name"]
+        instance.bio = validated_data["bio"]
+        if validated_data["profile_photo"]:
+            instance.profile_photo = validated_data["profile_photo"]
+        if validated_data["cover_photo"]:
+            instance.cover_photo = validated_data["cover_photo"]
+
+        instance.save()
+        return instance
+        

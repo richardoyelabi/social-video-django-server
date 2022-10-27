@@ -1,64 +1,47 @@
-from django.http import Http404
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.reverse import reverse
 
 from accounts.models import Account
-from accounts.serializers import UserPublicProfileSerializer, UserPrivateProfileSerializer, CreatorPublicProfileSerializer, CreatorPrivateProfileSerializer
+from accounts.serializers import UserPublicProfileSerializer, UserPrivateProfileSerializer,\
+    CreatorPublicProfileSerializer, CreatorPrivateProfileSerializer
+from accounts.permissions import OwnerOrReadOnly
 
-class ProfileView(APIView):
+class ProfileView(RetrieveUpdateAPIView):
     """Profile information for user whose username the url points to.
-    Accepts GET and POST.
+    Accepts GET, PUT and PATCH.
+    Weird Note: Even with PUT, "profile_photo" and "cover_photo" can be left blank without deleting existing value in database.\
+        This is to prevent unnecessary image file overhead in every PUT request.
     """
+    queryset = Account.objects.all()
+    lookup_field = "public_id"
+    lookup_url_kwarg = "id"
+    permission_classes = [OwnerOrReadOnly]
 
-    def get_object(self, username):
-        """Get the account object corresponding to parameter from url"""
-        try:
-            return Account.objects.get(username=username)
-        except Account.DoesNotExist:
-            raise Http404
+    def get_serializer_class(self):
+        """Choose the appropriate serializer according to privacy and user type (creator or not)"""
 
-    def get(self, request, username, format=None):
+        account = self.get_object()
+        is_owner = self.request.user.id == account.id
+        is_creator = account.is_creator
 
-        def get_serializer(account):
-            """Choose the appropriate serializer according to privacy and user type (creator or not)"""
-            is_owner = request.user.id == account.id
-            is_creator = account.is_creator
-
-            if is_owner:
-                if is_creator:
-                    return CreatorPrivateProfileSerializer(account)
-                else:
-                    return UserPrivateProfileSerializer(account)
+        if is_owner:
+            if is_creator:
+                return CreatorPrivateProfileSerializer
             else:
-                if is_creator:
-                    return CreatorPublicProfileSerializer(account)
-                else:
-                    return UserPublicProfileSerializer(account)
-
-        account = self.get_object(username)
-        serializer = get_serializer(account)
-        return Response(serializer.data)
-
-    def post(self, request, username, format=None):
-        
-        def get_serializer(account, data):
-            """Choose the appropriate serializer according to privacy and user type (creator or not)"""
-            is_owner = request.user.id == account.id
-            is_creator = account.is_creator
-
-            if is_owner:
-                if is_creator:
-                    return CreatorPrivateProfileSerializer(account, data=data)
-                else:
-                    return UserPrivateProfileSerializer(account, data=data)
+                return UserPrivateProfileSerializer
+        else:
+            if is_creator:
+                return CreatorPublicProfileSerializer
             else:
-                return status.HTTP_403_FORBIDDEN
+                return UserPublicProfileSerializer
 
-        account = self.get_object(username)
-        serializer = get_serializer(account, request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+class MyProfileURLView(APIView):
+    """Return profile url of authenticated user.
+    Accepts GET."""
+
+    def get(self, request):
+        public_id = request.user.public_id
+        url = reverse("profile", args=[public_id], request=request)
+        return Response({"profile_url": url})

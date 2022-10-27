@@ -69,7 +69,7 @@ class Account(AbstractUser):
         return self.username
 
     def get_absolute_url(self):
-        return reverse("profile", kwargs={"username": self.username}) 
+        return reverse("profile", kwargs={"public_id": self.public_id}) 
 
 class CreatorInfo(models.Model):
     creator = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name="creatorinfo")

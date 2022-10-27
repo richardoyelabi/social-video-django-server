@@ -3,7 +3,7 @@ from dj_rest_auth.views import (
     LoginView, LogoutView, PasswordChangeView, PasswordResetConfirmView,
     PasswordResetView,
 )
-from accounts.views import ProfileView
+from accounts.views import ProfileView, MyProfileURLView
 
 urlpatterns = [
     #Dj_rest_auth login and signup
@@ -15,5 +15,6 @@ urlpatterns = [
     path("signup/", include("dj_rest_auth.registration.urls"),),
 
     #Profile
-    path("<username>/", ProfileView.as_view(), name="profile"),
+    path("<uuid:id>/", ProfileView.as_view(), name="profile"),
+    path("my-profile-url", MyProfileURLView.as_view(), name="my-profile-url"),
 ]
