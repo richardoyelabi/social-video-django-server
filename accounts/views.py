@@ -22,7 +22,7 @@ class ProfileView(APIView):
 
         def get_serializer(account):
             """Choose the appropriate serializer according to privacy and user type (creator or not)"""
-            is_owner = request.user.id ==account.id
+            is_owner = request.user.id == account.id
             is_creator = account.is_creator
 
             if is_owner:
@@ -42,21 +42,21 @@ class ProfileView(APIView):
 
     def post(self, request, username, format=None):
         
-        def get_serializer(account):
-            """Choose the appropriate serializer according to privacy and user_type (creator or not)"""
-            is_owner = request.user.id ==account.id
+        def get_serializer(account, data):
+            """Choose the appropriate serializer according to privacy and user type (creator or not)"""
+            is_owner = request.user.id == account.id
             is_creator = account.is_creator
 
             if is_owner:
                 if is_creator:
-                    return CreatorPrivateProfileSerializer(account)
+                    return CreatorPrivateProfileSerializer(account, data=data)
                 else:
-                    return UserPrivateProfileSerializer(account)
+                    return UserPrivateProfileSerializer(account, data=data)
             else:
                 return status.HTTP_403_FORBIDDEN
 
         account = self.get_object(username)
-        serializer = get_serializer(account, data=request.data)
+        serializer = get_serializer(account, request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
