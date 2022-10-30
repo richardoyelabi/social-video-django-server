@@ -7,7 +7,7 @@ class PhotoAdmin(admin.ModelAdmin):
         "uploader",
         "content_type",
         "upload_time",
-        "image",
+        "media",
     )
 
 class VideoAdmin(admin.ModelAdmin):
@@ -16,7 +16,7 @@ class VideoAdmin(admin.ModelAdmin):
         "uploader",
         "content_type",
         "upload_time",
-        "video",
+        "media",
     )
 
 admin.site.register(Photo, PhotoAdmin)

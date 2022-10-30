@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class OwnerOrReadOnly(BasePermission):
-    """Give write access on an account only to the owner of the account"""
+    """Give write access to an account only to the owner of the account"""
 
     def has_permission(self, request, view):
         if request.user.is_authenticated:

@@ -19,7 +19,7 @@ class Photo(models.Model):
         ("chat","Private message")
     ])
     upload_time = models.DateTimeField(auto_now=True)
-    image = VersatileImageField(upload_to=photo_uploads_path)
+    media = VersatileImageField(upload_to=photo_uploads_path)
 
     associated_posts = GenericRelation(Post, related_query_name="photo", content_type_field="media_type", object_id_field="media_id")
 
@@ -36,7 +36,7 @@ class Video(models.Model):
         ("free_chat", "Free Message")
     ])
     upload_time = models.DateTimeField(auto_now=True)
-    video = models.FileField(upload_to=video_uploads_path, validators=[FileExtensionValidator(["mp4"])])
+    media = models.FileField(upload_to=video_uploads_path, validators=[FileExtensionValidator(["mp4"])])
     purchase_cost_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
     purchase_cost_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
 

@@ -24,6 +24,9 @@ class Post(models.Model):
     media_id = models.PositiveIntegerField()
     media_item = GenericForeignKey("media_type", "media_id")
 
+    likes_number = models.PositiveIntegerField(default=0)
+    comments_number = models.PositiveIntegerField(default=0)
+
     class Meta:
         indexes = [
             models.Index(fields=["media_type", "media_id"]),
@@ -41,6 +44,7 @@ class Like(models.Model):
         return f"{self.account} likes {self.post}"
 
 class Comment(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     comment_text = models.TextField(max_length=256)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

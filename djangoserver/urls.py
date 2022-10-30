@@ -34,6 +34,9 @@ urlpatterns = [
     #Account and auth
     path("account/", include("accounts.urls")),
 
+    #Post
+    path("post/", include("posts.urls")),
+
     #Subscription
     path("subscription/", include("subscriptions.urls")),
     

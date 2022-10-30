@@ -45,12 +45,15 @@ class CustomRegisterSerializer(RegisterSerializer):
 class UserPublicProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by other users"""
 
-    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True)
-    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True)
+    public_id = serializers.UUIDField(read_only=False)
+
+    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True, read_only=True)
+    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True, read_only=True)
 
     class Meta:
         model = get_user_model()
         fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo"]
+        read_only_fields = ["username", "display_name", "bio", "profile_photo", "cover_photo"]
 
 class UserPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by the user"""

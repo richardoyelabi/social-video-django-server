@@ -174,6 +174,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ],
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
+    'PAGE_SIZE': 50,
+
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -217,7 +221,7 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     ],
 
     'photo_upload': [
-        ('full_size', 'url'),
+        ('main_media', 'url'),
         ('thumbnail', 'thumbnail__300x300')
     ]
 }
