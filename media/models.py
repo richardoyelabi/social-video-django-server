@@ -6,6 +6,7 @@ from media.media_paths import photo_uploads_path, video_uploads_path
 from posts.models import Post
 
 from versatileimagefield.fields import VersatileImageField
+from videothumbs.fields import VideoThumbnailField
 from django.core.validators import FileExtensionValidator
 import uuid
 
@@ -36,7 +37,7 @@ class Video(models.Model):
         ("free_chat", "Free Message")
     ])
     upload_time = models.DateTimeField(auto_now=True)
-    media = models.FileField(upload_to=video_uploads_path, validators=[FileExtensionValidator(["mp4"])])
+    media = VideoThumbnailField(upload_to=video_uploads_path, validators=[FileExtensionValidator(["mp4"])], sizes=((300,300),))
     purchase_cost_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
     purchase_cost_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
 

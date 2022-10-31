@@ -41,9 +41,7 @@ class MyProfileURLView(APIView):
     """Return profile url of authenticated user.
     Accepts GET."""
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         public_id = request.user.public_id
-        ProfileView.as_view()
-        #public_id = request.user.public_id
-        #url = reverse("profile", args=[public_id], request=request)
-        #return Response(url)
+        url = reverse("profile", args=[public_id], request=request)
+        return Response(url)

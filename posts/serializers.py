@@ -81,7 +81,7 @@ class VideoPostCreateSerializer(BasePostCreateSerializer):
     media_item = VideoSerializer()
 
     def create(self, validated_data):
-        media_data = validated_data.pop("media")
+        media_data = validated_data.pop("media_item")
         uploader = validated_data.pop("uploader")
         post_type = validated_data.get("post_type")
 
