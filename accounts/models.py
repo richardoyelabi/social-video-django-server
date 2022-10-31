@@ -10,6 +10,7 @@ from transactions.models import Transaction
 from media.models import Video
 from video_purchases.models import Purchase
 from posts.models import Post, Like, Comment
+from video_saves.models import VideoSave
 
 from versatileimagefield.fields import VersatileImageField
 from django.db.models import JSONField
@@ -46,6 +47,8 @@ class Account(AbstractUser):
 
     subscriptions = models.ManyToManyField("self", through=Subscription, related_name="subscribers", symmetrical=False)
     purchased_videos = models.ManyToManyField(Video, through=Purchase, related_name="buyers")
+
+    saved_videos = models.ManyToManyField(Post, through=VideoSave, related_name="saves")
 
     post_likes = models.ManyToManyField(Post, through=Like, related_name="liked_by")
     post_comments = models.ManyToManyField(Post, through=Comment, related_name="commented_on_by")

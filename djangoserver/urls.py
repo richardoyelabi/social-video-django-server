@@ -36,6 +36,9 @@ urlpatterns = [
 
     #Post
     path("post/", include("posts.urls")),
+    
+    #Video save
+    path("video-save/", include("video_saves.urls")),
 
     #Subscription
     path("subscription/", include("subscriptions.urls")),

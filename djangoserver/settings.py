@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "sage_stream.apps.SageStreamConfig",
     "video_purchases.apps.VideoPurchasesConfig",
     "posts.apps.PostsConfig",
+    "video_saves.apps.VideoSavesConfig",
 
     #3rd party apps that have to come last
     "django_cleanup.apps.CleanupConfig",

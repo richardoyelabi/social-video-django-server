@@ -6,8 +6,10 @@ from rest_framework.filters import OrderingFilter
 from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
 
 from posts.models import Post, Like, Comment
-from posts.serializers import PhotoPostCreateSerializer, VideoPostCreateSerializer, PhotoPostDetailSerializer, VideoPostDetailSerializer, LikeSerializer, CommentSerializer, CommentCreateSerializer
-
+from posts.serializers import PhotoPostCreateSerializer, VideoPostCreateSerializer, \
+    PhotoPostDetailSerializer, VideoPostDetailSerializer, \
+        LikeSerializer, CommentSerializer, CommentCreateSerializer
+        
 class PostLikeView(GenericAPIView):
     """Like, unlike, or get the number of likes of a post.
     GET to retrieve the number of likes; POST to like; DELETE to unlike."""

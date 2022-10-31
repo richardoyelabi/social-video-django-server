@@ -22,6 +22,8 @@ class AccountAdmin(UserAdmin):
         "notification_settings",
         "is_creator",
         "public_id",
+        "saved_videos_number",
+        "purchased_videos_number",
         "btc_wallet_balance",
         "usd_wallet_balance"
         ]
