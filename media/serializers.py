@@ -25,8 +25,8 @@ class CustomVideoThumbnailSerializer(serializers.FileField):
         if self.context:
             context_request = self.context.get("request", None)
         return {
-            "thumbnail": HttpRequest.build_absolute_uri(value.get_thumbnail_url((300,300))),
-            "video": HttpRequest.build_absolute_uri(value.path),
+            "video": value.url,
+            "thumbnail": value.url_300x300
         }
 
 class VideoSerializer(serializers.ModelSerializer):
