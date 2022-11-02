@@ -4,7 +4,7 @@ from .models import Purchase, CancelledPurchase, NullifiedPurchase
 class PurchaseAdmin(admin.ModelAdmin):
     list_display = (
         "buyer",
-        "video",
+        "video_post",
         "time_of_purchase",
         "fee_currency",
         "fee_amount",
@@ -13,7 +13,7 @@ class PurchaseAdmin(admin.ModelAdmin):
 class CancelledPurchaseAdmin(admin.ModelAdmin):
     list_display = (
         "buyer",
-        "video",
+        "video_post",
         "time_of_cancellation",
         "time_of_initial_purchase",
         "fee_currency",
@@ -23,7 +23,7 @@ class CancelledPurchaseAdmin(admin.ModelAdmin):
 class NullifiedPurchaseAdmin(admin.ModelAdmin):
     list_display = (
         "buyer",
-        "video",
+        "video_post",
         "time_of_nullification",
         "time_of_initial_purchase",
         "fee_currency",

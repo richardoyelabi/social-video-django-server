@@ -6,8 +6,8 @@ from rest_framework.filters import OrderingFilter
 from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
 
 from posts.models import Post, Like, Comment
-from posts.serializers import PhotoPostCreateSerializer, VideoPostCreateSerializer, \
-    PhotoPostDetailSerializer, VideoPostDetailSerializer, \
+from posts.serializers import PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
+    PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
         LikeSerializer, CommentSerializer, CommentCreateSerializer
         
 class PostLikeView(GenericAPIView):
@@ -119,7 +119,10 @@ class PostView(RetrieveDestroyAPIView):
         
         if post_type=="photo":
             return PhotoPostDetailSerializer
-        return VideoPostDetailSerializer
+        elif post_type=="free_video":
+            return VideoPostDetailSerializer
+        elif post_type=="paid_video":
+            return PaidVideoPostDetailSerializer
 
 class CreatePostView(CreateAPIView):
     """Create a new post.
@@ -132,13 +135,16 @@ class CreatePostView(CreateAPIView):
 
         if post_type=="photo":
             return PhotoPostCreateSerializer
-        return VideoPostCreateSerializer
+        elif post_type=="free_video":
+            return VideoPostCreateSerializer
+        elif post_type=="paid_video":
+            return PaidVideoPostCreateSerializer
 
     def post(self, request, *args, **kwargs):
         post_type = self.request.data.get("post_type")
 
         uploader_public_id = request.user.public_id
-        media = request.data.get("media_item.media")
+        media = request.data.get("media")
         caption = request.data.get("caption")
 
         data = {
@@ -153,25 +159,36 @@ class CreatePostView(CreateAPIView):
         }
         
         #Set serialization process based on post_type
+
         if post_type=="photo":
             data["media_item"]["content_type"] = "post"
             serializer = PhotoPostCreateSerializer(data=data)
+            
         else:
+
             if post_type=="free_video":
                 data["media_item"]["content_type"] = "free_post"
+                serializer = VideoPostCreateSerializer(data=data)
+
             elif post_type=="paid_video":
                 data["media_item"]["content_type"] = "paid_post"
+                data["purchase_cost_currency"], data["purchase_cost_amount"] = \
+                    request.data.get("purchase_cost_currency"), request.data.get("purchase_cost_amount")
+                
+                serializer = PaidVideoPostCreateSerializer(data=data)
+
             else:
                 return Response("Invalid post_type parameter", status=status.HTTP_400_BAD_REQUEST)
-            serializer = VideoPostCreateSerializer(data=data)
 
         if serializer.is_valid():
             new_post = serializer.save()
 
             if post_type=="photo":
                 serializer = PhotoPostDetailSerializer(new_post)
-            else:
+            elif post_type=="free_video":
                 serializer = VideoPostDetailSerializer(new_post)
+            elif post_type=="paid_video":
+                serializer = PaidVideoPostDetailSerializer(new_post)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

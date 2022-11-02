@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-
 from django.conf import settings
+
+from transactions.models import Transaction
 
 import uuid
 
@@ -26,6 +27,9 @@ class Post(models.Model):
 
     likes_number = models.PositiveIntegerField(default=0)
     comments_number = models.PositiveIntegerField(default=0)
+
+    purchase_cost_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
+    purchase_cost_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
 
     class Meta:
         indexes = [

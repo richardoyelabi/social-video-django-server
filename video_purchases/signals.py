@@ -24,7 +24,7 @@ def decrease_purchased_videos_number_and_archive_purchase(sender, instance, **kw
     #Move purchase to CancelledPurchase before deleting from Purchase
     CancelledPurchase.objects.create(
         buyer=instance.buyer,
-        video=instance.video,
+        video_post=instance.video_post,
         time_of_initial_purchase=instance.time_of_purchase,
         fee_currency=instance.fee_currency,
         fee_amount=instance.fee_amount

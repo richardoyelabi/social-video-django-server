@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 from video_purchases.models import Purchase
 from video_purchases.serializers import PurchaseSerializer
-from media.models import Video
+from posts.models import Post
 
 class PurchaseView(GenericAPIView):
     """Purchase a video.
@@ -13,17 +13,17 @@ class PurchaseView(GenericAPIView):
 
     queryset = Purchase.objects.all()
     serializer_class = PurchaseSerializer
-    lookup_url_kwarg = "video_id"
+    lookup_url_kwarg = "post_id"
 
-    def post(self, request, video_id, *args, **kwargs):
+    def post(self, request, post_id, *args, **kwargs):
         buyer = request.user
-        video = Video.objects.get(public_id=video_id)
+        post = Post.objects.get(public_id=post_id)
 
         if Purchase.objects.filter(
             buyer = buyer,
-            video = video
+            video_post = post
         ).exists():
             return Response("User already purchased the video.", status.HTTP_400_BAD_REQUEST)
         
-        Purchase.objects.create(buyer=buyer, video=video)
+        Purchase.objects.create(buyer=buyer, video_post=post)
         return Response("Video purchased.", status.HTTP_201_CREATED)

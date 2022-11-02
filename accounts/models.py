@@ -7,7 +7,6 @@ from .account_manager import AccountManager
 from media.media_paths import profile_photos_path, cover_photos_path
 from subscriptions.models import Subscription
 from transactions.models import Transaction
-from media.models import Video
 from video_purchases.models import Purchase
 from posts.models import Post, Like, Comment
 from video_saves.models import VideoSave
@@ -46,7 +45,7 @@ class Account(AbstractUser):
     is_creator = models.BooleanField(default=False)
 
     subscriptions = models.ManyToManyField("self", through=Subscription, related_name="subscribers", symmetrical=False)
-    purchased_videos = models.ManyToManyField(Video, through=Purchase, related_name="buyers")
+    purchased_videos = models.ManyToManyField(Post, through=Purchase, related_name="buyers")
 
     saved_videos = models.ManyToManyField(Post, through=VideoSave, related_name="saves")
 
