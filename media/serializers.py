@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.http import HttpRequest
+from django.contrib.sites.models import Site
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 from django.contrib.auth import get_user_model
 
@@ -31,9 +31,11 @@ class CustomVideoThumbnailSerializer(serializers.FileField):
 
             video_rel_url = f"post/{post_id}/video-stream/{video_id}/"
 
+            domain = Site.objects.get_current().domain
+
         return {
-            "video": video_rel_url,
-            "thumbnail": value.url_300x300
+            "video": f"http://{domain}/{video_rel_url}",
+            "thumbnail": f"http://{domain}/{value.url_300x300}"
         }
 
 class VideoSerializer(serializers.ModelSerializer):
