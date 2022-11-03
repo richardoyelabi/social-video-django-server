@@ -12,11 +12,11 @@ class SubscriptionView(GenericAPIView):
 
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
-    lookup_url_kwarg = "creator_username"
+    lookup_url_kwarg = "creator_id"
 
-    def post(self, request, creator_username, *args, **kwargs):
+    def post(self, request, creator_id, *args, **kwargs):
         Account = get_user_model()
-        subscribed_to = Account.objects.get(username=creator_username)
+        subscribed_to = Account.objects.get(public_id=creator_id)
         subscriber = request.user
 
         if Subscription.objects.filter(
@@ -28,9 +28,9 @@ class SubscriptionView(GenericAPIView):
         Subscription.objects.create(subscribed_to=subscribed_to, subscriber=subscriber)
         return Response("Subscription created.", status.HTTP_201_CREATED)
 
-    def delete(self, request, creator_username, *args, **kwargs):
+    def delete(self, request, creator_id, *args, **kwargs):
         Account = get_user_model()
-        subscribed_to = Account.objects.get(username=creator_username)
+        subscribed_to = Account.objects.get(public_id=creator_id)
         subscriber = request.user
         
         if not Subscription.objects.filter(

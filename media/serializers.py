@@ -21,11 +21,18 @@ class CustomVideoThumbnailSerializer(serializers.FileField):
     read_only = True
 
     def to_representation(self, value):
+
         context_request = None
         if self.context:
             context_request = self.context.get("request", None)
+
+            post_id = self.context.get("view").kwargs.get("post_id")
+            video_id = value.instance.public_id
+
+            video_rel_url = f"post/{post_id}/video-stream/{video_id}/"
+
         return {
-            "video": value.url,
+            "video": video_rel_url,
             "thumbnail": value.url_300x300
         }
 

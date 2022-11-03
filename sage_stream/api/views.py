@@ -7,15 +7,12 @@ from sage_stream import settings
 from sage_stream.utils.log_services import log_watch_request, get_request_ip
 from sage_stream.utils.stream_services import get_streaming_response
 
-from media.video_streams.permissions import HasSubscribedOrPurchasedVideo
-
+from media.models import Video
 
 class VideoStreamAPIView(APIView):
     """return StreamingHTTPResponse"""
 
-    permission_classes = (HasSubscribedOrPurchasedVideo,)
-
-    def get(self, request, *args, **kwargs):
+    def get(self, request, video_id, *args, **kwargs):
         """get range header & create streaming response"""
         # initialize parameters
         max_load_volume = settings.STREAM_MAX_LOAD_VOLUME
@@ -26,9 +23,10 @@ class VideoStreamAPIView(APIView):
         media_url = django_settings.MEDIA_URL
 
         # get video path & range header
-        video_path = request.GET.get(path_key)
         range_header = request.META.get('HTTP_RANGE', '').strip()
         range_re = re.compile(range_re_pattern, re.I)
+        
+        video_path = Video.objects.get(public_id=video_id).media.url
         video_path = video_path.replace(media_url, media_dir)
         video_path = os.path.join(django_settings.BASE_DIR, video_path)
 

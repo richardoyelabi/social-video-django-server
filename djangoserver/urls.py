@@ -28,6 +28,9 @@ urlpatterns = [
     #path("media_files/video_uploads", include("media.video_streams.urls")),
     #path("video-api/", include("sage_stream.api.urls")),
 
+    #Video stream
+    #path("video-stream/", include("sage_stream.api.urls")),
+
     #Admin
     path('admin/', admin.site.urls),
 

@@ -3,12 +3,15 @@ from rest_framework.generics import GenericAPIView, DestroyAPIView, RetrieveDest
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
 
+from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
 from posts.models import Post, Like, Comment
 from posts.serializers import PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
     PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
         LikeSerializer, CommentSerializer, CommentCreateSerializer
+from sage_stream.api.views import VideoStreamAPIView
+from media.models import Video
+from subscriptions.models import Subscription
         
 class PostLikeView(GenericAPIView):
     """Like, unlike, or get the number of likes of a post.
@@ -192,3 +195,30 @@ class CreatePostView(CreateAPIView):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PostVideoStreamView(VideoStreamAPIView):
+    """Stream post video.
+    Accepts GET"""
+
+    def get(self, request, post_id, video_id, *args, **kwargs):
+        """Authorize user to view stream and call super() to send stream"""
+
+        post = Post.objects.get(public_id=post_id)
+        video = Video.objects.get(public_id=video_id)
+
+        error_response = Response("You're not authorized to watch this video. Please purchase video or subscribe to creator to unlock.", 
+            status=status.HTTP_401_UNAUTHORIZED)
+
+        if post.media_item != video:
+            return error_response
+
+        user = request.user
+        post_creator = post.uploader
+
+        if post.post_type=="free_video" or \
+            Subscription.objects.filter(subscribed_to=post_creator, subscriber=user).exists() or \
+                post.buyers.filter(id=user.id).exists():
+                return super().get(request, video_id)
+
+        return error_response

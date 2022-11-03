@@ -1,5 +1,8 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+from posts.models import Post
+from media.models import Video
+
 class CommentOwnerOrReadOnly(BasePermission):
     """Give write access to an existing comment only to the owner of the account"""
 
