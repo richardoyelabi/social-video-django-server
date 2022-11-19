@@ -40,6 +40,9 @@ urlpatterns = [
     #Post
     path("post/", include("posts.urls")),
     
+    #Chat
+    path("chat/", include("chats.urls")),
+    
     #Video save
     path("video-save/", include("video_saves.urls")),
 

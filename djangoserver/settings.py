@@ -35,6 +35,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
+    #3rd party apps that have to come first
+    "daphne",
+
+    #Default
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,6 +69,7 @@ INSTALLED_APPS = [
     "video_purchases.apps.VideoPurchasesConfig",
     "posts.apps.PostsConfig",
     "video_saves.apps.VideoSavesConfig",
+    "chats.apps.ChatsConfig",
 
     #3rd party apps that have to come last
     "django_cleanup.apps.CleanupConfig",
@@ -209,6 +215,20 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+# CHANNELS
+ASGI_APPLICATION = "djangoserver.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     'profile_photo': [

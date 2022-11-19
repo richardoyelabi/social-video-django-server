@@ -13,4 +13,18 @@ from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoserver.settings')
 
-application = get_asgi_application()
+django_asgi_app = get_asgi_application()
+
+from . import routing
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels_auth_token_middlewares.middleware import DRFAuthTokenMiddleware
+
+application = ProtocolTypeRouter({
+    "http": django_asgi_app,
+    "websocket": DRFAuthTokenMiddleware(
+        URLRouter(
+            routing.websocket_urlpatterns
+        ),
+    ),
+    
+})
