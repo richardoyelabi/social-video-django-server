@@ -5,7 +5,6 @@ class PhotoAdmin(admin.ModelAdmin):
     list_display = (
         "public_id",
         "uploader",
-        "content_type",
         "upload_time",
         "media",
     )
@@ -14,7 +13,6 @@ class VideoAdmin(admin.ModelAdmin):
     list_display = (
         "public_id",
         "uploader",
-        "content_type",
         "upload_time",
         "media",
     )

@@ -155,7 +155,6 @@ class CreatePostView(CreateAPIView):
             "uploader": uploader_public_id,
             "media_item": {
                 "uploader": uploader_public_id,
-                "content_type": "", 
                 "media": media
             }, 
             "caption":caption
@@ -164,17 +163,14 @@ class CreatePostView(CreateAPIView):
         #Set serialization process based on post_type
 
         if post_type=="photo":
-            data["media_item"]["content_type"] = "post"
             serializer = PhotoPostCreateSerializer(data=data)
             
         else:
 
             if post_type=="free_video":
-                data["media_item"]["content_type"] = "free_post"
                 serializer = VideoPostCreateSerializer(data=data)
 
             elif post_type=="paid_video":
-                data["media_item"]["content_type"] = "paid_post"
                 data["purchase_cost_currency"], data["purchase_cost_amount"] = \
                     request.data.get("purchase_cost_currency"), request.data.get("purchase_cost_amount")
                 
@@ -218,7 +214,9 @@ class PostVideoStreamView(VideoStreamAPIView):
 
         if post.post_type=="free_video" or \
             Subscription.objects.filter(subscribed_to=post_creator, subscriber=user).exists() or \
-                post.buyers.filter(id=user.id).exists():
-                return super().get(request, video_id)
+                post.buyers.filter(id=user.id).exists() or \
+                    user==post_creator:
+                    
+                    return super().get(request, video_id)
 
         return error_response

@@ -12,7 +12,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ["public_id", "uploader", "content_type", "media"]
+        fields = ["public_id", "uploader", "media"]
         read_only_fields = ["public_id"]
 
 class CustomVideoThumbnailSerializer(serializers.FileField):
@@ -45,5 +45,5 @@ class VideoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Video
-        fields = ["public_id", "uploader", "content_type", "media"]
+        fields = ["public_id", "uploader", "media"]
         read_only_fields = ["public_id"]

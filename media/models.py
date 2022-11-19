@@ -14,10 +14,6 @@ import uuid
 class Photo(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="photo_uploads", on_delete=models.SET_NULL, null=True)
-    content_type = models.CharField(max_length=4, choices=[
-        ("post","Feed post"),
-        ("chat","Private message")
-    ])
     upload_time = models.DateTimeField(auto_now=True)
     media = VersatileImageField(upload_to=photo_uploads_path)
 
@@ -29,12 +25,6 @@ class Photo(models.Model):
 class Video(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="video_uploads", on_delete=models.SET_NULL, null=True)
-    content_type = models.CharField(max_length=10, choices=[
-        ("paid_post", "Premium post"),
-        ("paid_chat", "Premium message"),
-        ("free_post","Free post"),
-        ("free_chat", "Free Message")
-    ])
     upload_time = models.DateTimeField(auto_now=True)
     media = VideoThumbnailField(upload_to=video_uploads_path, validators=[FileMimeValidator()], sizes=((300,300),))
 
