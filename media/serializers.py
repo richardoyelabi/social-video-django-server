@@ -22,16 +22,12 @@ class CustomVideoThumbnailSerializer(serializers.FileField):
 
     def to_representation(self, value):
 
-        context_request = None
-        if self.context:
-            context_request = self.context.get("request", None)
+        post_id = self.root.instance.public_id
+        video_id = value.instance.public_id
 
-            post_id = self.context.get("view").kwargs.get("post_id")
-            video_id = value.instance.public_id
+        video_rel_url = f"post/{post_id}/video-stream/{video_id}/"
 
-            video_rel_url = f"post/{post_id}/video-stream/{video_id}/"
-
-            domain = Site.objects.get_current().domain
+        domain = Site.objects.get_current().domain
 
         return {
             "video": f"http://{domain}/{video_rel_url}",

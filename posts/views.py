@@ -6,7 +6,7 @@ from rest_framework.filters import OrderingFilter
 
 from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
 from posts.models import Post, Like, Comment
-from posts.serializers import PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
+from posts.serializers import BasePostCreateSerializer, PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
     PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
         LikeSerializer, CommentSerializer, CommentCreateSerializer
 from sage_stream.api.views import VideoStreamAPIView
@@ -132,16 +132,7 @@ class CreatePostView(CreateAPIView):
     Accepts POST"""
 
     queryset = Post.objects.all()
-    
-    def get_serializer_class(self):
-        post_type = self.request.data.get("post_type")
-
-        if post_type=="photo":
-            return PhotoPostCreateSerializer
-        elif post_type=="free_video":
-            return VideoPostCreateSerializer
-        elif post_type=="paid_video":
-            return PaidVideoPostCreateSerializer
+    serializer_class = BasePostCreateSerializer
 
     def post(self, request, *args, **kwargs):
         post_type = self.request.data.get("post_type")

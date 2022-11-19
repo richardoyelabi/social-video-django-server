@@ -70,11 +70,9 @@ class PhotoPostCreateSerializer(BasePostCreateSerializer):
     def create(self, validated_data):
         media_data = validated_data.pop("media_item")
         uploader = validated_data.pop("uploader")
-        content_type = "post"
 
         media_data = {
             "uploader": uploader,
-            "content_type": content_type,
             "media": media_data.get("media")
         }
 
@@ -98,15 +96,8 @@ class VideoPostCreateSerializer(BasePostCreateSerializer):
         uploader = validated_data.pop("uploader")
         post_type = validated_data.get("post_type")
 
-        #Determine (video) content type
-        if post_type=="free_video":
-            content_type = "free_post"
-        elif post_type=="paid_video":
-            content_type = "paid_post"
-
         media_data = {
             "uploader": uploader,
-            "content_type": content_type,
             "media": media_data.get("media")
         }
 
