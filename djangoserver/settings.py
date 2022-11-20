@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     "video_saves.apps.VideoSavesConfig",
     "chats.apps.ChatsConfig",
     "special_requests.apps.SpecialRequestsConfig",
+    "tips.apps.TipsConfig",
 
     #3rd party apps that have to come last
     "django_cleanup.apps.CleanupConfig",

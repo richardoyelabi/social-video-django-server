@@ -58,8 +58,7 @@ class PostLikeView(GenericAPIView):
 
 class PostCommentView(ListModelMixin,GenericAPIView):
     """View comments or get the number of comments on a post.
-    GET to retrieve the number of comments, 'list=True' to view comments; 
-    POST to comment (comment_text)"""
+    GET to retrieve the number of comments, 'list=True' to view comments."""
 
     serializer_class = CommentSerializer
     lookup_field = "public_id"

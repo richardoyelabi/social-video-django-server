@@ -46,6 +46,9 @@ urlpatterns = [
     
     #Special Request
     path("special-request/", include("special_requests.urls")),
+    
+    #Tip
+    path("tip/", include("tips.urls")),
 
     #Browsable API
     path("api-auth/", include("rest_framework.urls"),),
