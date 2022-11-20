@@ -23,14 +23,6 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
-    #Media
-    #path("media/video_uploads", include("media.video_streams.urls")),
-    #path("media_files/video_uploads", include("media.video_streams.urls")),
-    #path("video-api/", include("sage_stream.api.urls")),
-
-    #Video stream
-    #path("video-stream/", include("sage_stream.api.urls")),
-
     #Admin
     path('admin/', admin.site.urls),
 
@@ -51,6 +43,9 @@ urlpatterns = [
     
     #Video Purchase
     path("video-purchase/", include("video_purchases.urls")),
+    
+    #Special Request
+    path("special-request/", include("special_requests.urls")),
 
     #Browsable API
     path("api-auth/", include("rest_framework.urls"),),

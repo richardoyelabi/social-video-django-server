@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "posts.apps.PostsConfig",
     "video_saves.apps.VideoSavesConfig",
     "chats.apps.ChatsConfig",
+    "special_requests.apps.SpecialRequestsConfig",
 
     #3rd party apps that have to come last
     "django_cleanup.apps.CleanupConfig",

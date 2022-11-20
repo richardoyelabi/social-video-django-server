@@ -3,12 +3,28 @@ from django.contrib import admin
 from .models import Thread, ChatMessage, Inbox
 
 
-class ChatMessageAdmin(admin.TabularInline):
+class ChatMessageInlineAdmin(admin.TabularInline):
     model = ChatMessage
 
 
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = (
+        "public_id",
+        "thread",
+        "user",
+        "receiver",
+        "message",
+        "timestamp",
+        "status",
+        "message_type",
+        "media_item",
+        "purchase_cost_currency",
+        "purchase_cost_amount",
+    )
+
+
 class ThreadAdmin(admin.ModelAdmin):
-    inlines = [ChatMessageAdmin]
+    inlines = [ChatMessageInlineAdmin]
     list_display = ('first', 'second', 'id', 'timestamp', 'updated')
     readonly_fields = ('updated', 'timestamp')
 
@@ -28,5 +44,6 @@ class InboxAdmin(admin.ModelAdmin):
         model = Inbox
 
 
+admin.site.register(ChatMessage, ChatMessageAdmin)
 admin.site.register(Thread, ThreadAdmin)
 admin.site.register(Inbox, InboxAdmin)

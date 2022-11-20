@@ -9,9 +9,11 @@ from channels.layers import get_channel_layer
 
 from chats.serializers import AccountChatSerializer, MessageListSerializer
 from chats.models import Inbox, ChatMessage
+from media.models import Video
+from special_requests.models import MessagePurchase
 from chats.serializers import InboxSerializer
 from utils.paginations import InboxMessagePagination, InboxListPagination, ChatContactsListPagination
-from subscriptions.models import Subscription
+from sage_stream.api.views import VideoStreamAPIView
 
 channel_layer = get_channel_layer()
 User = get_user_model()
@@ -66,3 +68,31 @@ class ChatContactsList(ListAPIView):
         if user.is_creator:
             return user.subscribers.all()
         return user.subscriptions.all()
+
+
+class MessageVideoStreamView(VideoStreamAPIView):
+    """Stream message video.
+    Accepts GET"""
+
+    def get(self, request, message_id, video_id, *args, **kwargs):
+        """Authorize user to view stream and call super() to send stream"""
+
+        message = ChatMessage.objects.get(public_id=message_id)
+        video = Video.objects.get(public_id=video_id)
+
+        error_response = Response("You're not authorized to watch this video. Please, unlock video to watch.", 
+            status=status.HTTP_401_UNAUTHORIZED)
+
+        if message.media_item != video:
+            return error_response
+
+        user = request.user
+        creator = message.user
+
+        if message.message_type=="free_video" or \
+            MessagePurchase.objects.filter(buyer=user, video_message=message).exists() or \
+                user==creator:
+
+                return super().get(request, video_id)
+
+        return error_response

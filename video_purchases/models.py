@@ -32,7 +32,7 @@ class Purchase(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.buyer} purchased {self.video}"
+        return f"{self.buyer} purchased {self.video_post}"
 
 class CancelledPurchase(models.Model):
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -43,7 +43,7 @@ class CancelledPurchase(models.Model):
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
 
     def __str__(self):
-        return f"{self.buyer} cancelled their purchase of {self.video}"
+        return f"{self.buyer} cancelled their purchase of {self.video_post}"
 
 class NullifiedPurchase(models.Model):
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -54,4 +54,4 @@ class NullifiedPurchase(models.Model):
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
 
     def __str__(self):
-        return f"{self.buyer}'s purchase of {self.video} has been nullified"
+        return f"{self.buyer}'s purchase of {self.video_post} has been nullified"

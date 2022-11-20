@@ -3,6 +3,7 @@ from .models import Photo, Video
 
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "public_id",
         "uploader",
         "upload_time",
@@ -11,6 +12,7 @@ class PhotoAdmin(admin.ModelAdmin):
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "public_id",
         "uploader",
         "upload_time",
