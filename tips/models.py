@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from .tips_cut import cut
 from transactions.models import Transaction
+from chats.models import ChatMessage
 
 from decimal import Decimal
 
@@ -12,6 +13,7 @@ class Tip(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd")
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
+    tip_message = models.ForeignKey(ChatMessage, null=True, blank=True, on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs):
 
