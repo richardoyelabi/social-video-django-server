@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
 from posts.models import Post, Like, Comment
 from posts.serializers import BasePostCreateSerializer, PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
@@ -28,7 +31,7 @@ class PostLikeView(GenericAPIView):
         post = Post.objects.get(public_id=post_id)
         likes_number = post.likes_number
 
-        return Response(likes_number)
+        return Response({"like_count": likes_number})
 
     def post(self, request, post_id, *args, **kwargs):
         account = request.user
@@ -41,6 +44,9 @@ class PostLikeView(GenericAPIView):
             return Response("User already liked this post.", status.HTTP_400_BAD_REQUEST)
 
         Like.objects.create(account=account, post=post)
+
+        self.send_like_count_update(post)
+
         return Response("Post liked.", status.HTTP_201_CREATED)
 
     def delete(self, request, post_id, *args, **kwargs):
@@ -54,7 +60,23 @@ class PostLikeView(GenericAPIView):
             return Response("Like relation does not exist.", status.HTTP_400_BAD_REQUEST)
 
         Like.objects.get(account=account, post=post).delete()
+
+        self.send_like_count_update(post)
+
         return Response("Post unliked.", status.HTTP_204_NO_CONTENT)
+
+    def send_like_count_update(self, post):
+        """Send updated number of likes to consumers listening to like_count_..."""
+
+        post.refresh_from_db(fields=["likes_number"])
+
+        likes_number = post.likes_number
+        post_id = post.public_id
+
+        async_to_sync(get_channel_layer().group_send)(f"like_count_{post_id}", {
+            "type": "like_count_update",
+            "content": {"like_count": likes_number}
+        })
 
 class PostCommentView(ListModelMixin,GenericAPIView):
     """View comments or get the number of comments on a post.
@@ -75,7 +97,7 @@ class PostCommentView(ListModelMixin,GenericAPIView):
             
         post = Post.objects.get(public_id=post_id)
         comments_number = post.comments_number
-        return Response(comments_number)
+        return Response({"comment_count": comments_number})
 
 class CommentCreateView(GenericAPIView):
     """Create new comment.
@@ -86,15 +108,59 @@ class CommentCreateView(GenericAPIView):
     lookup_url_kwarg = "post_id"
 
     def post(self, request, post_id, *args, **kwargs):
+
         account = request.user.public_id
         comment_text = request.POST.get("comment_text")
 
         data = {"account":account, "comment_text":comment_text, "post":post_id}
+
         serializer = CommentCreateSerializer(data=data)
+
         if serializer.is_valid():
-            serializer.save()
+            comment = serializer.save()
+            comment_data = CommentSerializer(comment).data
+            comment_data["post"] = str(comment_data["post"])
+
+            post = Post.objects.get(public_id=post_id)
+
+            self.send_new_comment(
+                post,
+                comment_data
+            )
+
+            self.send_comment_count(
+                post
+            )
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def send_comment_count(self, post):
+        """Send updated number of comments to consumers listening to comment_count_..."""
+
+        post.refresh_from_db(fields=["comments_number"])
+
+        comments_number = post.comments_number
+        post_id = post.public_id
+
+        async_to_sync(get_channel_layer().group_send)(f"comment_count_{post_id}", {
+            "type": "comment_count_update",
+            "content": {"comment_count": comments_number}
+        })
+
+    def send_new_comment(self, post, comment_data):
+        """Send new comment to consumers listening for new comment"""
+
+        post_id = post.public_id
+
+        async_to_sync(get_channel_layer().group_send)(f"comments_{post_id}", {
+            "type": "comment_update",
+            "content": {
+                "type": "create",
+                "data": comment_data
+            }
+        })
             
 class CommentView(DestroyAPIView):
     """Delete comment.
@@ -105,6 +171,48 @@ class CommentView(DestroyAPIView):
     lookup_field = "public_id"
     lookup_url_kwarg = "comment_id"
     permission_classes = [CommentOwnerOrReadOnly]
+
+    def destroy(self, request, comment_id, *args, **kwargs):
+
+        try:
+            comment = Comment.objects.get(public_id=comment_id)
+
+        except Comment.DoesNotExist:
+            return Response("Comment does not exist.", status.HTTP_400_BAD_REQUEST)
+        
+        comment.delete()
+
+        self.send_comment_delete(comment.post, comment)
+        self.send_comment_count(comment.post)
+
+        return Response("Comment deleted.", status.HTTP_204_NO_CONTENT)
+
+    def send_comment_count(self, post):
+        """Send updated number of comments to consumers listening to comment_count_..."""
+
+        post.refresh_from_db(fields=["comments_number"])
+
+        comments_number = post.comments_number
+        post_id = post.public_id
+
+        async_to_sync(get_channel_layer().group_send)(f"comment_count_{post_id}", {
+            "type": "comment_count_update",
+            "content": {"comment_count": comments_number}
+        })
+
+    def send_comment_delete(self, post, comment):
+        """Notify PostCommentsConsumer if a comment is deleted"""
+
+        post_id = post.public_id
+        comment_id = str(comment.public_id)
+
+        async_to_sync(get_channel_layer().group_send)(f"comments_{post_id}", {
+            "type": "comment_update",
+            "content": {
+                "type": "delete",
+                "data": comment_id
+            }
+        })
 
 class PostView(RetrieveDestroyAPIView):
     """View or delete post.

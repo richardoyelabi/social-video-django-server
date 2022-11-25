@@ -88,7 +88,7 @@ class InboxManager(models.Manager):
                                                 {"type": "update_inbox",
                                                  "content": {
                                                      'type': 'inbox_update',
-                                                     'payload': ib1
+                                                     'data': ib1
                                                  }})
 
         return None
@@ -105,7 +105,7 @@ class InboxManager(models.Manager):
                                                     {"type": "update_inbox",
                                                      "content": {
                                                          'type': 'read_update',
-                                                         'payload': inbox_data
+                                                         'data': inbox_data
                                                      }})
 
             return None
