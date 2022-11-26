@@ -8,7 +8,7 @@ from media.media_paths import profile_photos_path, cover_photos_path
 from subscriptions.models import Subscription
 from transactions.models import Transaction
 from video_purchases.models import Purchase
-from posts.models import Post, Like, Comment
+from posts.models import Post, Like, Comment, View, UniqueView
 from video_saves.models import VideoSave
 
 from versatileimagefield.fields import VersatileImageField
@@ -50,8 +50,11 @@ class Account(AbstractUser):
 
     saved_videos = models.ManyToManyField(Post, through=VideoSave, related_name="saves")
 
+    #Post engagement
     post_likes = models.ManyToManyField(Post, through=Like, related_name="liked_by")
     post_comments = models.ManyToManyField(Post, through=Comment, related_name="commented_on_by")
+    post_views = models.ManyToManyField(Post, through=View, related_name="viewed_by")
+    unique_post_views = models.ManyToManyField(Post, through=UniqueView, related_name="unique_viewers")
 
     #Chat info
     online = models.BooleanField(default=False)
@@ -81,11 +84,17 @@ class Account(AbstractUser):
 
 class CreatorInfo(models.Model):
     creator = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name="creatorinfo")
+    
     subscribers_number = models.PositiveIntegerField(default=0)
     subscription_fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
     subscription_fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
+    
     is_verified = models.BooleanField(default=False)
     identity = JSONField(null=True, blank=True)
+
+    #Used by generic feed ranking algorithm;
+    #Updated in posts.signals.feed_score_like_update
+    feed_score = models.FloatField(default=1)
 
     def __str__(self):
         return f"Creator {self.creator.username}"

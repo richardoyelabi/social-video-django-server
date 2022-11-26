@@ -7,6 +7,7 @@ from transactions.models import Transaction
 
 import uuid
 
+
 class Post(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="posts", on_delete=models.SET_NULL, null=True)
@@ -27,6 +28,12 @@ class Post(models.Model):
 
     likes_number = models.PositiveIntegerField(default=0)
     comments_number = models.PositiveIntegerField(default=0)
+    views_number = models.PositiveIntegerField(default=0)
+    unique_views_number = models.PositiveBigIntegerField(default=0)
+
+    #Used by generic feed ranking algorithm;
+    #Updated in .signals.feed_score_unique_view_update and signals.feed_score_like_update
+    feed_score = models.FloatField(default=1)
 
     purchase_cost_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
     purchase_cost_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
@@ -39,6 +46,7 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.uploader}'s post {self.public_id}"
 
+
 class Like(models.Model):
     account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -46,6 +54,7 @@ class Like(models.Model):
 
     def __str__(self):
         return f"{self.account} likes {self.post}"
+
 
 class Comment(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -56,3 +65,21 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.account}'s comment on {self.post}"
+
+
+class View(models.Model):
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.account} viewed {self.post}"
+
+
+class UniqueView(models.Model):
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    time = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.account} viewed {self.post} for the first time"

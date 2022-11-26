@@ -1,49 +1,113 @@
 from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save, pre_delete
 from media.exceptions import MediaUseError
-from .models import Post, Like, Comment
+from .models import Post, Like, Comment, View, UniqueView
+from .feed_score import feed_score_update
+from accounts.feed_score import creator_feed_score_update
 
+
+#Make sure accounts can not use media items that do not belong to them in a post
 @receiver(pre_save, sender=Post)
 def check_media_ownership(sender, instance, **kwargs):
-    """Make sure accounts can not use media items that do not belong to them in a post"""
 
     if (instance.media_item.uploader != instance.uploader):
         raise MediaUseError("This account does not have permission to use the media in this post.")
 
+
+#Make sure photo media doesn't get into video posts and vice versa
 #@receiver(pre_save, sender=Post)
 #def check_media_consistency(sender, instance, **kwargs):
-#    """Make sure photo media doesn't get into video posts and vice versa"""
 #
 #    if not(instance.post_type=="photo" and instance.media_type.model=="photo") \
 #        or not((instance.post_type=="free_video" or instance.post_type=="paid_video" )and instance.media_type.model=="video"):
 #        raise MediaUseError("Post type does not match media type. Please, correct the discrepancy.")
 
+
+#Increase post's likes_number for each new like
 @receiver(post_save, sender=Like)
 def increase_likes_number(sender, instance, created, **kwargs):
-    """Increase post's likes_number for each new like"""
 
     if created:
         instance.post.likes_number += 1
         instance.post.save(update_fields=["likes_number"])
 
+
+#Decrease post's likes_number for each deleted like
 @receiver(pre_delete, sender=Like)
 def decrease_likes_number(sender, instance, **kwargs):
-    """Decrease post's likes_number for each deleted like"""
 
     instance.post.likes_number -= 1
     instance.post.save(update_fields=["likes_number"])
 
+
+#Increase post's comments_number for each new comment
 @receiver(post_save, sender=Comment)
 def increase_comments_number(sender, instance, created, **kwargs):
-    """Increase post's comments_number for each new comment"""
 
     if created:
         instance.post.comments_number += 1
         instance.post.save(update_fields=["comments_number"])
 
+
+#Decrease post's comments_number for each deleted comment
 @receiver(pre_delete, sender=Comment)
 def decrease_comments_number(sender, instance, **kwargs):
-    """Decrease post's comments_number for each deleted comment"""
 
     instance.post.comments_number -= 1
     instance.post.save(update_fields=["comments_number"])
+
+
+#If user is viewing post for the first time, record the view in unique_view table
+@receiver(post_save, sender=View)
+def record_unique_view(sender, instance, created, **kwargs):
+    """If View instance doesn't exist in UniqueView, duplicate View instance in UniqueView"""
+
+    if created:
+        if not UniqueView.objects.filter(
+            account = instance.account,
+            post = instance.post
+        ).exists():
+            UniqueView.objects.create(
+                account = instance.account,
+                post = instance.post,
+                time = instance.time
+            )
+
+
+#Increase post's views_number for each new View instance
+@receiver(post_save, sender=View)
+def increase_views_number(sender, instance, created, **kwargs):
+
+    if created:
+        instance.post.views_number += 1
+        instance.post.save(update_fields=["views_number"])
+
+
+#Increase post's unique_views_number for each new UniqueView instance
+@receiver(post_save, sender=UniqueView)
+def increase_unique_views_number(sender, instance, created, **kwargs):
+
+    if created:
+        instance.post.unique_views_number += 1
+        instance.post.save(update_fields=["unique_views_number"])
+
+
+#Update post's feed_score when there's a new UniqueView instance
+@receiver(post_save, sender=UniqueView)
+def feed_score_view_update(sender, instance, created, **kwargs):
+    
+    feed_score_update(instance, created)
+
+
+#Update post's feed_score when there's a new Like instance
+@receiver(post_save, sender=Like)
+def feed_score_like_update(sender, instance, created, **kwargs):
+
+    feed_score_update(instance, created)
+
+
+#Update creator's feed_score when there's a new Like instance
+@receiver(post_save, sender=Like)
+def creator_feed_score_like_update(sender, instance, created , **kwargs):
+
+    creator_feed_score_update(instance, created)
