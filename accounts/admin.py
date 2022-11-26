@@ -71,7 +71,8 @@ class CreatorInfoAdmin(admin.ModelAdmin):
         "subscription_fee_currency",
         "subscription_fee_amount",
         "is_verified",
-        "identity"
+        "identity",
+        "feed_score"
     )
 
 admin.site.register(Account, AccountAdmin)

@@ -106,6 +106,13 @@ def feed_score_like_update(sender, instance, created, **kwargs):
     feed_score_update(instance, created)
 
 
+#Update creator's feed_score when there's a new UniqueView instance
+@receiver(post_save, sender=UniqueView)
+def creator_feed_score_like_update(sender, instance, created , **kwargs):
+
+    creator_feed_score_update(instance, created)
+
+
 #Update creator's feed_score when there's a new Like instance
 @receiver(post_save, sender=Like)
 def creator_feed_score_like_update(sender, instance, created , **kwargs):

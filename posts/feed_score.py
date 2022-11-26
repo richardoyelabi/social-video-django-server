@@ -1,3 +1,5 @@
+from posts.models import Like, UniqueView
+
 from datetime import datetime, timedelta
 
 def feed_score_update(instance, created):
@@ -14,10 +16,18 @@ def feed_score_update(instance, created):
 
         post = instance.post
 
-        likes = post.liked_by.filter(time=start_time)
+        likes = Like.objects.filter(
+            post = post,
+            time__gte = start_time
+        )
+
         likes_number = likes.count()
 
-        views = post.unique_viewers.filter(time=start_time)
+        views = UniqueView.objects.filter(
+            post = post,
+            time__gte = start_time
+        )
+        
         views_number = views.count()
 
         feed_score = likes_number / views_number

@@ -16,10 +16,18 @@ def creator_feed_score_update(instance, created):
 
         creator = instance.post.uploader
 
-        likes = Like.objects.filter(post__uploader=creator)
+        likes = Like.objects.filter(
+            post__uploader=creator,
+            time__gte = start_time
+        )
+
         likes_number = likes.count()
 
-        views = UniqueView.objects.filter(post__uploader=creator)
+        views = UniqueView.objects.filter(
+            post__uploader=creator,
+            time__gte = start_time
+        )
+        
         views_number = views.count()
 
         feed_score = likes_number / views_number
