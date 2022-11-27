@@ -11,3 +11,6 @@ class InboxListPagination(CursorPagination):
 
 class ChatContactsListPagination(CursorPagination):
     ordering = "username"
+
+class BaseFeedViewPagination(CursorPagination):
+    page_size_query_param = "size"

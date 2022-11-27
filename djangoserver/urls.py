@@ -28,6 +28,9 @@ urlpatterns = [
 
     #Account and auth
     path("account/", include("accounts.urls")),
+    
+    #Feed
+    path("feed/", include("feeds.urls")),
 
     #Post
     path("post/", include("posts.urls")),
@@ -50,7 +53,7 @@ urlpatterns = [
     #Tip
     path("tip/", include("tips.urls")),
 
-    #Browsable API
+    #Browsable API auth
     path("api-auth/", include("rest_framework.urls"),),
 
     #Schema
