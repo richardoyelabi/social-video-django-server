@@ -1,6 +1,10 @@
 from rest_framework.pagination import CursorPagination
 
 
+class PostCommentViewPagination(CursorPagination):
+    ordering = "time"
+
+
 class InboxMessagePagination(CursorPagination):
     ordering = "-timestamp"
 

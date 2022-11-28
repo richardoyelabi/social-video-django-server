@@ -2,7 +2,6 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.generics import GenericAPIView, DestroyAPIView, RetrieveDestroyAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.filters import OrderingFilter
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -13,6 +12,7 @@ from posts.serializers import BasePostCreateSerializer, PhotoPostCreateSerialize
     PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
         LikeSerializer, CommentSerializer, CommentCreateSerializer
 from sage_stream.api.views import VideoStreamAPIView
+from utils.paginations import PostCommentViewPagination
 from media.models import Video
 from subscriptions.models import Subscription
         
@@ -85,8 +85,7 @@ class PostCommentView(ListModelMixin,GenericAPIView):
     serializer_class = CommentSerializer
     lookup_field = "public_id"
     lookup_url_kwarg = "post_id"
-    filter_backends = [OrderingFilter]
-    ordering = ["time"]
+    pagination_class = PostCommentViewPagination
 
     def get_queryset(self):
         return Comment.objects.filter(post__public_id=self.kwargs["post_id"])
