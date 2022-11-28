@@ -1,20 +1,24 @@
 from rest_framework.pagination import CursorPagination
 
 
-class PostCommentViewPagination(CursorPagination):
+class CustomCursorPagination(CursorPagination):
+    page_size_query_param = "size"
+
+
+class PostCommentViewPagination(CustomCursorPagination):
     ordering = "time"
 
 
-class InboxMessagePagination(CursorPagination):
+class InboxMessagePagination(CustomCursorPagination):
     ordering = "-timestamp"
 
 
-class InboxListPagination(CursorPagination):
+class InboxListPagination(CustomCursorPagination):
     ordering = "-updated"
 
 
-class ChatContactsListPagination(CursorPagination):
+class ChatContactsListPagination(CustomCursorPagination):
     ordering = "username"
 
-class BaseFeedViewPagination(CursorPagination):
+class BaseFeedViewPagination(CustomCursorPagination):
     page_size_query_param = "size"
