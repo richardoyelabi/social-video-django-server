@@ -12,7 +12,7 @@ from posts.serializers import BasePostCreateSerializer, PhotoPostCreateSerialize
     PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
         LikeSerializer, CommentSerializer, CommentCreateSerializer
 from sage_stream.api.views import VideoStreamAPIView
-from utils.paginations import PostCommentViewPagination
+from utils.paginations import CustomCursorPagination
 from media.models import Video
 from subscriptions.models import Subscription
         
@@ -85,7 +85,9 @@ class PostCommentView(ListModelMixin,GenericAPIView):
     serializer_class = CommentSerializer
     lookup_field = "public_id"
     lookup_url_kwarg = "post_id"
-    pagination_class = PostCommentViewPagination
+
+    CustomCursorPagination.ordering = "time"
+    pagination_class = CustomCursorPagination
 
     def get_queryset(self):
         return Comment.objects.filter(post__public_id=self.kwargs["post_id"])

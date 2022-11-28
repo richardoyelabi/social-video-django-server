@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from utils.paginations import BaseFeedViewPagination
+from utils.paginations import CustomCursorPagination
 
 
 class BaseFeedView(ListAPIView):
@@ -11,6 +11,6 @@ class BaseFeedView(ListAPIView):
     """
 
     permission_classes = [IsAuthenticated]
-    pagination_class = BaseFeedViewPagination
+    pagination_class = CustomCursorPagination
 
     

@@ -12,7 +12,7 @@ from chats.models import Inbox, ChatMessage
 from media.models import Video
 from special_requests.models import MessagePurchase
 from chats.serializers import InboxSerializer
-from utils.paginations import InboxMessagePagination, InboxListPagination, ChatContactsListPagination
+from utils.paginations import CustomCursorPagination
 from sage_stream.api.views import VideoStreamAPIView
 
 channel_layer = get_channel_layer()
@@ -36,8 +36,10 @@ class UserInboxView(ModelViewSet):
 class InboxMessageView(ModelViewSet):
     serializer_class = MessageListSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = InboxMessagePagination
     lookup_field = 'public_id'
+
+    CustomCursorPagination.ordering = "-timestamp"
+    pagination_class = CustomCursorPagination
 
     def get_queryset(self):
         try:
@@ -50,7 +52,9 @@ class InboxMessageView(ModelViewSet):
 class InboxListView(ModelViewSet):
     serializer_class = InboxSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = InboxListPagination
+
+    CustomCursorPagination.ordering = "-updated"
+    pagination_class = CustomCursorPagination
 
     def get_queryset(self):
         return Inbox.objects.filter(user=self.request.user).order_by('-updated')
@@ -59,7 +63,9 @@ class InboxListView(ModelViewSet):
 class ChatContactsList(ListAPIView):
     serializer_class = AccountChatSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = ChatContactsListPagination
+
+    CustomCursorPagination.ordering = "username"
+    pagination_class = CustomCursorPagination
 
     def get_queryset(self):
         user = self.request.user
