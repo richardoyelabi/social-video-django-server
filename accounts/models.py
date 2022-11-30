@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 from .account_manager import AccountManager
 from media.media_paths import profile_photos_path, cover_photos_path
-from subscriptions.models import Subscription
+from subscriptions.models import Subscription, CancelledSubscription
 from transactions.models import Transaction
 from video_purchases.models import Purchase
 from posts.models import Post, Like, Comment, View, UniqueView
@@ -46,6 +46,7 @@ class Account(AbstractUser):
     is_creator = models.BooleanField(default=False)
 
     subscriptions = models.ManyToManyField("self", through=Subscription, through_fields=("subscriber","subscribed_to"), related_name="subscribers", symmetrical=False)
+    cancelled_subscriptions = models.ManyToManyField("self", through=CancelledSubscription, through_fields=("subscriber","subscribed_to"), related_name="cancelled_subscribers", symmetrical=False)
     purchased_videos = models.ManyToManyField(Post, through=Purchase, related_name="buyers")
 
     saved_videos = models.ManyToManyField(Post, through=VideoSave, related_name="saves")

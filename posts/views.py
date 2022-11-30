@@ -86,14 +86,16 @@ class PostCommentView(ListModelMixin,GenericAPIView):
     lookup_field = "public_id"
     lookup_url_kwarg = "post_id"
 
-    CustomCursorPagination.ordering = "time"
-    pagination_class = CustomCursorPagination
+    class Pagination(CustomCursorPagination):
+        ordering = "time"
+
+    pagination_class = Pagination
 
     def get_queryset(self):
         return Comment.objects.filter(post__public_id=self.kwargs["post_id"])
 
     def get(self, request, post_id, *args, **kwargs):
-        if request.query_params.get("list"):
+        if "list" in request.query_params.keys():
             return self.list(request, *args, **kwargs)
             
         post = Post.objects.get(public_id=post_id)

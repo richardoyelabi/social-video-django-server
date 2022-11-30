@@ -1,13 +1,8 @@
 from urllib import parse
 
-from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
-from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
-
-from posts.models import Post, Like, Comment
-from posts.serializers import LikeSerializer, CommentSerializer
 
 
 # Returns user by validating Token

@@ -30,7 +30,7 @@ urlpatterns = [
     path("account/", include("accounts.urls")),
     
     #Feed
-    #path("feed/", include("feeds.urls")),
+    path("feed/", include("feeds.urls")),
 
     #Post
     path("post/", include("posts.urls")),

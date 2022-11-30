@@ -38,8 +38,10 @@ class InboxMessageView(ModelViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = 'public_id'
 
-    CustomCursorPagination.ordering = "-timestamp"
-    pagination_class = CustomCursorPagination
+    class Pagination(CustomCursorPagination):
+        ordering = "-timestamp"
+
+    pagination_class = Pagination
 
     def get_queryset(self):
         try:
@@ -53,8 +55,10 @@ class InboxListView(ModelViewSet):
     serializer_class = InboxSerializer
     permission_classes = [IsAuthenticated]
 
-    CustomCursorPagination.ordering = "-updated"
-    pagination_class = CustomCursorPagination
+    class Pagination(CustomCursorPagination):
+        ordering = "-timestamp"
+
+    pagination_class = Pagination
 
     def get_queryset(self):
         return Inbox.objects.filter(user=self.request.user).order_by('-updated')
@@ -64,13 +68,14 @@ class ChatContactsList(ListAPIView):
     serializer_class = AccountChatSerializer
     permission_classes = [IsAuthenticated]
 
-    CustomCursorPagination.ordering = "username"
-    pagination_class = CustomCursorPagination
+    class Pagination(CustomCursorPagination):
+        ordering = "username"
+
+    pagination_class = Pagination
 
     def get_queryset(self):
         user = self.request.user
 
-        #return user.subscriptions.all()
         if user.is_creator:
             return user.subscribers.all()
         return user.subscriptions.all()

@@ -1,12 +1,14 @@
 from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
+from django.db import models
 
 from media.validators import FileMimeValidator
 from posts.models import Post, Like, Comment
 from accounts.serializers import UserPublicProfileSerializer
 from media.models import Photo, Video
 from media.serializers import PhotoSerializer, VideoSerializer
+
 
 class LikeSerializer(serializers.ModelSerializer):
     """Serializer for LikeView"""
@@ -15,6 +17,7 @@ class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = ["account", "post"]
+
 
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for PostCommentView"""
@@ -25,9 +28,11 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ["public_id", "account", "comment_text", "post", "time"]
         read_only_fields = ["public_id", "time"]
 
+
 class CommentCreateSerializer(CommentSerializer):
     """Serializer for CommentCreateView"""
     account = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
+
 
 class BasePostDetailSerializer(serializers.ModelSerializer):
     """Base serializer for RetrievePostView"""
@@ -38,13 +43,16 @@ class BasePostDetailSerializer(serializers.ModelSerializer):
         fields = ["public_id", "uploader", "post_type", "upload_time", "caption", "media_item", "likes_number", "comments_number"]
         read_only_fields = ["public_id", "upload_time", "likes_number", "comments_number"]
 
+
 class PhotoPostDetailSerializer(BasePostDetailSerializer):
     """Serializer for photo posts"""
     media_item = PhotoSerializer(read_only=True)
 
+
 class VideoPostDetailSerializer(BasePostDetailSerializer):
     """Serializer for free video posts"""
     media_item = VideoSerializer(read_only=True)
+
 
 class PaidVideoPostDetailSerializer(VideoPostDetailSerializer):
     """Serializer for paid video posts"""
@@ -52,6 +60,40 @@ class PaidVideoPostDetailSerializer(VideoPostDetailSerializer):
         model = Post
         fields = ["public_id", "uploader", "post_type", "upload_time", "caption", "media_item", "likes_number", "comments_number", "purchase_cost_currency", "purchase_cost_amount"]
         read_only_fields = ["public_id", "upload_time", "likes_number", "comments_number"]
+
+
+class PostListSerializer(serializers.ListSerializer):
+    """Custom serializer for post list to implement custom to_representation for each item in list"""
+    
+    def to_representation(self, data):
+
+        iterable = data.all() if isinstance(data, models.Manager) else data
+        
+        to_rep = []
+        for item in iterable:
+            to_rep += [self.get_to_rep(item)]
+        return to_rep
+
+    def get_to_rep(self, instance):
+
+        if instance.post_type == "photo":
+            return PhotoPostDetailSerializer(instance).to_representation(instance)
+
+        elif instance.post_type == "free_video":
+            return VideoPostDetailSerializer(instance).to_representation(instance)
+
+        elif instance.post_type == "paid_video":
+            return PaidVideoPostDetailSerializer(instance).to_representation(instance)
+
+
+class PostDetailSerializer(serializers.ModelSerializer):
+    """Common serializer for all post types"""
+
+    class Meta:
+        list_serializer_class = PostListSerializer
+        model = Post
+        fields = "__all__"
+
 
 class BasePostCreateSerializer(serializers.ModelSerializer):
     """Base serializer for CreatePostView"""
@@ -61,6 +103,7 @@ class BasePostCreateSerializer(serializers.ModelSerializer):
         model = Post
         fields = ["public_id", "uploader", "post_type", "upload_time", "caption", "media_item", "likes_number", "comments_number"]
         read_only_fields = ["public_id", "upload_time", "likes_number", "comments_number"]
+
 
 class PhotoPostCreateSerializer(BasePostCreateSerializer):
     """Serializer for creating new photo posts"""
@@ -80,6 +123,7 @@ class PhotoPostCreateSerializer(BasePostCreateSerializer):
         
         post = Post.objects.create(media_item=photo, uploader=uploader, **validated_data)
         return post
+
 
 class VideoPostCreateSerializer(BasePostCreateSerializer):
     """Serializer for creating new free video posts"""
@@ -105,6 +149,7 @@ class VideoPostCreateSerializer(BasePostCreateSerializer):
         
         post = Post.objects.create(media_item=video, uploader=uploader, **validated_data)
         return post
+
 
 class PaidVideoPostCreateSerializer(VideoPostCreateSerializer):
     """Serializer for creating new premium video posts"""
