@@ -2,6 +2,7 @@ from django.urls import path
 from feeds.profile_posts import ActiveSubPostFeedView, ExpiredSubPostFeedView, PurchasedPostFeedView, SavedPostFeedView
 from feeds.creator_posts import NewCreatorPostFeedView, NewCreatorPremiumVideoFeedView, TopCreatorPremiumVideoFeedView
 from feeds.general_posts import AllPostFeedView, TopVideoFeedView, TopPremiumVideoFeedView, NewPremiumVideoFeedView
+from feeds.creators import TopCreatorFeedView, SugCreatorFeedView
 
 
 urlpatterns = [
@@ -25,4 +26,8 @@ urlpatterns = [
     path("top-videos/", TopVideoFeedView.as_view(), name="top_video_feed"),
     path("top-premium-videos/", TopPremiumVideoFeedView.as_view(), name="top_premium_video_feed"),
     path("new-premium-videos/", NewPremiumVideoFeedView.as_view(), name="new_premium_video_feed"),
+
+    #Creators
+    path("top-creators/", TopCreatorFeedView.as_view(), name="top_creators"),
+    path("suggested-creators/", SugCreatorFeedView.as_view(), name="suggested_creators"),
 ]
