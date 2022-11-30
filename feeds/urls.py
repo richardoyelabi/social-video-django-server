@@ -1,5 +1,6 @@
 from django.urls import path
 from feeds.profile_posts import ActiveSubPostFeedView, ExpiredSubPostFeedView, PurchasedPostFeedView, SavedPostFeedView
+from feeds.creator_posts import NewCreatorPostFeedView, NewCreatorPremiumVideoFeedView, TopCreatorPremiumVideoFeedView
 
 
 urlpatterns = [
@@ -12,4 +13,9 @@ urlpatterns = [
     
     #Saved posts
     path("saved-posts/", SavedPostFeedView.as_view(), name="saved"),
+    
+    #Creator posts
+    path("<uuid:creator_id>/all-posts/", NewCreatorPostFeedView.as_view(), name="creator_all_posts"),
+    path("<uuid:creator_id>/all-premium-videos/", NewCreatorPremiumVideoFeedView.as_view(), name="creator_all_premium_videos"),
+    path("<uuid:creator_id>/top-premium-videos/", TopCreatorPremiumVideoFeedView.as_view(), name="creator_top_premium_videos"),
 ]

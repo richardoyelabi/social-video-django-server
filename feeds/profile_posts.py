@@ -8,8 +8,7 @@ from posts.models import Post
 
 
 class BaseProfilePostFeedView(BaseFeedView):
-    """Base feed for all profile post feed views to extend.
-    Implements pagination order."""
+    """Base feed for all profile post feed views to extend"""
 
     serializer_class = PostDetailSerializer
 
