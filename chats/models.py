@@ -188,7 +188,11 @@ def update_inbox(sender, instance, created, **kwargs):
 #Make sure a user can only initiate chat with an account they're subscribed to
 @receiver(pre_save, sender=ChatMessage)
 def enforce_chat_initiation_privileges(sender, instance, **kwargs):
-    if not ChatMessage.objects.filter(user=instance.user, receiver=instance.receiver).exists():
+
+    qlookup = (Q(user=instance.user) & Q(receiver=instance.receiver)) | \
+        (Q(user=instance.receiver) & Q(receiver=instance.user))
+
+    if not ChatMessage.objects.filter(qlookup).exists():
         if not Subscription.objects.filter(
             subscriber = instance.user,
             subscribed_to = instance.receiver
@@ -207,3 +211,15 @@ def enforce_messaging_privileges(sender, instance, **kwargs):
     
     if not Subscription.objects.filter(qlookup).exists():
         raise ConnectionRefusedError("Chat is not authorized")
+
+#Make sure only verified creators can send premium videos
+#Change premium videos to free videos with $0 cost
+@receiver(pre_save, sender=ChatMessage)
+def restrict_paid_videos(sender, instance, **kwargs):
+    user = instance.user
+
+    if instance.message_type=="paid_video":
+        if not (user.is_creator and user.creatorinfo.is_verified):
+            instance.message_type = "free_video"
+            instance.purchase_cost_currency = "usd"
+            instance.purchase_cost_amount = 0
