@@ -60,9 +60,14 @@ class TopCreatorPremiumVideoFeedView(BaseCreatorPostFeedView):
 
     def get_queryset(self):
 
+        user = self.request.user
+
         creator_id = self.kwargs.get("creator_id")
         creator = get_user_model().objects.get(public_id=creator_id)
+
         return Post.objects.filter(
             uploader = creator,
             post_type = "paid_video"
+        ).exclude(
+            uniqueview__account = user
         ).order_by("-feed_score")
