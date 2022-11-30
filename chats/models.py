@@ -3,7 +3,7 @@ from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from model_utils import FieldTracker
 
@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 from transactions.models import Transaction
+from subscriptions.models import Subscription
 
 import uuid
 
@@ -176,9 +177,33 @@ class ChatMessage(models.Model):
         ]
 
 
+#Update inboxes of concerned users when a message is created
 @receiver(post_save, sender=ChatMessage)
 def update_inbox(sender, instance, created, **kwargs):
     if created:
         Inbox.objects.set_inbox(user=instance.user, other_user=instance.receiver, msg=instance.message, read=True)
         Inbox.objects.set_inbox(other_user=instance.user, user=instance.receiver, msg=instance.message, read=False)
         return None
+
+#Make sure a user can only initiate chat with an account they're subscribed to
+@receiver(pre_save, sender=ChatMessage)
+def enforce_chat_initiation_privileges(sender, instance, **kwargs):
+    if not ChatMessage.objects.filter(user=instance.user, receiver=instance.receiver).exists():
+        if not Subscription.objects.filter(
+            subscriber = instance.user,
+            subscribed_to = instance.receiver
+        ).exists():
+            raise ConnectionRefusedError("Chat initiation is not authorized")
+
+#Make sure all created messages are between accounts with a subscription relationship
+@receiver(pre_save, sender=ChatMessage)
+def enforce_messaging_privileges(sender, instance, **kwargs):
+
+    user = instance.user
+    receiver = instance.receiver
+
+    qlookup = (Q(subscribed_to=user) & Q(subscriber=receiver)) \
+        | (Q(subscribed_to=receiver) & Q(subscriber=user))
+    
+    if not Subscription.objects.filter(qlookup).exists():
+        raise ConnectionRefusedError("Chat is not authorized")
