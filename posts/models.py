@@ -38,6 +38,15 @@ class Post(models.Model):
     purchase_cost_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
     purchase_cost_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
 
+    def save(self, *args, **kwargs):
+
+        if not self.uploader.is_creator:
+            raise ConnectionRefusedError("User is not a creator")
+        if not self.uploader.creatorinfo.is_verified:
+            raise ConnectionRefusedError("Creator is not verified")
+
+        super().save(*args, **kwargs)
+
     class Meta:
         indexes = [
             models.Index(fields=["media_type", "media_id"]),
