@@ -93,7 +93,7 @@ class CreatorInfo(models.Model):
     is_verified = models.BooleanField(default=False)
     identity = JSONField(null=True, blank=True)
 
-    #Used by generic feed ranking algorithm;
+    #Used by generic feed ranking;
     #Updated in posts.signals.feed_score_like_update
     feed_score = models.FloatField(default=1)
 

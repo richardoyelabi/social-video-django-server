@@ -31,7 +31,7 @@ class Post(models.Model):
     views_number = models.PositiveIntegerField(default=0)
     unique_views_number = models.PositiveBigIntegerField(default=0)
 
-    #Used by generic feed ranking algorithm;
+    #Used by generic feed ranking;
     #Updated in .signals.feed_score_unique_view_update and signals.feed_score_like_update
     feed_score = models.FloatField(default=1)
 
