@@ -18,9 +18,11 @@ class Subscription(models.Model):
 
         creator_account =  self.subscribed_to
 
-        #Check that the account subscribed to is a creator's
+        #Check that the account subscribed to is a verified creator's
         if not(creator_account.is_creator):
             raise SubscriptionNotACreatorError(f"{creator_account.username} is not a creator. Can not subscribe to non-creator account.")
+        if not(creator_account.creatorinfo.is_verified):
+            raise SubscriptionNotACreatorError(f"{creator_account.username} is not a verified creator.")
 
         #Get subscription fee
         creator_info = creator_account.creatorinfo
