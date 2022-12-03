@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from rest_framework.filters import OrderingFilter
 
 from .base import BaseFeedView
 from utils.paginations import CustomCursorPagination as Pagination
@@ -11,12 +10,12 @@ class BaseProfilePostFeedView(BaseFeedView):
     """Base feed for all profile post feed views to extend"""
 
     serializer_class = PostDetailSerializer
+    word_fields = ["caption", "uploader__username", "uploader__display_name"]
 
 
 class ActiveSubPostFeedView(BaseProfilePostFeedView):
     """Active subscriptions post feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-upload_time"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
@@ -34,7 +33,6 @@ class ActiveSubPostFeedView(BaseProfilePostFeedView):
 class ExpiredSubPostFeedView(BaseProfilePostFeedView):
     """Expired subscriptions post feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-upload_time"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
@@ -52,7 +50,6 @@ class ExpiredSubPostFeedView(BaseProfilePostFeedView):
 class PurchasedPostFeedView(BaseProfilePostFeedView):
     """Purchased post feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-purchase__time_of_purchase"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
@@ -69,7 +66,6 @@ class PurchasedPostFeedView(BaseProfilePostFeedView):
 class SavedPostFeedView(BaseProfilePostFeedView):
     """Saved post feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-videosave__created"]
     ordering = ordering_fields[0]
     pagination_class = Pagination

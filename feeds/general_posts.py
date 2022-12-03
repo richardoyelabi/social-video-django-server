@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.models import ContentType
-from rest_framework.filters import OrderingFilter
 
 from .base import BaseFeedView
 from utils.paginations import CustomCursorPagination as Pagination
@@ -12,12 +11,12 @@ class BasePostFeedView(BaseFeedView):
     """Base feed for all general post feed views to extend"""
 
     serializer_class = PostDetailSerializer
+    word_fields = ["caption", "uploader__username", "uploader__display_name"]
 
 
 class AllPostFeedView(BasePostFeedView):
     """All (home) post feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-feed_score"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
@@ -35,7 +34,6 @@ class AllPostFeedView(BasePostFeedView):
 class TopVideoFeedView(BasePostFeedView):
     """Top video feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-feed_score"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
@@ -54,7 +52,6 @@ class TopVideoFeedView(BasePostFeedView):
 class TopPremiumVideoFeedView(BasePostFeedView):
     """Top premium feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-feed_score"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
@@ -73,7 +70,6 @@ class TopPremiumVideoFeedView(BasePostFeedView):
 class NewPremiumVideoFeedView(BasePostFeedView):
     """New premium video feed view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-upload_time"]
     ordering = ordering_fields[0]
     pagination_class = Pagination

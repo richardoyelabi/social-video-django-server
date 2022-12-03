@@ -1,4 +1,3 @@
-from rest_framework.filters import OrderingFilter
 from django.contrib.auth import get_user_model
 
 from .base import BaseFeedView
@@ -10,12 +9,12 @@ class BaseCreatorFeedView(BaseFeedView):
     """Base feed for all creator feed views to extend"""
 
     serializer_class = CreatorPublicProfileSerializer
+    word_fields = ["username", "display_name"]
 
 
 class TopCreatorFeedView(BaseCreatorFeedView):
     """Top creator feed (by number of subscribers) view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-creatorinfo__subscribers_number"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
@@ -34,7 +33,6 @@ class TopCreatorFeedView(BaseCreatorFeedView):
 class SugCreatorFeedView(BaseCreatorFeedView):
     """Hot creator feed (by post engagement) view"""
 
-    filter_backends = [OrderingFilter]
     ordering_fields = ["-creatorinfo__feed_score"]
     ordering = ordering_fields[0]
     pagination_class = Pagination

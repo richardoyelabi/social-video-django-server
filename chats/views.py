@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView
+from rest_framework_word_filter import FullWordSearchFilter
 from channels.layers import get_channel_layer
 
 from chats.serializers import AccountChatSerializer, MessageListSerializer
@@ -37,6 +38,8 @@ class InboxMessageView(ModelViewSet):
     serializer_class = MessageListSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'public_id'
+    filter_backends = [FullWordSearchFilter]
+    word_fields = ["message"]
 
     class Pagination(CustomCursorPagination):
         ordering = "-timestamp"
@@ -54,9 +57,11 @@ class InboxMessageView(ModelViewSet):
 class InboxListView(ModelViewSet):
     serializer_class = InboxSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [FullWordSearchFilter]
+    word_fields = ["second__username", "second__display_name"]
 
     class Pagination(CustomCursorPagination):
-        ordering = "-timestamp"
+        ordering = "-updated"
 
     pagination_class = Pagination
 
@@ -67,6 +72,8 @@ class InboxListView(ModelViewSet):
 class ChatContactsList(ListAPIView):
     serializer_class = AccountChatSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [FullWordSearchFilter]
+    word_fields = ["username", "display_name"]
 
     class Pagination(CustomCursorPagination):
         ordering = "username"
