@@ -1,7 +1,11 @@
 from django.urls import path
-from posts.views import PostLikeView, PostCommentView, CommentView, CommentCreateView, PostView, CreatePostView, PostVideoStreamView
+from posts.views import PostViewView, PostLikeView, PostCommentView, CommentView, CommentCreateView, PostView, CreatePostView, PostVideoStreamView
 
 urlpatterns = [
+
+    #Views
+    path("<uuid:post_id>/views/", PostViewView.as_view(), name="post_views"),
+
     #Likes
     path("<uuid:post_id>/likes/", PostLikeView.as_view(), name="post_likes"),
     

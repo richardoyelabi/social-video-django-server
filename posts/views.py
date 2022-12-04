@@ -7,14 +7,32 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
-from posts.models import Post, Like, Comment
+from posts.models import Post, Like, Comment, View
 from posts.serializers import BasePostCreateSerializer, PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
     PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
-        LikeSerializer, CommentSerializer, CommentCreateSerializer
+        ViewSerializer, LikeSerializer, CommentSerializer, CommentCreateSerializer
 from sage_stream.api.views import VideoStreamAPIView
 from utils.paginations import CustomCursorPagination
 from media.models import Video
 from subscriptions.models import Subscription
+
+
+class PostViewView(GenericAPIView):
+    """Send acknowledgement that post made an impression on user.
+    Accepts POST."""
+
+    serializer_class = ViewSerializer
+    lookup_field = "public_id"
+    lookup_url_kwarg = "post_id"
+
+    def post(self, request, post_id, *args, **kwargs):
+        account = request.user
+        post = Post.objects.get(public_id=post_id)
+
+        View.objects.create(account=account, post=post)
+
+        return Response("Post view acknowledged", status.HTTP_202_ACCEPTED)
+
         
 class PostLikeView(GenericAPIView):
     """Like, unlike, or get the number of likes of a post.
@@ -78,6 +96,7 @@ class PostLikeView(GenericAPIView):
             "content": {"like_count": likes_number}
         })
 
+
 class PostCommentView(ListModelMixin,GenericAPIView):
     """View comments or get the number of comments on a post.
     GET to retrieve the number of comments, 'list=True' to view comments."""
@@ -101,6 +120,7 @@ class PostCommentView(ListModelMixin,GenericAPIView):
         post = Post.objects.get(public_id=post_id)
         comments_number = post.comments_number
         return Response({"comment_count": comments_number})
+
 
 class CommentCreateView(GenericAPIView):
     """Create new comment.
@@ -165,6 +185,7 @@ class CommentCreateView(GenericAPIView):
             }
         })
             
+
 class CommentView(DestroyAPIView):
     """Delete comment.
     Accepts DELETE"""
@@ -217,6 +238,7 @@ class CommentView(DestroyAPIView):
             }
         })
 
+
 class PostView(RetrieveDestroyAPIView):
     """View or delete post.
     Accepts GET and DELETE"""
@@ -236,6 +258,7 @@ class PostView(RetrieveDestroyAPIView):
             return VideoPostDetailSerializer
         elif post_type=="paid_video":
             return PaidVideoPostDetailSerializer
+
 
 class CreatePostView(CreateAPIView):
     """Create a new post.

@@ -10,6 +10,14 @@ from media.models import Photo, Video
 from media.serializers import PhotoSerializer, VideoSerializer
 
 
+class ViewSerializer(serializers.ModelSerializer):
+    """Serializer for PostViewView"""
+    post = serializers.SlugRelatedField(slug_field="public_id", queryset=Post.objects.all())
+    class Meta:
+        model = Like
+        fields = ["post"]
+
+
 class LikeSerializer(serializers.ModelSerializer):
     """Serializer for LikeView"""
     account = UserPublicProfileSerializer(read_only=True)
