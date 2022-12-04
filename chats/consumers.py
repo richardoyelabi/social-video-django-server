@@ -93,6 +93,7 @@ class OnlineOfflineConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         return user
 
 
+#Watch an account's online/offline status
 class WatchStatusConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
 
     async def connect(self):
@@ -195,6 +196,7 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
                                             })
 
         return super().receive_json(content, **kwargs)
+        
     # Broadcast to channel layer
     async def send_msg(self, event):
         await self.send_json(event['content'])
