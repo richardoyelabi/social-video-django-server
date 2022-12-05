@@ -37,11 +37,10 @@ class ProfileView(RetrieveUpdateAPIView):
             else:
                 return UserPublicProfileSerializer
 
-class MyProfileURLView(APIView):
-    """Return profile url of authenticated user.
+class MyIdView(APIView):
+    """Get id of authenticated user.
     Accepts GET."""
 
     def get(self, request):
         public_id = request.user.public_id
-        url = reverse("profile", args=[public_id], request=request)
-        return Response(url)
+        return Response(public_id)
