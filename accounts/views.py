@@ -43,4 +43,4 @@ class MyIdView(APIView):
 
     def get(self, request):
         public_id = request.user.public_id
-        return Response(public_id)
+        return Response({"public_id": public_id,})
