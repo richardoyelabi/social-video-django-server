@@ -63,8 +63,8 @@ class UserPrivateProfileSerializer(UserDetailsSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance"]
-        read_only_fields = ["public_id", "btc_wallet_balance", "usd_wallet_balance"]
+        fields = ["username", "public_id", "display_name", "bio", "is_creator", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance"]
+        read_only_fields = ["public_id", "is_creator", "btc_wallet_balance", "usd_wallet_balance"]
 
 class CreatorPublicInfoSerializer(serializers.ModelSerializer):
     """Serializer for creator-specific info to be nested in CreatorPublicProfileSerializer"""
@@ -88,8 +88,8 @@ class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
     """Serializer for creator-specific info to be nested in CreatorPrivateProfileSerializer"""
     class Meta:
         model = CreatorInfo
-        fields = ["subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
-        read_only_fields = ["subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
+        fields = ["is_verified", "subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
+        read_only_fields = ["is_verified", "subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
 
 class CreatorPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by the creator"""
@@ -97,12 +97,12 @@ class CreatorPrivateProfileSerializer(UserDetailsSerializer):
     profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True)
     cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True)
 
-    creatorinfo = CreatorPublicInfoSerializer(read_only=True)
+    creatorinfo = CreatorPrivateInfoSerializer(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
-        read_only_fields = ["public_id", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
+        fields = ["username", "public_id", "display_name", "bio", "is_creator", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
+        read_only_fields = ["public_id", "is_creator", "btc_wallet_balance", "usd_wallet_balance", "creatorinfo"]
 
     def validate_username(self, value):
         user = self.context['request'].user
