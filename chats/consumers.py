@@ -93,6 +93,7 @@ class OnlineOfflineConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         return user
 
 
+#Watch an account's online/offline status
 class WatchStatusConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
 
     async def connect(self):
@@ -195,9 +196,19 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
                                             })
 
         return super().receive_json(content, **kwargs)
+        
     # Broadcast to channel layer
     async def send_msg(self, event):
         await self.send_json(event['content'])
+
+        # Update last_delivered_message in user's inbox
+        msg_public_id = event["content"].get("public_id")
+        msg = ChatMessage.objects.get(public_id=msg_public_id)
+        sender = msg.user
+        receiver = msg.receiver
+        inbox = Inbox.objects.get(user=sender, second=receiver)
+        inbox.last_delivered_message = msg
+        inbox.save(update_fields=["last_delivered_message"])
 
     @database_sync_to_async
     def get_thread(self, user, other_user):

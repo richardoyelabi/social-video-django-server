@@ -58,7 +58,7 @@ class TextMessageDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ['public_id', 'thread', 'user', 'receiver', 'message', 'timestamp', "status", "message_type", "is_special_request"]
+        fields = ['public_id', 'thread', 'user', 'receiver', 'message', 'timestamp', "message_type", "is_special_request"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -69,7 +69,7 @@ class BaseMediaMessageDetailSerializer(TextMessageDetailSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "status", "message_type", "media_item", "is_special_request"]
+        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "is_special_request"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -90,7 +90,7 @@ class PaidVideoMessageDetailSerializer(VideoMessageDetailSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "status", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
+        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -125,7 +125,7 @@ class TextMessageCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ['public_id', 'thread', 'user', 'receiver', 'message', 'timestamp', "status", "message_type", "is_special_request"]
+        fields = ['public_id', 'thread', 'user', 'receiver', 'message', 'timestamp', "message_type", "is_special_request"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -136,7 +136,7 @@ class BaseMediaMessageCreateSerializer(TextMessageCreateSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "status", "message_type", "media_item", "is_special_request"]
+        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "is_special_request"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -200,5 +200,5 @@ class PaidVideoMessageCreateSerializer(VideoMessageCreateSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "status", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
+        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
         read_only_fields = ["public_id", "timestamp", "status"]

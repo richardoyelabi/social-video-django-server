@@ -145,12 +145,6 @@ class ChatMessage(models.Model):
     message = models.TextField(max_length=2048, blank=True, default="")
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    status = models.CharField(max_length=12, null=False, blank=False, choices=[
-        ("sent", "Sent"),
-        ("delivered", "Delivered"),
-        ("read", "Read"),
-    ], default="sent")
-
     message_type = models.CharField(max_length=12, null=False, blank=False, choices=[
         ("text", "Text"),
         ("photo", "Photo"),
