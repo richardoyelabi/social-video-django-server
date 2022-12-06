@@ -15,7 +15,6 @@ class ChatMessageAdmin(admin.ModelAdmin):
         "receiver",
         "message",
         "timestamp",
-        "status",
         "message_type",
         "media_item",
         "purchase_cost_currency",
