@@ -10,6 +10,7 @@ class PostAdmin(admin.ModelAdmin):
         "upload_time",
         "caption",
         "media_item",
+        "video_preview",
         "feed_score",
         "purchase_cost_currency",
         "purchase_cost_amount",

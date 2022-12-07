@@ -1,5 +1,5 @@
 from django.urls import path
-from posts.views import PostViewView, PostLikeView, PostCommentView, CommentView, CommentCreateView, PostView, CreatePostView, PostVideoStreamView
+from posts.views import PostViewView, PostLikeView, PostCommentView, CommentView, CommentCreateView, PostView, CreatePostView, PostVideoStreamView, PreviewVideoStreamView
 
 urlpatterns = [
 
@@ -16,6 +16,7 @@ urlpatterns = [
     
     #Video stream
     path("<uuid:post_id>/video-stream/<uuid:video_id>/", PostVideoStreamView.as_view(), name="post_video_stream"),
+    path("<uuid:post_id>/video-preview/<uuid:video_id>/", PreviewVideoStreamView.as_view(), name="post_video_preview"),
     
     #Post
     path("<uuid:post_id>/", PostView.as_view(), name="post"),

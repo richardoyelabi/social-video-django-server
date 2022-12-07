@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.conf import settings
 
+from media.media_paths import video_previews_path
 from transactions.models import Transaction
 
 import uuid
@@ -25,6 +26,8 @@ class Post(models.Model):
     )})
     media_id = models.PositiveIntegerField()
     media_item = GenericForeignKey("media_type", "media_id")
+
+    video_preview = models.FileField(upload_to=video_previews_path, blank=True, null=True)
 
     likes_number = models.PositiveIntegerField(default=0)
     comments_number = models.PositiveIntegerField(default=0)

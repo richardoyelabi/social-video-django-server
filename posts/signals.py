@@ -1,13 +1,16 @@
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save, pre_delete
+from django.core.files import File
 
 from media.models import Photo, Video
 from media.exceptions import MediaUseError
 from .models import Post, Like, Comment, View, UniqueView
 from .feed_score import feed_score_update
 from accounts.feed_score import creator_feed_score_update
+from utils.video_preview import cut_video_preview, clean_temp
 
+from pathlib import Path
 
 #Make sure accounts can not use media items that do not belong to them in a post
 @receiver(pre_save, sender=Post)
@@ -36,6 +39,32 @@ def check_media_consistency(sender, instance, **kwargs):
     ):
 
         raise MediaUseError("Post type does not match media type. Please, correct the discrepancy.")
+
+
+#Make sure no premium video has non-zero purchase amount
+@receiver(pre_save, sender=Post)
+def assert_premium_status(sender, instance, **kwargs):
+
+    if instance.post_type=="paid_video":
+        if instance.purchase_cost_amount<=0:
+            instance.post_type = "free_video"
+            instance.save(update_fields=["post_type"])
+
+
+#Create 10-second preview for premium videos in premium video posts
+@receiver(post_save, sender=Post)
+def create_video_preview(sender, instance, created, **kwargs):
+
+    if instance.post_type=="paid_video" and not instance.video_preview:
+
+        temp_path = cut_video_preview(instance.media_item.media.path)
+        path = Path(temp_path)
+
+        with path.open("rb") as f:
+            instance.video_preview = File(f, name=path.name)
+            instance.save(update_fields=["video_preview"])
+            
+        clean_temp(temp_path)
 
 
 #Increase post's likes_number for each new like

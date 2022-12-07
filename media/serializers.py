@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 
 from media.models import Photo, Video
 
+
 class PhotoSerializer(serializers.ModelSerializer):
     """Serializer for photo uploads"""
     media = VersatileImageFieldSerializer(sizes="photo_upload")
@@ -14,6 +15,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         model = Photo
         fields = ["public_id", "uploader", "media"]
         read_only_fields = ["public_id"]
+
 
 class CustomVideoThumbnailSerializer(serializers.FileField):
     """Return a dictionary of urls corresponding to video and its thumbnail"""
@@ -29,10 +31,18 @@ class CustomVideoThumbnailSerializer(serializers.FileField):
 
         domain = Site.objects.get_current().domain
 
-        return {
+        ret = {
             "video": f"http://{domain}/{video_rel_url}",
-            "thumbnail": f"http://{domain}/{value.url_300x300}"
+            "thumbnail": f"http://{domain}{value.url_300x300}"
         }
+
+        if self.root.instance.post_type=="paid_video":
+            if self.root.instance.video_preview:
+                preview = self.root.instance.video_preview
+                ret["video_preview"] = f"http://{domain}/post/{post_id}/video-preview/{video_id}"
+
+        return ret
+
 
 class VideoSerializer(serializers.ModelSerializer):
     """Serializer for video uploads"""

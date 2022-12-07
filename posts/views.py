@@ -11,7 +11,7 @@ from posts.models import Post, Like, Comment, View
 from posts.serializers import BasePostCreateSerializer, PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
     PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
         ViewSerializer, LikeSerializer, CommentSerializer, CommentCreateSerializer
-from sage_stream.api.views import VideoStreamAPIView
+from sage_stream.api.views import VideoStreamAPIView, PreviewStreamAPIView
 from utils.paginations import CustomCursorPagination
 from media.models import Video
 from subscriptions.models import Subscription
@@ -344,3 +344,12 @@ class PostVideoStreamView(VideoStreamAPIView):
                     return super().get(request, video_id)
 
         return error_response
+
+
+class PreviewVideoStreamView(PreviewStreamAPIView):
+    """Stream previews premium video posts.
+    Accepts GET"""
+
+    def get(self, request, post_id, *args, **kwargs):
+
+        return super().get(request, post_id, *args, **kwargs)
