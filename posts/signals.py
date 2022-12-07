@@ -51,7 +51,7 @@ def assert_premium_status(sender, instance, **kwargs):
             instance.save(update_fields=["post_type"])
 
 
-#Create 10-second preview for premium videos in premium video posts
+#Create preview for premium videos in premium video posts
 @receiver(post_save, sender=Post)
 def create_video_preview(sender, instance, created, **kwargs):
 
