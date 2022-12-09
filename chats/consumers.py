@@ -1,18 +1,17 @@
 from urllib import parse
-
-from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
-from chats.models import Thread, Inbox, ChatMessage
+from chats.models import Thread, Inbox
 from chats.serializers import \
     TextMessageDetailSerializer, TextMessageCreateSerializer, \
         PhotoMessageDetailSerializer, PhotoMessageCreateSerializer, \
             VideoMessageDetailSerializer, VideoMessageCreateSerializer, \
                 PaidVideoMessageDetailSerializer, PaidVideoMessageCreateSerializer
+
 
 channel_layer = get_channel_layer()
 
@@ -188,7 +187,16 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         elif message_type=="paid_video":
             serializer = PaidVideoMessageDetailSerializer(msg)
 
-        data = serializer.data
+        @database_sync_to_async
+        def _get_data():
+            return serializer.data
+
+        data = await _get_data()
+
+        #Make media item public_ids serializable
+        data["media_item"]["public_id"] = str(data["media_item"]["public_id"])
+        data["media_item"]["uploader"] = str(data["media_item"]["uploader"])
+
         await self.channel_layer.group_send(f'thread_{thread.id}',
                                             {
                                                 'type': 'send_msg',
@@ -200,15 +208,6 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
     # Broadcast to channel layer
     async def send_msg(self, event):
         await self.send_json(event['content'])
-
-        # Update last_delivered_message in user's inbox
-        msg_public_id = event["content"].get("public_id")
-        msg = ChatMessage.objects.get(public_id=msg_public_id)
-        sender = msg.user
-        receiver = msg.receiver
-        inbox = Inbox.objects.get(user=sender, second=receiver)
-        inbox.last_delivered_message = msg
-        inbox.save(update_fields=["last_delivered_message"])
 
     @database_sync_to_async
     def get_thread(self, user, other_user):

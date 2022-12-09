@@ -4,7 +4,6 @@ from versatileimagefield.serializers import VersatileImageFieldSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 
 from media.models import Photo, Video
-from media.validators import FileMimeValidator
 from .models import Inbox, ChatMessage
 from media.serializers import PhotoSerializer, VideoSerializer
 
@@ -58,7 +57,7 @@ class TextMessageDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ['public_id', 'thread', 'user', 'receiver', 'message', 'timestamp', "message_type", "is_special_request"]
+        fields = ['public_id', 'user', 'receiver', 'message', 'timestamp', "message_type", "is_special_request"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -69,7 +68,7 @@ class BaseMediaMessageDetailSerializer(TextMessageDetailSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "is_special_request"]
+        fields = ["public_id", "user", "receiver", "message", "timestamp", "message_type", "media_item", "is_special_request"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -90,7 +89,7 @@ class PaidVideoMessageDetailSerializer(VideoMessageDetailSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
+        fields = ["public_id", "user", "receiver", "message", "timestamp", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -125,74 +124,33 @@ class TextMessageCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ['public_id', 'thread', 'user', 'receiver', 'message', 'timestamp', "message_type", "is_special_request"]
-        read_only_fields = ["public_id", "timestamp", "status"]
+        fields = ['thread', 'user', 'receiver', 'message', "message_type", "is_special_request"]
 
 
-class BaseMediaMessageCreateSerializer(TextMessageCreateSerializer):
-    """Base serializer to create messages with media attachment"""
+class PhotoMessageCreateSerializer(serializers.ModelSerializer):
+    """Serializer to create photo messages"""
 
-    media_item = serializers.FileField()
+    user = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
+    receiver = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
+
+    media_item = serializers.SlugRelatedField(slug_field="public_id", queryset=Photo.objects.all())
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "is_special_request"]
-        read_only_fields = ["public_id", "timestamp", "status"]
+        fields = ["thread", "user", "receiver", "message", "message_type", "media_item", "is_special_request"]
 
 
-class PhotoMessageCreateSerializer(BaseMediaMessageCreateSerializer):
-    """Serializer to create photo messages"""
-
-    media_item = PhotoSerializer()
-
-    def create(self, validated_data):
-        media_data = validated_data.pop("media_item")
-        user = validated_data.pop("user")
-        content_type = "chat"
-
-        media_data = {
-            "uploader": user,
-            "content_type": content_type,
-            "media": media_data.get("media")
-        }
-
-        photo = Photo.objects.create(**media_data)
-
-        message = ChatMessage.objects.create(media_item=photo, user=user, **validated_data)
-        return message
-
-
-class VideoMessageCreateSerializer(BaseMediaMessageCreateSerializer):
+class VideoMessageCreateSerializer(serializers.ModelSerializer):
     """Serializer to create video messages"""
 
-    media_item = VideoSerializer()
+    user = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
+    receiver = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
 
-    def validate_media_item(self, value):
-        validator = FileMimeValidator()
-        validator(value.get("media"), api_call=True)
-        return value
+    media_item = serializers.SlugRelatedField(slug_field="public_id", queryset=Video.objects.all())
 
-    def create(self, validated_data):
-        media_data = validated_data.pop("media_item")
-        user = validated_data.pop("user")
-        message_type = validated_data.get("message_type")
-
-        #Determine (video) content type
-        if message_type=="free_video":
-            content_type = "free_chat"
-        elif message_type=="paid_video":
-            content_type = "paid_chat"
-
-        media_data = {
-            "uploader": user,
-            "content_type": content_type,
-            "media": media_data.get("media")
-        }
-
-        video = Video.objects.create(**media_data)
-
-        message = ChatMessage.objects.create(media_item=video, user=user, **validated_data)
-        return message
+    class Meta:
+        model = ChatMessage
+        fields = ["thread", "user", "receiver", "message", "message_type", "media_item", "is_special_request"]
 
 
 class PaidVideoMessageCreateSerializer(VideoMessageCreateSerializer):
@@ -200,5 +158,4 @@ class PaidVideoMessageCreateSerializer(VideoMessageCreateSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "thread", "user", "receiver", "message", "timestamp", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
-        read_only_fields = ["public_id", "timestamp", "status"]
+        fields = ["thread", "user", "receiver", "message", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]

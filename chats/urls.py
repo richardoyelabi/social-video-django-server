@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from chats.views import InboxListView, InboxMessageView, UserInboxView, ChatContactsList, MessageVideoStreamView
 
 urlpatterns = [
@@ -7,4 +7,7 @@ urlpatterns = [
     path('messages/<uuid:public_id>/', InboxMessageView.as_view({'get': 'list'}),name='inbox_message'),
     path('account/<uuid:public_id>/', UserInboxView.as_view({'get': 'retrieve'}),),
     path("contacts/", ChatContactsList.as_view(), name="chat_contacts"),
+    
+    #Vault
+    path("vault/", include("chats.media_vault.urls")),
 ]

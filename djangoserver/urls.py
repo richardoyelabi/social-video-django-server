@@ -38,6 +38,9 @@ urlpatterns = [
     #Chat
     path("chat/", include("chats.urls")),
     
+    #Media
+    path("media-upload/", include("media.urls")),
+    
     #Video save
     path("video-save/", include("video_saves.urls")),
 

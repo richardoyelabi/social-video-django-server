@@ -9,7 +9,7 @@ from accounts.serializers import UserPublicProfileSerializer, UserPrivateProfile
 from accounts.permissions import OwnerOrReadOnly
 
 class ProfileView(RetrieveUpdateAPIView):
-    """Profile information for user whose username the url points to.
+    """Profile information for user whose public_id the url points to.
     Accepts GET, PUT and PATCH.
     Weird Note: Even with PUT, "profile_photo" and "cover_photo" can be left blank without deleting existing value in database.\
         This is to prevent unnecessary image file overhead in every PUT request.
