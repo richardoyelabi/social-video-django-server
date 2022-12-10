@@ -17,7 +17,7 @@ class Post(models.Model):
         ("free_video", "Free video"),
         ("paid_video", "Premium video"),
     ])
-    upload_time = models.DateTimeField(auto_now=True)
+    upload_time = models.DateTimeField(auto_now_add=True)
     caption = models.TextField(max_length=1024, blank=True, default="")
 
     media_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, limit_choices_to={"model__in":(
