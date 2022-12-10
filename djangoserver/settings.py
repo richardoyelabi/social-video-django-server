@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     "chats.apps.ChatsConfig",
     "special_requests.apps.SpecialRequestsConfig",
     "tips.apps.TipsConfig",
+    "verifications.apps.VerificationsConfig",
 
     #3rd party apps that have to come last
     "django_cleanup.apps.CleanupConfig",

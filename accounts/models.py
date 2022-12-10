@@ -91,7 +91,9 @@ class CreatorInfo(models.Model):
     subscription_fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
     
     is_verified = models.BooleanField(default=False)
-    identity = JSONField(null=True, blank=True)
+    identity = JSONField(blank=True, 
+        default= dict(legal_name="", age="",)
+    )
 
     #Used by generic feed ranking;
     #Updated in posts.signals.feed_score_like_update

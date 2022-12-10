@@ -55,6 +55,9 @@ urlpatterns = [
     
     #Tip
     path("tip/", include("tips.urls")),
+    
+    #Id verification
+    path("verification/", include("verifications.urls")),
 
     #Browsable API auth
     path("api-auth/", include("rest_framework.urls"),),

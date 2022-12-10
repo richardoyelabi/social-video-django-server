@@ -19,3 +19,7 @@ def video_uploads_path(instance, filename):
 def video_previews_path(instance, filename):
      file_extension = Path(filename).suffix
      return f"video_previews/{instance.uploader.username}/{instance.public_id}_VideoPreview_{instance.uploader.username}{file_extension}"
+
+def upload_id_path(instance, filename):
+     file_extension = Path(filename).suffix
+     return f"id_uploads/{instance.creator.username}/{instance.public_id}_IdUpload_{instance.creator.username}{file_extension}"
