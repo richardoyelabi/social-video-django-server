@@ -177,7 +177,9 @@ class Notification (models.Model):
             else:
                 email_notify(receiver, record)
         
-        if receiver.site_message:
+        if receiver.site_message and \
+            record._meta.model and not record._meta.model==ChatMessage:
+
             site_notify(receiver, record)
 
         elif receiver.email_message:
