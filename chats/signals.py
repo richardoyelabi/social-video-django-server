@@ -9,6 +9,7 @@ from subscriptions.models import Subscription
 from special_requests.models import SpecialRequest
 from tips.models import Tip
 from media.exceptions import MediaUseError
+from notifications.models import Notification
 
 
 #Make sure accounts can not use media items that do not belong to them in a message
@@ -167,3 +168,15 @@ def restrict_paid_videos(sender, instance, **kwargs):
             instance.message_type = "free_video"
             instance.purchase_cost_currency = "usd"
             instance.purchase_cost_amount = 0
+
+
+#Notify receiver of new message
+@receiver(post_save, sender=ChatMessage)
+def message_notify(sender, instance, created, **kwargs):
+
+    if created:
+
+        receiver = instance.receiver
+        record = instance
+
+        Notification.notify(receiver=receiver, record=record)

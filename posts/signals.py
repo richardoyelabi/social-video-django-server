@@ -9,6 +9,7 @@ from .models import Post, Like, Comment, View, UniqueView
 from .feed_score import feed_score_update
 from accounts.feed_score import creator_feed_score_update
 from utils.video_preview import cut_video_preview, clean_temp
+from notifications.models import Notification
 
 from pathlib import Path
 
@@ -162,3 +163,27 @@ def creator_feed_score_like_update(sender, instance, created , **kwargs):
 def creator_feed_score_like_update(sender, instance, created , **kwargs):
 
     creator_feed_score_update(instance, created)
+
+
+#Notify post uploader of like
+@receiver(post_save, sender=Like)
+def like_notify(sender, instance, created, **kwargs):
+
+    if created:
+
+        receiver = instance.post.uploader
+        record = instance
+
+        Notification.notify(receiver=receiver, record=record)
+
+
+#Notify post uploader of comment
+@receiver(post_save, sender=Comment)
+def comment_notify(sender, instance, created, **kwargs):
+
+    if created:
+
+        receiver = instance.post.uploader
+        record = instance
+
+        Notification.notify(receiver=receiver, record=record)

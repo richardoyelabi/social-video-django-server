@@ -1,6 +1,8 @@
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from .models import Subscription, CancelledSubscription, NullifiedSubscription
+from notifications.models import Notification
+
 
 #Update subscription data for each new subscription
 @receiver(post_save, sender=Subscription)
@@ -12,6 +14,7 @@ def increase_subscriptions_numbers(sender, instance, created, **kwargs):
         instance.subscriber.active_subscriptions_number += 1
         instance.subscribed_to.creatorinfo.save(update_fields=["subscribers_number"])
         instance.subscriber.save(update_fields=["active_subscriptions_number"])
+
 
 #Update subscription data for each new unsubscription
 @receiver(pre_delete, sender=Subscription)
@@ -32,3 +35,14 @@ def decrease_subscriptions_numbers_and_archive_subscription(sender, instance, **
         fee_amount=instance.fee_amount
     )
 
+
+#Notify creator of subscription
+@receiver(post_save, sender=Subscription)
+def subscription_notify(sender, instance, created, **kwargs):
+
+    if created:
+
+        receiver = instance.subscribed_to
+        record = instance
+
+        Notification.notify(receiver=receiver, record=record)

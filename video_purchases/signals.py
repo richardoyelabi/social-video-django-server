@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from .models import Purchase, CancelledPurchase, NullifiedPurchase
+from notifications.models import Notification
 
 #Update purchase data for each new purchase
 @receiver(post_save, sender=Purchase)
@@ -29,3 +30,15 @@ def decrease_purchased_videos_number_and_archive_purchase(sender, instance, **kw
         fee_currency=instance.fee_currency,
         fee_amount=instance.fee_amount
     )
+
+
+#Notify creator of purchase
+@receiver(post_save, sender=Purchase)
+def purchase_notify(sender, instance, created, **kwargs):
+
+    if created:
+
+        receiver = instance.video_post.uploader
+        record = instance
+
+        Notification.notify(receiver=receiver, record=record)
