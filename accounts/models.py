@@ -54,7 +54,7 @@ class Account(AbstractUser):
     email_message = models.BooleanField(default=True)
     site_message = models.BooleanField(default=True)
     email_promotion = models.BooleanField(default=True)
-    site_notification = models.BooleanField(default=True)
+    site_promotion = models.BooleanField(default=True)
     notification_seen = models.BooleanField(default=True)
     
     #Subscription relations
