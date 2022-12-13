@@ -45,10 +45,26 @@ class Account(AbstractUser):
     
     is_creator = models.BooleanField(default=False)
 
+    #Chat info
+    online = models.BooleanField(default=False)
+    last_online = models.DateTimeField(auto_now=True)
+
+    #Notifications info
+    connected = models.BooleanField(default=False)
+    email_message = models.BooleanField(default=True)
+    site_message = models.BooleanField(default=True)
+    email_promotion = models.BooleanField(default=True)
+    site_notification = models.BooleanField(default=True)
+    notification_seen = models.BooleanField(default=True)
+    
+    #Subscription relations
     subscriptions = models.ManyToManyField("self", through=Subscription, through_fields=("subscriber","subscribed_to"), related_name="subscribers", symmetrical=False)
     cancelled_subscriptions = models.ManyToManyField("self", through=CancelledSubscription, through_fields=("subscriber","subscribed_to"), related_name="cancelled_subscribers", symmetrical=False)
+    
+    #Video purchase relations
     purchased_videos = models.ManyToManyField(Post, through=Purchase, related_name="buyers")
 
+    #Video save relations
     saved_videos = models.ManyToManyField(Post, through=VideoSave, related_name="saves")
 
     #Post engagement
@@ -57,9 +73,6 @@ class Account(AbstractUser):
     post_views = models.ManyToManyField(Post, through=View, related_name="viewed_by")
     unique_post_views = models.ManyToManyField(Post, through=UniqueView, related_name="unique_viewers")
 
-    #Chat info
-    online = models.BooleanField(default=False)
-    last_online = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
 

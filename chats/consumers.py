@@ -194,8 +194,9 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         data = await _get_data()
 
         #Make media item public_ids serializable
-        data["media_item"]["public_id"] = str(data["media_item"]["public_id"])
-        data["media_item"]["uploader"] = str(data["media_item"]["uploader"])
+        if not message_type=="text":
+            data["media_item"]["public_id"] = str(data["media_item"]["public_id"])
+            data["media_item"]["uploader"] = str(data["media_item"]["uploader"])
 
         await self.channel_layer.group_send(f'thread_{thread.id}',
                                             {

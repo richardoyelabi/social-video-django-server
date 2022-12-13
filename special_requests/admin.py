@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import MessagePurchase
+from .models import SpecialRequest, MessagePurchase
+
+
+class SpecialRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "request_by",
+        "request_to",
+        "request",
+        "created",
+    )
 
 
 class PurchaseAdmin(admin.ModelAdmin):
@@ -11,4 +20,6 @@ class PurchaseAdmin(admin.ModelAdmin):
         "fee_amount",
     )
 
+
+admin.site.register(SpecialRequest, SpecialRequestAdmin)
 admin.site.register(MessagePurchase, PurchaseAdmin)

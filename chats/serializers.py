@@ -57,7 +57,7 @@ class TextMessageDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ['public_id', 'user', 'receiver', 'message', 'timestamp', "message_type", "is_special_request"]
+        fields = ['public_id', 'user', 'receiver', 'message', 'timestamp', "message_type", "is_special_request", "is_tip_message", "tip_currency", "tip_amount"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
@@ -124,7 +124,7 @@ class TextMessageCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ['thread', 'user', 'receiver', 'message', "message_type", "is_special_request"]
+        fields = ['thread', 'user', 'receiver', 'message', "message_type", "is_special_request", "is_tip_message", "tip_currency", "tip_amount"]
 
 
 class PhotoMessageCreateSerializer(serializers.ModelSerializer):

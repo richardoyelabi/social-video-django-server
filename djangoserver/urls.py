@@ -56,6 +56,9 @@ urlpatterns = [
     #Tip
     path("tip/", include("tips.urls")),
     
+    #Notification
+    path("notification/", include("notifications.urls")),
+    
     #Id verification
     path("verification/", include("verifications.urls")),
 

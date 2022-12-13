@@ -160,7 +160,10 @@ class ChatMessage(models.Model):
     purchase_cost_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
 
     is_special_request = models.BooleanField(default=False)
+
     is_tip_message = models.BooleanField(default=False)
+    tip_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
+    tip_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
 
     class Meta:
         indexes = [

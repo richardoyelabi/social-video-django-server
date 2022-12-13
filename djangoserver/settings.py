@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "special_requests.apps.SpecialRequestsConfig",
     "tips.apps.TipsConfig",
     "verifications.apps.VerificationsConfig",
+    "notifications.apps.NotificationsConfig",
 
     #3rd party apps that have to come last
     "django_cleanup.apps.CleanupConfig",

@@ -54,6 +54,11 @@ class Media(models.Model):
     media_id = models.PositiveIntegerField(null=True, blank=True)
     media_item = GenericForeignKey("media_type", "media_id")
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["media_type", "media_id"]),
+        ]
+
 
 def create_media(sender, instance, created, **kwargs):
     """

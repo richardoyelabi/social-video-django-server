@@ -6,6 +6,8 @@ from django.dispatch import receiver
 from chats.models import ChatMessage, Inbox
 from media.models import Photo, Video
 from subscriptions.models import Subscription
+from special_requests.models import SpecialRequest
+from tips.models import Tip
 from media.exceptions import MediaUseError
 
 
@@ -53,10 +55,76 @@ def assert_premium_status(sender, instance, **kwargs):
 #Update inboxes of concerned users when a message is created
 @receiver(post_save, sender=ChatMessage)
 def update_inbox(sender, instance, created, **kwargs):
+
     if created:
         Inbox.objects.set_inbox(user=instance.user, other_user=instance.receiver, msg=instance.message, read=True)
         Inbox.objects.set_inbox(other_user=instance.user, user=instance.receiver, msg=instance.message, read=False)
         return None
+
+
+#Make sure only creators can receive special request messages
+@receiver(pre_save, sender=ChatMessage)
+def restrict_special_request(sender, instance, **kwargs):
+
+    if instance.is_special_request==True:
+
+        if not instance.receiver.is_creator:
+            instance.is_special_request = False
+
+
+#Create special request record if message is a special request
+@receiver(post_save, sender=ChatMessage)
+def create_request(sender, instance, created, **kwargs):
+
+    if created:
+
+        if instance.is_special_request==True:
+
+            SpecialRequest.objects.create(
+                request_by = instance.user,
+                request_to = instance.receiver,
+                request = instance,
+                created = instance.timestamp
+            )
+
+
+#Make sure only creators can receive tips
+@receiver(pre_save, sender=ChatMessage)
+def restrict_tip_receipt(sender, instance, **kwargs):
+
+    if instance.is_tip_message==True:
+
+        if not instance.receiver.is_creator:
+            instance.is_tip_message = False
+
+
+#Make sure tips have non-zero tip_amount
+@receiver(pre_save, sender=ChatMessage)
+def restrict_tip(sender, instance, **kwargs):
+
+    if instance.is_tip_message==True:
+
+        if instance.tip_amount<=0:
+            instance.is_tip_message = False
+            instance.save(update_fields=["is_tip_message"])
+
+
+#Create tip record if message is a tip message
+@receiver(post_save, sender=ChatMessage)
+def create_tip(sender, instance, created, **kwargs):
+
+    if created:
+
+        if instance.is_tip_message==True:
+
+            Tip.objects.create(
+                sender = instance.user,
+                receiver = instance.receiver,
+                created = instance.timestamp,
+                fee_currency = instance.tip_currency,
+                fee_amount = instance.tip_amount,
+                tip_message = instance
+            )
 
 
 #Make sure a user can only initiate chat with an account they're subscribed to
