@@ -117,13 +117,13 @@ class InboxConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
     # Accepts connection
     async def connect(self):
         user = await self.get_user()
-        await self.channel_layer.group_add(f"inbox_{user.username}", self.channel_name)
+        await self.channel_layer.group_add(f"inbox_{user.public_id}", self.channel_name)
         await self.accept()
 
     # Disconnects
     async def disconnect(self, code):
         user = await self.get_user()
-        await self.channel_layer.group_discard(f"inbox_{user.username}", self.channel_name)
+        await self.channel_layer.group_discard(f"inbox_{user.public_id}", self.channel_name)
 
         return await super().disconnect(code)
 

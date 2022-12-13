@@ -1,7 +1,8 @@
 from django.urls import path, include
-from chats.views import InboxListView, InboxMessageView, UserInboxView, ChatContactsList, MessageVideoStreamView
+from chats.views import InboxListView, InboxReadView, InboxMessageView, UserInboxView, ChatContactsList, MessageVideoStreamView
 
 urlpatterns = [
+    path("inbox/<uuid:contact_id>/read/", InboxReadView.as_view(), name="inbox_read"),
     path('inbox/', InboxListView.as_view({'get': 'list'}), name='inbox'),
     path("message/<uuid:message_id>/video-stream/<uuid:video_id>/", MessageVideoStreamView.as_view(), name="message_video_stream"),
     path('messages/<uuid:public_id>/', InboxMessageView.as_view({'get': 'list'}),name='inbox_message'),

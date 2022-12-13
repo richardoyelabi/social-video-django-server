@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework_word_filter import FullWordSearchFilter
 from channels.layers import get_channel_layer
@@ -67,6 +68,27 @@ class InboxListView(ModelViewSet):
 
     def get_queryset(self):
         return Inbox.objects.filter(user=self.request.user).order_by('-updated')
+
+
+class InboxReadView(APIView):
+
+    def post(self, request, contact_id, *args, **kwargs):
+
+        user = request.user
+        inbox = self.get_inbox(user, contact_id)
+        inbox.read = True
+        inbox.save(update_fields=["read"])
+
+        return Response("Inbox view acknowledged", status.HTTP_202_ACCEPTED)
+        
+
+    def get_inbox(self, user, other_user):
+        try:
+            second_user = User.objects.get(public_id=other_user)
+            user_inbox, created = Inbox.objects.get_or_create(user=user, second=second_user)
+            return user_inbox
+        except User.DoesNotExist:
+            return None
 
 
 class ChatContactsList(ListAPIView):
