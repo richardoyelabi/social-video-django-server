@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from versatileimagefield.serializers import VersatileImageFieldSerializer
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth import get_user_model
@@ -8,6 +7,7 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 
 from accounts.models import CreatorInfo
+from media.serializers import CustomImageFieldSerializer
 
 class CustomRegisterSerializer(RegisterSerializer):
     """Custom serializer for signup page"""
@@ -47,8 +47,8 @@ class UserPublicProfileSerializer(UserDetailsSerializer):
 
     public_id = serializers.UUIDField(read_only=False)
 
-    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True, read_only=True)
-    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True, read_only=True)
+    profile_photo = CustomImageFieldSerializer(sizes="profile_photo", allow_null=True, read_only=True)
+    cover_photo = CustomImageFieldSerializer(sizes="cover_photo", allow_null=True, read_only=True)
 
     class Meta:
         model = get_user_model()
@@ -58,8 +58,8 @@ class UserPublicProfileSerializer(UserDetailsSerializer):
 class UserPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by the user"""
 
-    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True)
-    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True)
+    profile_photo = CustomImageFieldSerializer(sizes="profile_photo", allow_null=True)
+    cover_photo = CustomImageFieldSerializer(sizes="cover_photo", allow_null=True)
 
     class Meta:
         model = get_user_model()
@@ -75,8 +75,8 @@ class CreatorPublicInfoSerializer(serializers.ModelSerializer):
 class CreatorPublicProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by other users"""
 
-    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True)
-    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True)
+    profile_photo = CustomImageFieldSerializer(sizes="profile_photo", allow_null=True)
+    cover_photo = CustomImageFieldSerializer(sizes="cover_photo", allow_null=True)
 
     creatorinfo = CreatorPublicInfoSerializer(read_only=True)
 
@@ -94,8 +94,8 @@ class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
 class CreatorPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by the creator"""
 
-    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True)
-    cover_photo = VersatileImageFieldSerializer(sizes="cover_photo", allow_null=True)
+    profile_photo = CustomImageFieldSerializer(sizes="profile_photo", allow_null=True)
+    cover_photo = CustomImageFieldSerializer(sizes="cover_photo", allow_null=True)
 
     creatorinfo = CreatorPrivateInfoSerializer(read_only=True)
 

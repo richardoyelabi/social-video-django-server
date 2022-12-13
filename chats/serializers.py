@@ -1,11 +1,10 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from versatileimagefield.serializers import VersatileImageFieldSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 
 from media.models import Photo, Video
 from .models import Inbox, ChatMessage
-from media.serializers import PhotoSerializer, VideoSerializer
+from media.serializers import PhotoSerializer, VideoSerializer,CustomImageFieldSerializer
 
 
 class AccountChatSerializer(UserDetailsSerializer):
@@ -13,7 +12,7 @@ class AccountChatSerializer(UserDetailsSerializer):
 
     public_id = serializers.UUIDField(read_only=False)
 
-    profile_photo = VersatileImageFieldSerializer(sizes="profile_photo", allow_null=True, read_only=True)
+    profile_photo = CustomImageFieldSerializer(sizes="profile_photo", allow_null=True, read_only=True)
 
     class Meta:
         model = get_user_model()
