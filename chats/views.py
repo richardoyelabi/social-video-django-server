@@ -9,11 +9,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework_word_filter import FullWordSearchFilter
 from channels.layers import get_channel_layer
 
-from chats.serializers import AccountChatSerializer, MessageListSerializer
+from chats.serializers import AccountChatSerializer, MessageDetailSerializer, InboxSerializer
 from chats.models import Inbox, ChatMessage
 from media.models import Video
 from special_requests.models import MessagePurchase
-from chats.serializers import InboxSerializer
 from utils.paginations import CustomCursorPagination
 from sage_stream.api.views import VideoStreamAPIView
 
@@ -36,7 +35,7 @@ class UserInboxView(ModelViewSet):
 
 
 class InboxMessageView(ModelViewSet):
-    serializer_class = MessageListSerializer
+    serializer_class = MessageDetailSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'public_id'
     filter_backends = [FullWordSearchFilter]

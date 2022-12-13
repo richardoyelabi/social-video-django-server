@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from django.db import models
 from dj_rest_auth.serializers import UserDetailsSerializer
 
 from media.models import Photo, Video
@@ -92,27 +93,40 @@ class PaidVideoMessageDetailSerializer(VideoMessageDetailSerializer):
         read_only_fields = ["public_id", "timestamp", "status"]
 
 
-class MessageListSerializer(serializers.ModelSerializer):
-    """Serializer for listing messages in a chat"""
+class MessageListSerializer(serializers.ListSerializer):
+    """Custom serializer to implement custom to_representation for each message in list"""
 
-    message_details = serializers.SerializerMethodField()
+    def to_representation(self, data):
+        
+        iterable = data.all() if isinstance(data, models.Manager) else data
 
-    def get_message_details(self, instance):
-        message_type = instance.message_type
-        if message_type=="text":
-            serializer = TextMessageDetailSerializer
-        elif message_type=="photo":
-            serializer = PhotoMessageDetailSerializer
-        elif message_type==("free_video"):
-            serializer = VideoMessageDetailSerializer
-        elif message_type==("paid_video"):
-            serializer = PaidVideoMessageDetailSerializer
+        to_rep = []
+        for item in iterable:
+            to_rep += [self.get_to_rep(item)]
+        return to_rep
 
-        return serializer(instance).data
+    def get_to_rep(self, instance):
+
+        if instance.message_type == "text":
+            return TextMessageDetailSerializer(instance).to_representation(instance)
+
+        elif instance.message_type == "photo":
+            return PhotoMessageDetailSerializer(instance).to_representation(instance)
+
+        elif instance.message_type == "free_video":
+            return VideoMessageDetailSerializer(instance).to_representation(instance)
+
+        elif instance.message_type == "paid_video":
+            return PaidVideoMessageDetailSerializer(instance).to_representation(instance)
+
+
+class MessageDetailSerializer(serializers.ModelSerializer):
+    """Common serializer for all messages in message list"""
 
     class Meta:
+        list_serializer_class = MessageListSerializer
         model = ChatMessage
-        fields = ["message_details"]
+        fields = "__all__"
 
 
 class TextMessageCreateSerializer(serializers.ModelSerializer):
