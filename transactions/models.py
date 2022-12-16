@@ -54,7 +54,7 @@ class Transaction(models.Model):
                         self.sender.save(update_fields=["btc_wallet_balance"])
                     
                 else:
-                    raise TransactionInsufficientBalanceError(f"There isn't enough money in {self.sender.username}'s wallet to complete this transaction.")
+                    raise TransactionInsufficientBalanceError(f"There isn't enough money in your wallet to complete this transaction.")
             elif (amount<0):
                 raise TransactionInputError("You've entered a negative input as amount_sent.")
 

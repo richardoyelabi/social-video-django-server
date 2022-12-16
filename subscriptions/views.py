@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 
 from subscriptions.models import Subscription
 from subscriptions.serializers import SubscriptionSerializer
+from transactions.exceptions import TransactionInsufficientBalanceError
+
 
 class SubscriptionView(GenericAPIView):
     """Subscribe or unsubscribe to a creator.
@@ -25,7 +27,11 @@ class SubscriptionView(GenericAPIView):
         ).exists():
             return Response("Subscription already exists.", status.HTTP_400_BAD_REQUEST)
         
-        Subscription.objects.create(subscribed_to=subscribed_to, subscriber=subscriber)
+        try:
+            Subscription.objects.create(subscribed_to=subscribed_to, subscriber=subscriber)
+        except TransactionInsufficientBalanceError as e:
+            return Response(str(e), status.HTTP_400_BAD_REQUEST)
+            
         return Response("Subscription created.", status.HTTP_201_CREATED)
 
     def delete(self, request, creator_id, *args, **kwargs):

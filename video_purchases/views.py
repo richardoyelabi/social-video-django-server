@@ -5,6 +5,8 @@ from rest_framework import status
 from video_purchases.models import Purchase
 from video_purchases.serializers import PurchaseSerializer
 from posts.models import Post
+from transactions.exceptions import TransactionInsufficientBalanceError
+
 
 class PurchaseView(GenericAPIView):
     """Purchase a post video.
@@ -27,5 +29,9 @@ class PurchaseView(GenericAPIView):
         ).exists():
             return Response("User already purchased the video.", status.HTTP_400_BAD_REQUEST)
         
-        Purchase.objects.create(buyer=buyer, video_post=post)
+        try:
+            Purchase.objects.create(buyer=buyer, video_post=post)
+        except TransactionInsufficientBalanceError as e:
+            return Response(str(e), status.HTTP_400_BAD_REQUEST)
+            
         return Response("Video purchased.", status.HTTP_201_CREATED)

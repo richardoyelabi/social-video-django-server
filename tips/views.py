@@ -5,6 +5,7 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from tips.models import Tip
 from tips.serializers import TipSerializer
+from transactions.exceptions import TransactionInsufficientBalanceError
 
 
 class TipView(GenericAPIView):
@@ -33,7 +34,11 @@ class TipView(GenericAPIView):
 
         serializer = TipSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            
+            try:
+                serializer.save()
+            except TransactionInsufficientBalanceError as e:
+                return Response(str(e), status.HTTP_400_BAD_REQUEST)
 
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 

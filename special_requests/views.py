@@ -5,6 +5,8 @@ from rest_framework import status
 from special_requests.models import MessagePurchase
 from special_requests.serializers import MessagePurchaseSerializer
 from chats.models import ChatMessage
+from transactions.exceptions import TransactionInsufficientBalanceError
+
 
 class MessagePurchaseView(GenericAPIView):
     """Purchase a message video.
@@ -27,5 +29,9 @@ class MessagePurchaseView(GenericAPIView):
         ).exists():
             return Response("User already unlocked the video.", status.HTTP_400_BAD_REQUEST)
         
-        MessagePurchase.objects.create(buyer=buyer, video_message=message)
+        try:
+            MessagePurchase.objects.create(buyer=buyer, video_message=message)
+        except TransactionInsufficientBalanceError as e:
+            return Response(str(e), status.HTTP_400_BAD_REQUEST)
+
         return Response("Video unlocked.", status.HTTP_201_CREATED)
