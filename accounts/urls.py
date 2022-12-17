@@ -8,8 +8,8 @@ from accounts.views import ProfileView, MyIdView
 
 urlpatterns = [
     #Dj_rest_auth login and signup
-    path('password/reset/', PasswordResetView.as_view(), name='rest_password_reset'),
-    path('password/reset/confirm/', PasswordResetConfirmView.as_view(), name='rest_password_reset_confirm'),
+    #path('password/reset/', PasswordResetView.as_view(), name='rest_password_reset'),
+    #path('password/reset/confirm/', PasswordResetConfirmView.as_view(), name='rest_password_reset_confirm'),
     path('login/', LoginView.as_view(), name='rest_login'),
     path('logout/', LogoutView.as_view(), name='rest_logout'),
     path('password/change/', PasswordChangeView.as_view(), name='rest_password_change'),
