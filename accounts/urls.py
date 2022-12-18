@@ -26,5 +26,5 @@ urlpatterns = [
 
     #Profile
     path("<uuid:id>/", ProfileView.as_view(), name="profile"),
-    path("my-id/", MyIdView.as_view(), name="my-profile-url"),
+    path("my-id/", MyIdView.as_view(), name="my-id"),
 ]
