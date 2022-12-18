@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
 from chats.models import ChatMessage
-from .special_requests_cut import cut
+from .special_requests_cut import cut as float_cut
 from transactions.models import Transaction
+from transactions.currency_convert import convert_currency
 
 from decimal import Decimal
 
@@ -26,14 +27,24 @@ class MessagePurchase(models.Model):
 
         #Get purchase fee
         video = self.video_message
-        self.fee_currency, self.fee_amount = (video.purchase_cost_currency, video.purchase_cost_amount)
+        source_currency, self.fee_amount = (video.purchase_cost_currency, video.purchase_cost_amount)
+
+        cut = Decimal(float_cut)
+        self.fee_amount = Decimal(self.fee_amount)
+
+        #Convert fee_amount to destination currency if needed
+        self.fee_amount = convert_currency(
+            source=source_currency,
+            target=self.fee_currency,
+            amount=self.fee_amount
+        )
         
         #Execute required transaction for purchase
         Transaction.objects.create(
             transaction_currency=self.fee_currency,
             amount_sent=self.fee_amount,
             sender=self.buyer,
-            platform_fee=Decimal(cut*self.fee_amount/100),
+            platform_fee=cut*self.fee_amount/100,
             receiver=self.video_message.user,
             transaction_type="request"
         )

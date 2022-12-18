@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from .tips_cut import cut
+from .tips_cut import cut as float_cut
 from transactions.models import Transaction
 from chats.models import ChatMessage
 
@@ -17,12 +17,15 @@ class Tip(models.Model):
 
     def save(self, *args, **kwargs):
 
+        cut = Decimal(float_cut)
+        self.fee_amount = Decimal(self.fee_amount)
+
         #Execute required transaction for purchase
         Transaction.objects.create(
             transaction_currency=self.fee_currency,
             amount_sent=Decimal(self.fee_amount),
             sender=self.sender,
-            platform_fee=Decimal(cut*self.fee_amount/100),
+            platform_fee=cut*self.fee_amount/100,
             receiver=self.receiver,
             transaction_type="tip"
         )

@@ -28,9 +28,17 @@ class PurchaseView(GenericAPIView):
             video_post = post
         ).exists():
             return Response("User already purchased the video.", status.HTTP_400_BAD_REQUEST)
+
+        try:
+            currency = request.query_params["currency"]
+        except KeyError:
+            return Response("Provide valid 'currency' get parameter: currency=usd or currency=btc")
+
+        if not currency in ("btc", "usd"):
+            return Response("Provide valid 'currency' get parameter: currency=usd or currency=btc")
         
         try:
-            Purchase.objects.create(buyer=buyer, video_post=post)
+            Purchase.objects.create(buyer=buyer, video_post=post, fee_currency=currency)
         except TransactionInsufficientBalanceError as e:
             return Response(str(e), status.HTTP_400_BAD_REQUEST)
             
