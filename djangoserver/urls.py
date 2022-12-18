@@ -59,6 +59,9 @@ urlpatterns = [
     #Notification
     path("notification/", include("notifications.urls")),
     
+    #Transaction
+    path("transaction/", include("transactions.urls")),
+    
     #Id verification
     path("verification/", include("verifications.urls")),
 
