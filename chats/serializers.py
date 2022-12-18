@@ -6,6 +6,7 @@ from dj_rest_auth.serializers import UserDetailsSerializer
 from media.models import Photo, Video
 from .models import Inbox, ChatMessage
 from media.serializers import PhotoSerializer, VideoSerializer,CustomImageFieldSerializer
+from transactions.currency_convert import convert_currency
 
 
 class AccountChatSerializer(UserDetailsSerializer):
@@ -86,10 +87,18 @@ class VideoMessageDetailSerializer(BaseMediaMessageDetailSerializer):
 
 class PaidVideoMessageDetailSerializer(VideoMessageDetailSerializer):
     """Serializer for paid video messages"""
+    usd_purchase_cost = serializers.SerializerMethodField()
+    btc_purchase_cost = serializers.SerializerMethodField()
+
+    def get_usd_purchase_cost(self, obj):
+        return convert_currency(obj.purchase_cost_currency, "usd", obj.purchase_cost_amount)
+
+    def get_btc_purchase_cost(self, obj):
+        return convert_currency(obj.purchase_cost_currency, "btc", obj.purchase_cost_amount)
 
     class Meta:
         model = ChatMessage
-        fields = ["public_id", "user", "receiver", "message", "timestamp", "message_type", "media_item", "purchase_cost_currency", "purchase_cost_amount"]
+        fields = ["public_id", "user", "receiver", "message", "timestamp", "message_type", "media_item", "usd_purchase_cost", "btc_purchase_cost"]
         read_only_fields = ["public_id", "timestamp", "status"]
 
 

@@ -8,6 +8,7 @@ from posts.models import Post, Like, Comment
 from accounts.serializers import UserPublicProfileSerializer
 from media.models import Photo, Video
 from media.serializers import PhotoSerializer, VideoSerializer
+from transactions.currency_convert import convert_currency
 
 
 class ViewSerializer(serializers.ModelSerializer):
@@ -64,9 +65,18 @@ class VideoPostDetailSerializer(BasePostDetailSerializer):
 
 class PaidVideoPostDetailSerializer(VideoPostDetailSerializer):
     """Serializer for paid video posts"""
+    usd_purchase_cost = serializers.SerializerMethodField()
+    btc_purchase_cost = serializers.SerializerMethodField()
+
+    def get_usd_purchase_cost(self, obj):
+        return convert_currency(obj.purchase_cost_currency, "usd", obj.purchase_cost_amount)
+
+    def get_btc_purchase_cost(self, obj):
+        return convert_currency(obj.purchase_cost_currency, "btc", obj.purchase_cost_amount)
+        
     class Meta:
         model = Post
-        fields = ["public_id", "uploader", "post_type", "upload_time", "caption", "media_item", "likes_number", "comments_number", "purchase_cost_currency", "purchase_cost_amount"]
+        fields = ["public_id", "uploader", "post_type", "upload_time", "caption", "media_item", "likes_number", "comments_number", "usd_purchase_cost", "btc_purchase_cost"]
         read_only_fields = ["public_id", "upload_time", "likes_number", "comments_number"]
 
 

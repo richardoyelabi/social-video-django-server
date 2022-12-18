@@ -198,6 +198,11 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
             data["media_item"]["public_id"] = str(data["media_item"]["public_id"])
             data["media_item"]["uploader"] = str(data["media_item"]["uploader"])
 
+        #Make decimal.Decimal objects (money) serializable
+        if message_type=="paid_video":
+            data["usd_purchase_cost"] = float(data["usd_purchase_cost"])
+            data["btc_purchase_cost"] = float(data["btc_purchase_cost"])
+
         await self.channel_layer.group_send(f'thread_{thread.id}',
                                             {
                                                 'type': 'send_msg',

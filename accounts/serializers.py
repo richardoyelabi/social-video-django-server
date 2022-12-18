@@ -8,6 +8,8 @@ from allauth.account.utils import setup_user_email
 
 from accounts.models import CreatorInfo
 from media.serializers import CustomImageFieldSerializer
+from transactions.currency_convert import convert_currency
+
 
 class CustomRegisterSerializer(RegisterSerializer):
     """Custom serializer for signup page"""
@@ -42,6 +44,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         setup_user_email(request, user, [])
         return user
 
+
 class UserPublicProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by other users"""
 
@@ -55,6 +58,7 @@ class UserPublicProfileSerializer(UserDetailsSerializer):
         fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo"]
         read_only_fields = ["username", "display_name", "bio", "profile_photo", "cover_photo"]
 
+
 class UserPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for non-creator user's profile view as seen by the user"""
 
@@ -66,11 +70,22 @@ class UserPrivateProfileSerializer(UserDetailsSerializer):
         fields = ["username", "public_id", "display_name", "bio", "is_creator", "profile_photo", "cover_photo", "btc_wallet_balance", "usd_wallet_balance"]
         read_only_fields = ["public_id", "is_creator", "btc_wallet_balance", "usd_wallet_balance"]
 
+
 class CreatorPublicInfoSerializer(serializers.ModelSerializer):
     """Serializer for creator-specific info to be nested in CreatorPublicProfileSerializer"""
+    usd_subscription_fee = serializers.SerializerMethodField()
+    btc_subscription_fee = serializers.SerializerMethodField()
+
+    def get_usd_subscription_fee(self, obj):
+        return convert_currency(obj.subscription_fee_currency, "usd", obj.subscription_fee_amount)
+
+    def get_btc_subscription_fee(self, obj):
+        return convert_currency(obj.subscription_fee_currency, "btc", obj.subscription_fee_amount)
+
     class Meta:
         model = CreatorInfo
-        fields = ["subscription_fee_currency", "subscription_fee_amount"]
+        fields = ["usd_subscription_fee", "btc_subscription_fee"]
+
 
 class CreatorPublicProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by other users"""
@@ -84,12 +99,14 @@ class CreatorPublicProfileSerializer(UserDetailsSerializer):
         model = get_user_model()
         fields = ["username", "public_id", "display_name", "bio", "profile_photo", "cover_photo", "creatorinfo"]
 
+
 class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
     """Serializer for creator-specific info to be nested in CreatorPrivateProfileSerializer"""
     class Meta:
         model = CreatorInfo
         fields = ["is_verified", "subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
         read_only_fields = ["is_verified", "subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
+
 
 class CreatorPrivateProfileSerializer(UserDetailsSerializer):
     """Serializer for creator's profile view as seen by the creator"""
