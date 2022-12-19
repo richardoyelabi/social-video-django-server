@@ -1,10 +1,14 @@
 from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
 
 from subscriptions.models import Subscription
-from subscriptions.serializers import SubscriptionSerializer
+from accounts.models import CreatorInfo
+from subscriptions.serializers import SubscriptionSerializer, SetSubscriptionSerializer
+from .permissions import IsCreator
+from transactions.models import Transaction
 from transactions.exceptions import TransactionInsufficientBalanceError
 
 
@@ -55,3 +59,32 @@ class SubscriptionView(GenericAPIView):
 
         Subscription.objects.get(subscribed_to=subscribed_to, subscriber=subscriber).delete()
         return Response("Subscription deleted.", status.HTTP_204_NO_CONTENT)
+
+
+class SetSubscriptionView(GenericAPIView):
+    """Set creator's subscription_fee_currency and subscription_fee_amount.
+    Accepts POST with parameters fee_currency and fee_amount"""
+
+    queryset = CreatorInfo.objects.all()
+    serializer_class = SetSubscriptionSerializer
+    permission_classes = [IsCreator]
+
+    def post(self, request, *args, **kwargs):
+        creator = request.user
+        creator_id = request.user.public_id
+
+        data = dict(
+            creator = creator_id,
+            subscription_fee_currency = request.data.get("subscription_fee_currency"),
+            subscription_fee_amount = request.data.get("subscription_fee_amount")
+        )
+
+        creatorinfo = CreatorInfo.objects.get(creator=creator)
+
+        serializer = SetSubscriptionSerializer(creatorinfo, data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

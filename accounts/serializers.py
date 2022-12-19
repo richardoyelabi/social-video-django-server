@@ -105,7 +105,7 @@ class CreatorPrivateInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreatorInfo
         fields = ["is_verified", "subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
-        read_only_fields = ["is_verified", "subscription_fee_currency", "subscription_fee_amount", "subscribers_number"]
+        read_only_fields = ["is_verified", "subscribers_number"]
 
 
 class CreatorPrivateProfileSerializer(UserDetailsSerializer):

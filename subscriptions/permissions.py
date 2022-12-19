@@ -1,18 +1,14 @@
 from rest_framework.permissions import BasePermission
-from django.contrib.auth import get_user_model
 
-class SubscriberIsUser(BasePermission):
-    """Custom permission class for subscriptions views"""
 
-    def check_permission(self, request):
-        user = request.user
-        subscriber = request.data.get("subscriber")
-        if get_user_model().objects.get(username=subscriber)==user.username:
-            return True
-        return False
+class IsCreator(BasePermission):
+    """Authorize only creators"""
 
     def has_permission(self, request, view):
-        return self.check_permission(request)
+        if request.user.is_authenticated:
+            if request.user.is_creator:
+                return True
+        return False
 
     def has_object_permission(self, request, view, obj):
-        return self.check_permission(request)
+        return self.has_permission(request, view)
