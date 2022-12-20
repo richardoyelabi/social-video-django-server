@@ -65,8 +65,18 @@ class AccountAdmin(UserAdmin):
             }),)
 
 class CreatorInfoAdmin(admin.ModelAdmin):
+
+    @admin.display(description="Creator username")
+    def username(self, obj):
+        return obj.creator.username
+
+    @admin.display(description="Public Id")
+    def public_id(self, obj):
+        return obj.creator.public_id
+
     list_display = (
         "creator",
+        "public_id",
         "subscribers_number",
         "subscription_fee_currency",
         "subscription_fee_amount",
@@ -74,6 +84,18 @@ class CreatorInfoAdmin(admin.ModelAdmin):
         "identity",
         "feed_score"
     )
+
+    fields = (
+        "creator",
+        "is_verified",
+        "identity",
+    )
+
+    search_fields = (
+        "creator__username",
+        "creator__public_id",
+    )
+
 
 admin.site.register(Account, AccountAdmin)
 admin.site.register(CreatorInfo, CreatorInfoAdmin)

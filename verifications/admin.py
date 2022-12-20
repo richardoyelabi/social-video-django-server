@@ -12,5 +12,10 @@ class IdUploadAdmin(admin.ModelAdmin):
         "upload",
     )
 
+    search_fields = (
+        "creator__username",
+        "creator__public_id",
+    )
+
 
 admin.site.register(IdUpload, IdUploadAdmin)
