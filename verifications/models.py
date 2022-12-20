@@ -10,6 +10,7 @@ import uuid
 class IdUpload(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="id_uploads", on_delete=models.CASCADE)
+    reviewed = models.BooleanField(default=False)
     type = models.CharField(max_length=10, choices=[
         ("selfie", "Selfie"), 
         ("doc", "Passport/ Id card")

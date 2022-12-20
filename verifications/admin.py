@@ -7,6 +7,7 @@ class IdUploadAdmin(admin.ModelAdmin):
     list_display = (
         "public_id",
         "creator",
+        "reviewed",
         "type",
         "upload_time",
         "upload",
