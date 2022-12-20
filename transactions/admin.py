@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Transaction
+from .models import Transaction, WithdrawalRequest
+
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = (
@@ -15,4 +16,14 @@ class TransactionAdmin(admin.ModelAdmin):
         "record_is_balanced",
     )
 
+
+class WithdrawalRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        "public_id",
+        "creator",
+        "handled",
+    )
+
+
 admin.site.register(Transaction, TransactionAdmin)
+admin.site.register(WithdrawalRequest, WithdrawalRequestAdmin)

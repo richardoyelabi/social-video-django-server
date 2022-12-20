@@ -90,3 +90,12 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.public_id}"
+
+
+class WithdrawalRequest(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="withdrawal_requests")
+    handled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"WithdrawalRequest {self.public_id}"

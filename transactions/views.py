@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from .models import WithdrawalRequest
 from .permissions import IsCreator
 
 
@@ -12,12 +13,11 @@ class WithdrawView(APIView):
     permission_classes = [IsCreator]
 
     def post(self, request, *args, **kwargs):
-        creator = request.user.id
+        creator = request.user
 
         try:
-            #SEND REQUEST FOR WITHDRAWAL
+            WithdrawalRequest.objects.create(creator=creator)
 
-            pass
         except:
             return Response("Something went wrong", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
