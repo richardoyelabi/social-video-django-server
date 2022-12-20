@@ -262,7 +262,8 @@ class PostView(RetrieveDestroyAPIView):
 
 class CreatePostView(CreateAPIView):
     """Create a new post.
-    Accepts POST"""
+    Accepts POST with parameters post_type, media, caption,
+    purchase_cost_currency and purchase_cost_amount"""
 
     queryset = Post.objects.all()
     serializer_class = BasePostCreateSerializer
