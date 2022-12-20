@@ -77,10 +77,10 @@ class CreatorPublicInfoSerializer(serializers.ModelSerializer):
     btc_subscription_fee = serializers.SerializerMethodField()
 
     def get_usd_subscription_fee(self, obj):
-        return convert_currency(obj.subscription_fee_currency, "usd", obj.subscription_fee_amount)
+        return str(convert_currency(obj.subscription_fee_currency, "usd", obj.subscription_fee_amount))
 
     def get_btc_subscription_fee(self, obj):
-        return convert_currency(obj.subscription_fee_currency, "btc", obj.subscription_fee_amount)
+        return str(convert_currency(obj.subscription_fee_currency, "btc", obj.subscription_fee_amount))
 
     class Meta:
         model = CreatorInfo

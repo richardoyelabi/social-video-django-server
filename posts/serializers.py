@@ -69,10 +69,10 @@ class PaidVideoPostDetailSerializer(VideoPostDetailSerializer):
     btc_purchase_cost = serializers.SerializerMethodField()
 
     def get_usd_purchase_cost(self, obj):
-        return convert_currency(obj.purchase_cost_currency, "usd", obj.purchase_cost_amount)
+        return str(convert_currency(obj.purchase_cost_currency, "usd", obj.purchase_cost_amount))
 
     def get_btc_purchase_cost(self, obj):
-        return convert_currency(obj.purchase_cost_currency, "btc", obj.purchase_cost_amount)
+        return str(convert_currency(obj.purchase_cost_currency, "btc", obj.purchase_cost_amount))
         
     class Meta:
         model = Post
