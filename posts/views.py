@@ -98,8 +98,8 @@ class PostLikeView(GenericAPIView):
 
 
 class PostCommentView(ListModelMixin,GenericAPIView):
-    """View comments or get the number of comments on a post.
-    GET to retrieve the number of comments, '?list' to view comments."""
+    """View comments.
+    Accepts GET"""
 
     serializer_class = CommentSerializer
     lookup_field = "public_id"
@@ -114,12 +114,7 @@ class PostCommentView(ListModelMixin,GenericAPIView):
         return Comment.objects.filter(post__public_id=self.kwargs["post_id"])
 
     def get(self, request, post_id, *args, **kwargs):
-        if "list" in request.query_params.keys():
-            return self.list(request, *args, **kwargs)
-            
-        post = Post.objects.get(public_id=post_id)
-        comments_number = post.comments_number
-        return Response({"comment_count": comments_number})
+        return self.list(request, *args, **kwargs)
 
 
 class CommentCreateView(GenericAPIView):
