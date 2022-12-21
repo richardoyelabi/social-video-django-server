@@ -63,7 +63,7 @@ class SubscriptionView(GenericAPIView):
 
 class SetSubscriptionView(GenericAPIView):
     """Set creator's subscription_fee_currency and subscription_fee_amount.
-    Accepts POST with parameters fee_currency and fee_amount"""
+    Accepts POST with parameters subscription_fee_currency and subscription_fee_amount"""
 
     queryset = CreatorInfo.objects.all()
     serializer_class = SetSubscriptionSerializer
