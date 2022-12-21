@@ -42,7 +42,7 @@ urlpatterns = [
     path("media-upload/", include("media.urls")),
     
     #Video save
-    path("video-save/", include("video_saves.urls")),
+    path("save/", include("video_saves.urls")),
 
     #Subscription
     path("subscription/", include("subscriptions.urls")),
