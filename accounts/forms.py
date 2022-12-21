@@ -24,7 +24,6 @@ class AccountChangeForm(UserChangeForm):
             "profile_photo", 
             "cover_photo",
             "payment_info",
-            "notification_settings",
             "is_creator",
             "is_staff",
             )

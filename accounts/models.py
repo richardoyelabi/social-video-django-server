@@ -39,8 +39,6 @@ class Account(AbstractUser):
     
     payment_info = JSONField(null=True)
     
-    notification_settings = JSONField(null=True, blank=True)
-    
     blocked_accounts_number = models.PositiveIntegerField(default=0)
     
     is_creator = models.BooleanField(default=False)

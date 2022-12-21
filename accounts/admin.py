@@ -19,7 +19,6 @@ class AccountAdmin(UserAdmin):
         "bio", 
         "profile_photo", 
         "cover_photo",
-        "notification_settings",
         "is_creator",
         "public_id",
         "saved_videos_number",
@@ -39,7 +38,6 @@ class AccountAdmin(UserAdmin):
                     "profile_photo",
                     "cover_photo",
                     "is_creator",
-                    "notification_settings",
                 )
             }
         ),
