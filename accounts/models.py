@@ -90,7 +90,7 @@ class Account(AbstractUser):
     objects = AccountManager()
 
     def __str__(self):
-        return self.username
+        return f"{self.username} - {self.public_id}"
 
     def get_absolute_url(self):
         return reverse("profile", kwargs={"public_id": self.public_id}) 
@@ -113,4 +113,4 @@ class CreatorInfo(models.Model):
     feed_score = models.FloatField(default=1)
 
     def __str__(self):
-        return f"Creator {self.creator.username}"
+        return f"Creator {self.creator.username} - {self.creator.public_id}"

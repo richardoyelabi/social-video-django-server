@@ -25,10 +25,10 @@ class Transaction(models.Model):
     transaction_currency = models.CharField(max_length=3, choices=currency_choices)
     amount_sent = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="debit_transactions")
-    platform_fee = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
+    platform_fee = models.DecimalField(max_digits=100, decimal_places=50, default=0)
     amount_received = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="credit_transactions")
-    transaction_type = models.CharField(max_length=10, choices=transaction_types)
+    transaction_type = models.CharField(max_length=10, choices=transaction_types, default="withdraw")
     record_is_balanced = models.BooleanField(default=False)
 
     def get_wallet(self, account, target_wallet):

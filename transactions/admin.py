@@ -16,11 +16,21 @@ class TransactionAdmin(admin.ModelAdmin):
         "record_is_balanced",
     )
 
+    fields = (
+        "transaction_currency",
+        "amount_sent",
+        "sender",
+    )
+
 
 class WithdrawalRequestAdmin(admin.ModelAdmin):
     list_display = (
         "public_id",
         "creator",
+        "handled",
+    )
+
+    fields = (
         "handled",
     )
 
