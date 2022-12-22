@@ -18,7 +18,7 @@ class AccountChatSerializer(UserDetailsSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["username", "public_id", "display_name", "profile_photo", "online", "last_online"]
+        fields = ["username", "public_id", "display_name", "profile_photo"]
         read_only_fields = ["username", "display_name", "profile_photo"]
 
 
