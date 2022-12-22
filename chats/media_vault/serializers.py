@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework import serializers
 from django.contrib.sites.models import Site
-from versatileimagefield.serializers import VersatileImageFieldSerializer
+from media.serializers import CustomImageFieldSerializer
 
 from media.models import Photo, Video, Media
 
@@ -9,7 +9,7 @@ from media.models import Photo, Video, Media
 class VaultPhotoSerializer(serializers.ModelSerializer):
     """Serializer for photos in ChatVaultView"""
 
-    media = VersatileImageFieldSerializer(sizes="photo_upload")
+    media = CustomImageFieldSerializer(sizes="photo_upload")
 
     class Meta:
         model = Photo
