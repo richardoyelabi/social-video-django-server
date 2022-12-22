@@ -193,6 +193,10 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
 
         data = await _get_data()
 
+        #Make user and receiver serializabel (they're uuids)
+        data["user"] = str(data["user"])
+        data["receiver"] = str(data["receiver"])
+
         #Make media item public_ids serializable
         if not message_type=="text":
             data["media_item"]["public_id"] = str(data["media_item"]["public_id"])
@@ -224,6 +228,7 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         except User.DoesNotExist:
             return []
 
+    #Not being used
     @database_sync_to_async
     def read_user_inbox(self, user, other_user):
         second_user = User.objects.get(public_id=other_user)

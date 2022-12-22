@@ -82,15 +82,15 @@ class InboxManager(models.Manager):
         inbox_object.save()
         from .serializers import InboxSerializer
         ib1 = InboxSerializer(instance=inbox_object).data
+        ib1["last_message_from"] = str(ib1["last_message_from"])
         async_to_sync(channel_layer.group_send)(f"inbox_{inbox_object.user.public_id}",
                                                 {"type": "update_inbox",
-                                                 "content": {
-                                                     'type': 'inbox_update',
-                                                     'data': ib1
-                                                 }})
+                                                 "content": ib1
+                                                })
 
         return None
 
+    #Not being used
     def read_inbox(self, user, other_user):
         inbox = self.get_queryset().filter(user=user, second=other_user)
         if inbox.count() == 1:
