@@ -95,8 +95,8 @@ class InboxManager(models.Manager):
         inbox = self.get_queryset().filter(user=user, second=other_user)
         if inbox.count() == 1:
             inbox_obj = inbox.first()
-            #inbox_obj.read = True
-            #inbox_obj.save()
+            inbox_obj.read = True
+            inbox_obj.save()
             from .serializers import InboxSerializer
             inbox_data = InboxSerializer(instance=inbox_obj).data
             async_to_sync(channel_layer.group_send)(f"inbox_{inbox_obj.user.public_id}",

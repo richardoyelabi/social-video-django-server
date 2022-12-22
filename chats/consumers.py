@@ -140,7 +140,7 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         if user is not None:
             second_user = self.scope['url_route']['kwargs']['public_id']
             thread = await self.get_thread(user, second_user)
-            await self.read_user_inbox(user, second_user)
+            #await self.read_user_inbox(user, second_user)
             # Add to channel layer
             await self.channel_layer.group_add(f"thread_{thread.id}", self.channel_name)
             await self.accept()
