@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -105,7 +106,10 @@ class ChatContactsList(ListAPIView):
         user = self.request.user
 
         if user.is_creator:
-            return user.subscribers.all()
+            return get_user_model().objects.filter(
+                Q(id__in = user.subscriptions.all()) |
+                Q(id__in = user.subscribers.all())
+            )
         return user.subscriptions.all()
 
 
