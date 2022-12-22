@@ -25,10 +25,8 @@ class AccountChatSerializer(UserDetailsSerializer):
 class InboxSerializer(serializers.ModelSerializer):
     """Serializer to retrieve user's inbox"""
 
-    user = AccountChatSerializer(many=False, read_only=True)
     second = serializers.SerializerMethodField()
-    request = serializers.SerializerMethodField()
-    last_message_from = AccountChatSerializer(many=False, read_only=True)
+    last_message_from = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
 
     def get_second(self, obj):
         if 'request' in self.context:
@@ -39,22 +37,16 @@ class InboxSerializer(serializers.ModelSerializer):
             profile_serializer = AccountChatSerializer(instance=get_user_model().objects.get(id=obj.second.id))
             return profile_serializer.data
 
-    def get_request(self, obj):
-        if 'request' in self.context:
-            return True
-        else:
-            return False
-
     class Meta:
         model = Inbox
-        fields = ['public_id', 'user', 'second', 'last_message', 'timestamp', 'updated', 'request', 'read', 'last_message_from']
+        fields = ['public_id', 'second', 'last_message', 'timestamp', 'updated', 'read', 'last_message_from']
 
 
 class TextMessageDetailSerializer(serializers.ModelSerializer):
     """Serializer to retrieve text messages"""
 
-    user = AccountChatSerializer(many=False, read_only=True)
-    receiver = AccountChatSerializer(many=False, read_only=True)
+    user = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
+    receiver = serializers.SlugRelatedField(slug_field="public_id", queryset=get_user_model().objects.all())
 
     class Meta:
         model = ChatMessage
