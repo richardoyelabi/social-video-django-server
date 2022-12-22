@@ -174,7 +174,7 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
             )
             return
         
-        await self.read_user_inbox(user, second_user)
+        #await self.read_user_inbox(user, second_user)
 
         message_type = content.get("message_type")
 
