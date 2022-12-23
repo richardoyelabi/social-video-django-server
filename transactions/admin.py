@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Transaction, WithdrawalRequest
+from .models import Transaction, WithdrawalRequest, Withdrawal
 
 
 class TransactionAdmin(admin.ModelAdmin):
@@ -35,5 +35,22 @@ class WithdrawalRequestAdmin(admin.ModelAdmin):
     )
 
 
+class WithdrawalAdmin(admin.ModelAdmin):
+    list_display = (
+        "public_id",
+        "creator",
+        "wallet",
+        "amount",
+        "timestamp",
+    )
+
+    fields = (
+        "creator",
+        "wallet",
+        "amount",
+    )
+
+
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(WithdrawalRequest, WithdrawalRequestAdmin)
+admin.site.register(Withdrawal, WithdrawalAdmin)

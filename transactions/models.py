@@ -96,6 +96,31 @@ class WithdrawalRequest(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="withdrawal_requests")
     handled = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"WithdrawalRequest {self.public_id}"
+
+
+class Withdrawal(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="withdrawals")
+    wallet = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd")
+    amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+
+        Transaction.objects.create(
+            transaction_currency = self.wallet,
+            amount_sent = self.amount,
+            sender = self.creator,
+            platform_fee = 0,
+            receiver = None,
+            transaction_type = "withdraw"
+        )
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Withdrawal {self.public_id}"
