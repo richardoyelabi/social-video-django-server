@@ -5,15 +5,15 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR /app/server
 
-RUN apt-get -y update && \
-        apt-get -y install ffmpeg
+RUN apt-get -y update \
+        && apt-get -y install ffmpeg \
+        && apt-get install -y --no-install-recommends build-essential libpq-dev \  
+        && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/server
 
-# Build psycopg2-binary from source -- add required required dependencies
-RUN apk add --virtual .build-deps --no-cache postgresql-dev gcc python3-dev musl-dev && \
-        pip install --no-cache-dir -r requirements.txt && \
-        apk --purge del .build-deps
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \  
+        && rm -rf /tmp/requirements.txt
 
 COPY . /app/server
 
