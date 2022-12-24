@@ -33,6 +33,7 @@ imageio-ffmpeg==0.4.7
 incremental==22.10.0
 inflection==0.5.1
 jsonschema==4.16.0
+libmagic==1.0
 moviepy==1.0.3
 msgpack==1.0.4
 numpy==1.23.5
