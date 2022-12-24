@@ -7,6 +7,7 @@ WORKDIR /app/server
 
 RUN apt-get -y update \
         && apt-get -y install ffmpeg \
+        && apt-get -y install libmagic1 \
         && apt-get install -y --no-install-recommends build-essential libpq-dev \  
         && rm -rf /var/lib/apt/lists/*
 
