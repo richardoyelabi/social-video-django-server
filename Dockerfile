@@ -12,11 +12,10 @@ RUN apt-get -y update \
 
 COPY requirements.txt /app/server
 
-RUN pip install --no-cache-dir -r /tmp/requirements.txt \  
-        && rm -rf /tmp/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/server
 
-ENTRYPOINT [ "entrypoint.sh" ]
+RUN python manage.py migrate
 
 CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
