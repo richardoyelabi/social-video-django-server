@@ -34,8 +34,10 @@ class Account(AbstractUser):
     
     saved_videos_number = models.PositiveIntegerField(default=0)
     
-    btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
-    usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=0.00)
+    #btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
+    #usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=0.00)
+    btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=1.00)
+    usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=17000.00)
     
     payment_info = JSONField(null=True)
     
@@ -101,7 +103,9 @@ class CreatorInfo(models.Model):
     subscription_fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
     subscription_fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
     
-    is_verified = models.BooleanField(default=False)
+    #is_verified = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=True)
+
     identity = JSONField(blank=True, 
         default= dict(legal_name="", age="",)
     )
