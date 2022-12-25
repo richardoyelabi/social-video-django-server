@@ -2,3 +2,7 @@
 .vscode/
 __pycache__/
 media_files/
+
+#docker
+redis/
+postgres_data/
