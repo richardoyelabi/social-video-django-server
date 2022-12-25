@@ -11,6 +11,9 @@ class Migration(migrations.Migration):
     dependencies = [
         ('posts', '0001_initial'),
         ('accounts', '0001_initial'),
+        ("subscriptions", "0001_initial"),
+        ("video_purchases", "0001_initial"),
+        ("video_saves", "0001_initial"),
     ]
 
     operations = [
