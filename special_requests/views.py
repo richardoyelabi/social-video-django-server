@@ -30,12 +30,12 @@ class MessagePurchaseView(GenericAPIView):
             return Response("User already unlocked the video.", status.HTTP_400_BAD_REQUEST)
 
         try:
-            currency = request.query_params["currency"]
+            currency = request.data["currency"]
         except KeyError:
-            return Response("Provide valid 'currency' get parameter: currency=usd or currency=btc")
+            return Response("Provide valid 'currency' parameter: currency is either 'usd' or 'btc'.")
 
         if not currency in ("btc", "usd"):
-            return Response("Provide valid 'currency' get parameter: currency=usd or currency=btc")
+            return Response("Provide valid 'currency' parameter: currency is either 'usd' or 'btc'.")
         
         try:
             MessagePurchase.objects.create(buyer=buyer, video_message=message, fee_currency=currency)
