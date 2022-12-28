@@ -148,11 +148,6 @@ class VideoPostCreateSerializer(BasePostCreateSerializer):
 
     media_item = VideoSerializer()
 
-    def validate_media_item(self, value):
-        validator = FileMimeValidator()
-        validator(value.get("media"), api_call=True)
-        return value
-
     def create(self, validated_data):
         media_data = validated_data.pop("media_item")
         uploader = validated_data.pop("uploader")
