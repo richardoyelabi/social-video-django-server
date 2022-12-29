@@ -32,15 +32,7 @@ class SubscriptionView(GenericAPIView):
             return Response("Subscription already exists.", status.HTTP_400_BAD_REQUEST)
 
         try:
-            currency = request.query_params["currency"]
-        except KeyError:
-            return Response("Provide valid 'currency' get parameter: currency=usd or currency=btc")
-
-        if not currency in ("btc", "usd"):
-            return Response("Provide valid 'currency' get parameter: currency=usd or currency=btc")
-
-        try:
-            Subscription.objects.create(subscribed_to=subscribed_to, subscriber=subscriber, fee_currency=currency)
+            Subscription.objects.create(subscribed_to=subscribed_to, subscriber=subscriber)
         except TransactionInsufficientBalanceError as e:
             return Response(str(e), status.HTTP_400_BAD_REQUEST)
             

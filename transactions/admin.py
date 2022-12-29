@@ -20,6 +20,7 @@ class TransactionAdmin(admin.ModelAdmin):
         "transaction_currency",
         "amount_sent",
         "sender",
+        "receiver",
     )
 
 

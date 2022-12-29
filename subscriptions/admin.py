@@ -1,14 +1,25 @@
 from django.contrib import admin
-from .models import Subscription, CancelledSubscription, NullifiedSubscription
+from .models import SubscriptionTransaction, Subscription, CancelledSubscription, NullifiedSubscription
+
+
+class SubscriptionTransactionAdmin(admin.ModelAdmin):
+    list_display = (
+        "subscribed_to",
+        "subscriber",
+        "timestamp",
+        "fee_currency",
+        "fee_amount",
+        "subscription",
+    )
+
 
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
         "subscribed_to",
         "subscriber",
         "time_of_subscription",
-        "fee_currency",
-        "fee_amount",
     )
+
 
 class CancelledSubscriptionAdmin(admin.ModelAdmin):
     list_display = (
@@ -16,8 +27,6 @@ class CancelledSubscriptionAdmin(admin.ModelAdmin):
         "subscriber",
         "time_of_cancellation",
         "time_of_initial_subscription",
-        "fee_currency",
-        "fee_amount",
     )
 
 class NullifiedSubscriptionAdmin(admin.ModelAdmin):
@@ -26,10 +35,10 @@ class NullifiedSubscriptionAdmin(admin.ModelAdmin):
         "subscriber",
         "time_of_nullification",
         "time_of_initial_subscription",
-        "fee_currency",
-        "fee_amount",
     )
 
+
+admin.site.register(SubscriptionTransaction, SubscriptionTransactionAdmin)
 admin.site.register(Subscription, SubscriptionAdmin)
 admin.site.register(CancelledSubscription, CancelledSubscriptionAdmin)
 admin.site.register(NullifiedSubscription, NullifiedSubscriptionAdmin)

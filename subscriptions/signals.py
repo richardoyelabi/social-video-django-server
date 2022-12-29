@@ -30,9 +30,7 @@ def decrease_subscriptions_numbers_and_archive_subscription(sender, instance, **
     CancelledSubscription.objects.create(
         subscribed_to=instance.subscribed_to,
         subscriber=instance.subscriber,
-        time_of_initial_subscription=instance.time_of_subscription,
-        fee_currency=instance.fee_currency,
-        fee_amount=instance.fee_amount
+        time_of_initial_subscription=instance.time_of_subscription
     )
 
 
