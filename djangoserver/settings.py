@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'rest_framework_word_filter',
     
     #Local
+    "domains.apps.DomainsConfig",
     "accounts.apps.AccountsConfig",
     "transactions.apps.TransactionsConfig",
     "subscriptions.apps.SubscriptionsConfig",
@@ -203,6 +204,8 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 SITE_ID = 1
+SITE_DISPLAY = "x-app"
+SITE_DOMAIN = "127.0.0.1:8000"
 
 # ALLAUTH
 ACCOUNT_AUTHENTICATION_METHOD = "email"
