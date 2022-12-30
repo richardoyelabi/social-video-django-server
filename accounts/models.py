@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
+from django.core.validators import MinValueValidator
+from versatileimagefield.fields import VersatileImageField
 
 from django.conf import settings
 from .account_manager import AccountManager
@@ -11,9 +13,8 @@ from video_purchases.models import Purchase
 from posts.models import Post, Like, Comment, View, UniqueView
 from video_saves.models import VideoSave
 
-from versatileimagefield.fields import VersatileImageField
-from django.db.models import JSONField
 import uuid
+from decimal import Decimal
 
 
 class Account(AbstractUser):
@@ -34,12 +35,12 @@ class Account(AbstractUser):
     
     saved_videos_number = models.PositiveIntegerField(default=0)
     
-    #btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
-    #usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=0.00)
-    btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=1.00)
-    usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=17000.00)
+    #btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, validators=[MinValueValidator(Decimal(0))])
+    #usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=0.00, validators=[MinValueValidator(Decimal(0))])
+    btc_wallet_balance = models.DecimalField(max_digits=100, decimal_places=50, default=1.00, validators=[MinValueValidator(Decimal(0))])
+    usd_wallet_balance = models.DecimalField(max_digits=20, decimal_places=10, default=17000.00, validators=[MinValueValidator(Decimal(0))])
     
-    payment_info = JSONField(null=True)
+    payment_info = models.JSONField(null=True)
     
     blocked_accounts_number = models.PositiveIntegerField(default=0)
     
@@ -106,7 +107,7 @@ class CreatorInfo(models.Model):
     #is_verified = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=True)
 
-    identity = JSONField(blank=True, 
+    identity = models.JSONField(blank=True, 
         default= dict(legal_name="", age="",)
     )
 
