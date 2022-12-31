@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "versatileimagefield",
     'rest_framework_word_filter',
+    "django_celery_beat",
     
     #Local
     "domains.apps.DomainsConfig",
@@ -126,7 +127,8 @@ DATABASES = {
         'NAME': 'djangoserver',
         'USER': 'richard',
         'PASSWORD': 'postgres',
-        'HOST': 'database',
+        #'HOST': 'database',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
@@ -237,10 +239,17 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            #"hosts": [("redis", 6379)],
+            "hosts": [("localhost", 6379)],
         },
     },
 }
+
+
+# CELERY
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {

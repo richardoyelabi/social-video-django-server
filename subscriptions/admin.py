@@ -9,7 +9,6 @@ class SubscriptionTransactionAdmin(admin.ModelAdmin):
         "timestamp",
         "fee_currency",
         "fee_amount",
-        "subscription",
     )
 
 

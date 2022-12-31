@@ -1,4 +1,5 @@
 from django.db import models
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 from django.conf import settings
 from .exceptions import SubscriptionNotACreatorError
@@ -8,6 +9,12 @@ from transactions.currency_convert import convert_currency
 from transactions.exceptions import TransactionInsufficientBalanceError
 
 from decimal import Decimal
+import uuid
+import json
+
+
+# Number of days before subscription expires
+validity_period = 30 #days
 
 
 class SubscriptionTransaction(models.Model):
@@ -16,9 +23,12 @@ class SubscriptionTransaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd")
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
-    subscription = models.ForeignKey("subscriptions.Subscription", related_name="transaction", on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs):
+
+        #Get subscription fee
+        creator_info = self.subscribed_to.creatorinfo
+        self.fee_currency, self.fee_amount = (creator_info.subscription_fee_currency, creator_info.subscription_fee_amount)
 
         #Convert monetary values to decimal
         cut = Decimal(float_cut)
@@ -33,7 +43,7 @@ class SubscriptionTransaction(models.Model):
 
         for currency in currencies:
             # Try to pay for subscription with each of subscriber's wallets 
-            # until one has enough money to pay.
+            # until one wallet has enough money to pay.
             # Otherwise, raise an exception.
 
             #Convert fee_amount to destination currency if needed
@@ -69,6 +79,7 @@ class Subscription(models.Model):
     subscribed_to = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="subs_subscribed_to_set", on_delete=models.CASCADE)
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sub_subscriber_set", on_delete=models.CASCADE)
     time_of_subscription = models.DateTimeField(auto_now_add=True)
+    task = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
 
@@ -80,21 +91,40 @@ class Subscription(models.Model):
         if not(creator_account.creatorinfo.is_verified):
             raise SubscriptionNotACreatorError(f"{creator_account.username} is not a verified creator.")
 
-        #Get subscription fee
-        creator_info = creator_account.creatorinfo
-        fee_currency, fee_amount = (creator_info.subscription_fee_currency, creator_info.subscription_fee_amount)
-
         try:
             SubscriptionTransaction.objects.create(
                 subscribed_to = self.subscribed_to,
-                subscriber = self.subscriber,
-                fee_currency = fee_currency,
-                fee_amount = fee_amount
+                subscriber = self.subscriber
             )
         except TransactionInsufficientBalanceError:
             raise
 
+        if not PeriodicTask.objects.filter(
+            name = f"subscription_{self.subscribed_to.public_id}_{self.subscriber.public_id}"
+        ).exists():
+
+            schedule, created = IntervalSchedule.objects.get_or_create(every=validity_period, period=IntervalSchedule.DAYS)
+
+            self.task = PeriodicTask.objects.create(
+                name = f"subscription_{self.subscribed_to.public_id}_{self.subscriber.public_id}",
+                task = "subscriptions.tasks.process_sub_transaction",
+                interval = schedule,
+                args=json.dumps([self.subscribed_to.id, self.subscriber.id]),
+            )
+
+        else:
+            self.task = PeriodicTask.objects.get(
+                name = f"subscription_{self.subscribed_to.public_id}_{self.subscriber.public_id}"
+            )
+
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+
+        try:
+            self.task.delete() # this results in super().delete() call due to cascading delete
+        except PeriodicTask.DoesNotExist:
+            pass
 
     def __str__(self):
         return f"{self.subscriber} subscribes to {self.subscribed_to}"

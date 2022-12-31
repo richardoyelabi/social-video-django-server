@@ -31,6 +31,7 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=10, choices=transaction_types, default="withdraw")
     record_is_balanced = models.BooleanField(default=False)
 
+    @classmethod
     def get_wallet(self, account, target_wallet):
         if (target_wallet=="usd"):
             wallet = account.usd_wallet_balance

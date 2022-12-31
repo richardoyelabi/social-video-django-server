@@ -3,6 +3,9 @@
 __pycache__/
 media_files/
 
+#redis (local)
+dump.rdb
+
 #docker
 redis/
 postgres_data/
