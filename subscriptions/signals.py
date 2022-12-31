@@ -2,9 +2,19 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from .models import Subscription, CancelledSubscription, NullifiedSubscription
 from notifications.models import Notification
+from django_celery_beat.models import PeriodicTask
 
 
-#Update subscription data for each new subscription
+# Delete subscription task on subscription delete
+@receiver(pre_delete, sender=Subscription)
+def delete_sub_task(sender, instance, **kwargs):
+    try:
+        instance.task.delete()
+    except PeriodicTask.DoesNotExist:
+        pass
+
+
+# Update subscription data for each new subscription
 @receiver(post_save, sender=Subscription)
 def increase_subscriptions_numbers(sender, instance, created, **kwargs):
 
@@ -16,7 +26,7 @@ def increase_subscriptions_numbers(sender, instance, created, **kwargs):
         instance.subscriber.save(update_fields=["active_subscriptions_number"])
 
 
-#Update subscription data for each new unsubscription
+# Update subscription data for each new unsubscription
 @receiver(pre_delete, sender=Subscription)
 def decrease_subscriptions_numbers_and_archive_subscription(sender, instance, **kwargs):
     
@@ -34,7 +44,7 @@ def decrease_subscriptions_numbers_and_archive_subscription(sender, instance, **
     )
 
 
-#Notify creator of subscription
+# Notify creator of subscription
 @receiver(post_save, sender=Subscription)
 def subscription_notify(sender, instance, created, **kwargs):
 

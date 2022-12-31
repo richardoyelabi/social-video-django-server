@@ -119,13 +119,6 @@ class Subscription(models.Model):
 
         super().save(*args, **kwargs)
 
-    def delete(self, *args, **kwargs):
-
-        try:
-            self.task.delete() # this results in super().delete() call due to cascading delete
-        except PeriodicTask.DoesNotExist:
-            pass
-
     def __str__(self):
         return f"{self.subscriber} subscribes to {self.subscribed_to}"
 
