@@ -16,6 +16,8 @@ import os.path
 
 from rest_framework.permissions import IsAuthenticated
 
+from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -231,6 +233,12 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# REDIS
+#REDIS_HOST = 'redis'
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
 
 # CHANNELS
 ASGI_APPLICATION = "djangoserver.asgi.application"
@@ -250,6 +258,12 @@ CHANNEL_LAYERS = {
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULE = {
+    "update_currency_exchange_task": {
+        "task": "transactions.tasks.update_currency_exchange_rate",
+        "schedule": timedelta(minutes=30), # GET NEW EXCHANGE RATE EVERY THIRTY MINUTES
+    },
+}
 
 
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
