@@ -11,7 +11,7 @@ import uuid
 
 class Post(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="posts", on_delete=models.SET_NULL, null=True)
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="posts", on_delete=models.CASCADE, null=True)
     post_type = models.CharField(max_length=12, null=False, blank=False, choices=[
         ("photo", "Photo"),
         ("free_video", "Free video"),
