@@ -27,7 +27,7 @@ def update_currency_exchange_rate():
         db=settings.REDIS_DB
     )
 
-    btc_to_usd = float(get_rate())
+    btc_to_usd = get_rate()
 
     if btc_to_usd:
-        r.set(key, btc_to_usd)
+        r.set(key, float(btc_to_usd))
