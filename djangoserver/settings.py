@@ -129,8 +129,7 @@ DATABASES = {
         'NAME': 'djangoserver',
         'USER': 'richard',
         'PASSWORD': 'postgres',
-        #'HOST': 'database',
-        'HOST': 'localhost',
+        'HOST': 'database',
         'PORT': '',
     }
 }
@@ -234,8 +233,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # REDIS
-#REDIS_HOST = 'redis'
-REDIS_HOST = 'localhost'
+REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 REDIS_DB = 0
 
@@ -247,16 +245,15 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            #"hosts": [("redis", 6379)],
-            "hosts": [("localhost", 6379)],
+            "hosts": [("redis", 6379)],
         },
     },
 }
 
 
 # CELERY
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_BEAT_SCHEDULE = {
     "update_currency_exchange_task": {
