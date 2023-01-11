@@ -49,6 +49,7 @@ services:
 
   celery_beat:
     build: .
+    entrypoint: ./celery.sh
     command: celery -A djangoserver beat -l info
     volumes:
       - .:/app/server
