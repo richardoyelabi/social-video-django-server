@@ -17,9 +17,9 @@ class TransactionAdmin(admin.ModelAdmin):
     )
 
     fields = (
+        "transaction_type",
         "transaction_currency",
         "amount_sent",
-        "sender",
         "receiver",
     )
 

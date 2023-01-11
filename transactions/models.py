@@ -28,7 +28,7 @@ class Transaction(models.Model):
     platform_fee = models.DecimalField(max_digits=100, decimal_places=50, default=0)
     amount_received = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="credit_transactions")
-    transaction_type = models.CharField(max_length=10, choices=transaction_types, default="withdraw")
+    transaction_type = models.CharField(max_length=10, choices=transaction_types)
     record_is_balanced = models.BooleanField(default=False)
 
     @classmethod
