@@ -4,49 +4,59 @@ services:
     image: postgres:14-alpine
     ports:
       - '5432:5432'
-
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=richard
       - POSTGRES_DB=djangoserver
-
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-
 
   redis:
     image: redis:6.2-alpine
     restart: always
     ports:
       - '6379:6379'
-    command: redis-server #--save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    #command: redis-server #--save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes: 
       - ../redis:/data
-
 
   server: 
     build: 
       context: .
       dockerfile: Dockerfile
-
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=richard
       - POSTGRES_DB=postgres
-
+    entrypoint: ./entrypoint.sh
     command: ["sh", "-c", "pip install debugpy -t /tmp \
       && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000 --nothreading --noreload"]
     ports:
       - 8000:8000
       - 5678:5678
-
     volumes:
       - .:/app/server
-
     depends_on:
       - database
       - redis
 
+  celery_worker:
+    build: .
+    command: celery -A djangoserver worker -l info
+    volumes:
+      - .:/app/server
+    depends_on:
+      - database
+      - redis
+
+  celery_beat:
+    build: .
+    command: celery -A djangoserver beat -l info
+    volumes:
+      - .:/app/server
+    depends_on:
+      - database
+      - redis
 
 volumes:
   postgres_data:
