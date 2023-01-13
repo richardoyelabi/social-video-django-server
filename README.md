@@ -28,6 +28,8 @@ There has to be a superuser that can create new staff accounts and has unrestric
 
 There will be prompts to create the superuser account.
 
+You can now access the admin panel at localhost:8000/admin/
+
 This is what verifying a creator account looks like
 
 ![Screenshot from 2023-01-13 09-48-33](https://user-images.githubusercontent.com/70032662/212278479-c2480e30-8585-4f74-adda-f16d83a70263.png)
