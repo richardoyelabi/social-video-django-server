@@ -1,7 +1,7 @@
 # social-video-django-server
-This Django project provides a robust API for a premium content sharing platform. On this platform, creators would create content that could be free or premium for 'regular' users.  The API is documented at https://bit.ly/3X7GaUX
+This Django project provexcu robust API for a premium content sharing platform. On this platform, creators would create content that could be free or premium for 'regular' users.  The API is documented at https://bit.ly/3X7GaUX
 
-The project's django config folder is named djangoserver. I know it isn't structured exactly pleasantly; my excuse is I was new to Django when I started this project haha. Okay, maybe not that good an excuse.
+The project's django config folder is named djangoserver. I know it isn't structured exactly pleasantly, my apologies 🙃
 
 To test run it, make sure you've got Docker and Docker-compose installed.
 
