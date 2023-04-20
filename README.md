@@ -39,3 +39,23 @@ And this is what depositing money into a user's account looks like
 ![Screenshot from 2023-01-13 09-48-55](https://user-images.githubusercontent.com/70032662/212278629-80052e37-4247-49d6-a56d-e2ee471f4209.png)
 
 And of course, don't forget to read the doc at https://bit.ly/3X7GaUX :)
+
+## Some implementation detail:
+- Creator and (regular) user authentication and account management in 'accounts' app.
+- Robust wallet and monetary transactions app for user and creator accounts in 'transactions' app.
+- User-to-creator paid 'subscriptions' app that connects to transactions.
+- Image and video posts creation limited only to creator accounts and implemented automatic thumbnails and video previews generation.
+- Video streaming (mostly thanks to third-party app).
+- Paywalls to video contents designated by their creators as premium that require subbscription to creator or outright purchase of video. Previews are available to everyone for free.
+- Likes and comments on post streamed in real time to every user connected to post.
+- Post bookmarks.
+- Real time in-app and email notifications.
+- Identity verification for creators.
+- In-app real time chat.
+- Special content at extra fee.
+- Creator tipping.
+
+Special mention tech stack:
+- Websocket
+- Redis
+- Celery
