@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0004_account_connected_account_email_message_and_more'),
+        ("accounts", "0004_account_connected_account_email_message_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='account',
-            name='notification_seen',
+            model_name="account",
+            name="notification_seen",
             field=models.BooleanField(default=True),
         ),
     ]

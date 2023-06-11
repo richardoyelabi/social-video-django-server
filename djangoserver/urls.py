@@ -19,63 +19,57 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from drf_spectacular.views import (
-    SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
 )
 
 urlpatterns = [
-    #Admin
-    path('admin/', admin.site.urls),
-
-    #Account and auth
+    # Admin
+    path("admin/", admin.site.urls),
+    # Account and auth
     path("account/", include("accounts.urls")),
-    
-    #Feed
+    # Feed
     path("feed/", include("feeds.urls")),
-
-    #Post
+    # Post
     path("post/", include("posts.urls")),
-    
-    #Chat
+    # Chat
     path("chat/", include("chats.urls")),
-    
-    #Media
+    # Media
     path("media-upload/", include("media.urls")),
-    
-    #Video save
+    # Video save
     path("save/", include("video_saves.urls")),
-
-    #Subscription
+    # Subscription
     path("subscription/", include("subscriptions.urls")),
-    
-    #Video Purchase
+    # Video Purchase
     path("video-purchase/", include("video_purchases.urls")),
-    
-    #Special Request
+    # Special Request
     path("special-request/", include("special_requests.urls")),
-    
-    #Tip
+    # Tip
     path("tip/", include("tips.urls")),
-    
-    #Notification
+    # Notification
     path("notification/", include("notifications.urls")),
-    
-    #Transaction
+    # Transaction
     path("transaction/", include("transactions.urls")),
-    
-    #Id verification
+    # Id verification
     path("verification/", include("verifications.urls")),
-
-    #Browsable API auth
-    path("api-auth/", include("rest_framework.urls"),),
-
-    #Schema
+    # Browsable API auth
+    path(
+        "api-auth/",
+        include("rest_framework.urls"),
+    ),
+    # Schema
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("schema/redoc/", SpectacularRedocView.as_view(
-    url_name="schema"), name="redoc",),
-    path("schema/swagger-ui/", SpectacularSwaggerView.as_view(
-    url_name="schema"), name="swagger-ui"),
-    
-    
+    path(
+        "schema/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
+    path(
+        "schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
 ]
 
 if settings.DEBUG:

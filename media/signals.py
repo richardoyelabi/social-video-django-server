@@ -7,9 +7,9 @@ from django.conf import settings
 
 
 def delete_thumbnails(**kwargs):
-    """Delete thumbnails of media files 
+    """Delete thumbnails of media files
     before django_cleanup deletes the parent files"""
-    
+
     file = kwargs["file"]
 
     if isinstance(file.field, VersatileImageField):
@@ -24,5 +24,6 @@ def delete_thumbnails(**kwargs):
         url = os.path.join(media_dir, rel_url)
 
         file.storage.delete(url)
+
 
 cleanup_pre_delete.connect(delete_thumbnails)

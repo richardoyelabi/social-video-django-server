@@ -8,7 +8,7 @@ from .permissions import IsUnVerifiedCreator
 
 
 class IdUploadView(CreateAPIView):
-    """Upload id verification files. 
+    """Upload id verification files.
     Accepts POST"""
 
     serializer_class = IdUploadSerializer
@@ -20,11 +20,7 @@ class IdUploadView(CreateAPIView):
         type = request.data.get("type")
         upload = request.data.get("upload")
 
-        data = {
-            "creator": creator,
-            "type": type,
-            "upload": upload
-        }
+        data = {"creator": creator, "type": type, "upload": upload}
 
         serializer = self.get_serializer_class()
         serializer = serializer(data=data)

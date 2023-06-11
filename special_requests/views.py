@@ -21,24 +21,31 @@ class MessagePurchaseView(GenericAPIView):
         message = ChatMessage.objects.get(public_id=message_id)
 
         if message.message_type != "paid_video":
-            return Response("Media doesn't require purchase", status.HTTP_400_BAD_REQUEST)
+            return Response(
+                "Media doesn't require purchase", status.HTTP_400_BAD_REQUEST
+            )
 
-        if MessagePurchase.objects.filter(
-            buyer = buyer,
-            video_message = message
-        ).exists():
-            return Response("User already unlocked the video.", status.HTTP_400_BAD_REQUEST)
+        if MessagePurchase.objects.filter(buyer=buyer, video_message=message).exists():
+            return Response(
+                "User already unlocked the video.", status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             currency = request.data["currency"]
         except KeyError:
-            return Response("Provide valid 'currency' parameter: currency is either 'usd' or 'btc'.")
+            return Response(
+                "Provide valid 'currency' parameter: currency is either 'usd' or 'btc'."
+            )
 
         if not currency in ("btc", "usd"):
-            return Response("Provide valid 'currency' parameter: currency is either 'usd' or 'btc'.")
-        
+            return Response(
+                "Provide valid 'currency' parameter: currency is either 'usd' or 'btc'."
+            )
+
         try:
-            MessagePurchase.objects.create(buyer=buyer, video_message=message, fee_currency=currency)
+            MessagePurchase.objects.create(
+                buyer=buyer, video_message=message, fee_currency=currency
+            )
         except TransactionInsufficientBalanceError as e:
             return Response(str(e), status.HTTP_400_BAD_REQUEST)
 

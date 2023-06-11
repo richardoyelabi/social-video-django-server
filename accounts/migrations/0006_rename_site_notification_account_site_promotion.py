@@ -4,15 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0005_account_notification_seen'),
+        ("accounts", "0005_account_notification_seen"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='account',
-            old_name='site_notification',
-            new_name='site_promotion',
+            model_name="account",
+            old_name="site_notification",
+            new_name="site_promotion",
         ),
     ]

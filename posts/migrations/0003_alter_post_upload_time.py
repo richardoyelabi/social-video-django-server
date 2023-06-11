@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('posts', '0002_post_video_preview'),
+        ("posts", "0002_post_video_preview"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='post',
-            name='upload_time',
+            model_name="post",
+            name="upload_time",
             field=models.DateTimeField(auto_now_add=True),
         ),
     ]

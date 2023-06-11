@@ -7,10 +7,9 @@ import versatileimagefield.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('posts', '0001_initial'),
-        ('accounts', '0001_initial'),
+        ("posts", "0001_initial"),
+        ("accounts", "0001_initial"),
         ("subscriptions", "0001_initial"),
         ("video_purchases", "0001_initial"),
         ("video_saves", "0001_initial"),
@@ -18,53 +17,81 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='account',
-            name='cancelled_subscriptions',
-            field=models.ManyToManyField(related_name='cancelled_subscribers', through='subscriptions.CancelledSubscription', to=settings.AUTH_USER_MODEL),
+            model_name="account",
+            name="cancelled_subscriptions",
+            field=models.ManyToManyField(
+                related_name="cancelled_subscribers",
+                through="subscriptions.CancelledSubscription",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='cover_photo',
-            field=versatileimagefield.fields.VersatileImageField(blank=True, null=True, upload_to=media.media_paths.cover_photos_path),
+            model_name="account",
+            name="cover_photo",
+            field=versatileimagefield.fields.VersatileImageField(
+                blank=True, null=True, upload_to=media.media_paths.cover_photos_path
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='post_comments',
-            field=models.ManyToManyField(related_name='commented_on_by', through='posts.Comment', to='posts.post'),
+            model_name="account",
+            name="post_comments",
+            field=models.ManyToManyField(
+                related_name="commented_on_by", through="posts.Comment", to="posts.post"
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='post_likes',
-            field=models.ManyToManyField(related_name='liked_by', through='posts.Like', to='posts.post'),
+            model_name="account",
+            name="post_likes",
+            field=models.ManyToManyField(
+                related_name="liked_by", through="posts.Like", to="posts.post"
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='post_views',
-            field=models.ManyToManyField(related_name='viewed_by', through='posts.View', to='posts.post'),
+            model_name="account",
+            name="post_views",
+            field=models.ManyToManyField(
+                related_name="viewed_by", through="posts.View", to="posts.post"
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='profile_photo',
-            field=versatileimagefield.fields.VersatileImageField(blank=True, null=True, upload_to=media.media_paths.profile_photos_path),
+            model_name="account",
+            name="profile_photo",
+            field=versatileimagefield.fields.VersatileImageField(
+                blank=True, null=True, upload_to=media.media_paths.profile_photos_path
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='purchased_videos',
-            field=models.ManyToManyField(related_name='buyers', through='video_purchases.Purchase', to='posts.post'),
+            model_name="account",
+            name="purchased_videos",
+            field=models.ManyToManyField(
+                related_name="buyers",
+                through="video_purchases.Purchase",
+                to="posts.post",
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='saved_videos',
-            field=models.ManyToManyField(related_name='saves', through='video_saves.VideoSave', to='posts.post'),
+            model_name="account",
+            name="saved_videos",
+            field=models.ManyToManyField(
+                related_name="saves", through="video_saves.VideoSave", to="posts.post"
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='subscriptions',
-            field=models.ManyToManyField(related_name='subscribers', through='subscriptions.Subscription', to=settings.AUTH_USER_MODEL),
+            model_name="account",
+            name="subscriptions",
+            field=models.ManyToManyField(
+                related_name="subscribers",
+                through="subscriptions.Subscription",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='account',
-            name='unique_post_views',
-            field=models.ManyToManyField(related_name='unique_viewers', through='posts.UniqueView', to='posts.post'),
+            model_name="account",
+            name="unique_post_views",
+            field=models.ManyToManyField(
+                related_name="unique_viewers",
+                through="posts.UniqueView",
+                to="posts.post",
+            ),
         ),
     ]

@@ -13,4 +13,3 @@ class BaseFeedView(ListAPIView):
 
     pagination_class = CustomCursorPagination
     filter_backends = [OrderingFilter, FullWordSearchFilter]
-    

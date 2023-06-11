@@ -5,17 +5,20 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('django_celery_beat', '0016_alter_crontabschedule_timezone'),
-        ('subscriptions', '0003_remove_subscriptiontransaction_subscription'),
+        ("django_celery_beat", "0016_alter_crontabschedule_timezone"),
+        ("subscriptions", "0003_remove_subscriptiontransaction_subscription"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='subscription',
-            name='task',
-            field=models.OneToOneField(default=1, on_delete=django.db.models.deletion.CASCADE, to='django_celery_beat.periodictask'),
+            model_name="subscription",
+            name="task",
+            field=models.OneToOneField(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="django_celery_beat.periodictask",
+            ),
             preserve_default=False,
         ),
     ]

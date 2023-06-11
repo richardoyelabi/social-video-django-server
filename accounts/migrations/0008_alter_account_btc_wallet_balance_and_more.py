@@ -6,25 +6,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0007_remove_account_notification_settings'),
+        ("accounts", "0007_remove_account_notification_settings"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='account',
-            name='btc_wallet_balance',
-            field=models.DecimalField(decimal_places=50, default=0.0, max_digits=100, validators=[django.core.validators.MinValueValidator(Decimal('0'))]),
+            model_name="account",
+            name="btc_wallet_balance",
+            field=models.DecimalField(
+                decimal_places=50,
+                default=0.0,
+                max_digits=100,
+                validators=[django.core.validators.MinValueValidator(Decimal("0"))],
+            ),
         ),
         migrations.AlterField(
-            model_name='account',
-            name='usd_wallet_balance',
-            field=models.DecimalField(decimal_places=10, default=0.0, max_digits=20, validators=[django.core.validators.MinValueValidator(Decimal('0'))]),
+            model_name="account",
+            name="usd_wallet_balance",
+            field=models.DecimalField(
+                decimal_places=10,
+                default=0.0,
+                max_digits=20,
+                validators=[django.core.validators.MinValueValidator(Decimal("0"))],
+            ),
         ),
         migrations.AlterField(
-            model_name='creatorinfo',
-            name='is_verified',
+            model_name="creatorinfo",
+            name="is_verified",
             field=models.BooleanField(default=False),
         ),
     ]

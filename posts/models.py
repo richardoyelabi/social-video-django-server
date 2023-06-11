@@ -11,38 +11,55 @@ import uuid
 
 class Post(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="posts", on_delete=models.CASCADE, null=True)
-    post_type = models.CharField(max_length=12, null=False, blank=False, choices=[
-        ("photo", "Photo"),
-        ("free_video", "Free video"),
-        ("paid_video", "Premium video"),
-    ])
+    uploader = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="posts",
+        on_delete=models.CASCADE,
+        null=True,
+    )
+    post_type = models.CharField(
+        max_length=12,
+        null=False,
+        blank=False,
+        choices=[
+            ("photo", "Photo"),
+            ("free_video", "Free video"),
+            ("paid_video", "Premium video"),
+        ],
+    )
     upload_time = models.DateTimeField(auto_now_add=True)
     caption = models.TextField(max_length=1024, blank=True, default="")
 
-    media_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, limit_choices_to={"model__in":(
-        "photo",
-        "video"
-    )})
+    media_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={"model__in": ("photo", "video")},
+    )
     media_id = models.PositiveIntegerField()
     media_item = GenericForeignKey("media_type", "media_id")
 
-    video_preview = models.FileField(upload_to=video_previews_path, blank=True, null=True)
+    video_preview = models.FileField(
+        upload_to=video_previews_path, blank=True, null=True
+    )
 
     likes_number = models.PositiveIntegerField(default=0)
     comments_number = models.PositiveIntegerField(default=0)
     views_number = models.PositiveIntegerField(default=0)
     unique_views_number = models.PositiveBigIntegerField(default=0)
 
-    #Used by generic feed ranking;
-    #Updated in .signals.feed_score_unique_view_update and signals.feed_score_like_update
+    # Used by generic feed ranking;
+    # Updated in .signals.feed_score_unique_view_update and signals.feed_score_like_update
     feed_score = models.FloatField(default=1)
 
-    purchase_cost_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd", blank=True)
-    purchase_cost_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00, blank=True)
+    purchase_cost_currency = models.CharField(
+        max_length=3, choices=Transaction.currency_choices, default="usd", blank=True
+    )
+    purchase_cost_amount = models.DecimalField(
+        max_digits=100, decimal_places=50, default=0.00, blank=True
+    )
 
     def save(self, *args, **kwargs):
-
         if not self.uploader.is_creator:
             raise ConnectionRefusedError("User is not a creator")
         if not self.uploader.creatorinfo.is_verified:

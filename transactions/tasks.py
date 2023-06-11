@@ -6,6 +6,7 @@ import json
 from django.conf import settings
 from .currency_convert import key
 
+
 def get_rate():
     """Get exchange rate from exchange rate API"""
 
@@ -17,14 +18,13 @@ def get_rate():
     except:
         return None
 
+
 @shared_task
 def update_currency_exchange_rate():
     """Task to update currency conversion rate used in app"""
 
     r = redis.Redis(
-        host=settings.REDIS_HOST,
-        port=settings.REDIS_PORT,
-        db=settings.REDIS_DB
+        host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB
     )
 
     btc_to_usd = get_rate()

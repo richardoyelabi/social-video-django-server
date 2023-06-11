@@ -6,9 +6,10 @@ from sage_stream.models import WatchLog
 @admin.register(WatchLog)
 class WatchLogAdmin(admin.ModelAdmin):
     """Watch Log admin"""
-    list_display = ('created', 'is_authenticated', 'user', 'ip')
-    list_filter = ('is_authenticated', 'created')
-    search_fields = ('user',)
+
+    list_display = ("created", "is_authenticated", "user", "ip")
+    list_filter = ("is_authenticated", "created")
+    search_fields = ("user",)
 
     def has_add_permission(self, request):
         return False

@@ -5,12 +5,10 @@ from tips.models import Tip
 from notifications.models import Notification
 
 
-#Notify creator of tip
+# Notify creator of tip
 @receiver(post_save, sender=Tip)
 def tip_notify(sender, instance, created, **kwargs):
-
     if created:
-
         receiver = instance.receiver
         record = instance
 

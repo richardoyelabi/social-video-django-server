@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('subscriptions', '0002_remove_cancelledsubscription_fee_amount_and_more'),
+        ("subscriptions", "0002_remove_cancelledsubscription_fee_amount_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='subscriptiontransaction',
-            name='subscription',
+            model_name="subscriptiontransaction",
+            name="subscription",
         ),
     ]

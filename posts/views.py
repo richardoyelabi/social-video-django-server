@@ -1,5 +1,10 @@
 from rest_framework.mixins import ListModelMixin
-from rest_framework.generics import GenericAPIView, DestroyAPIView, RetrieveDestroyAPIView, CreateAPIView
+from rest_framework.generics import (
+    GenericAPIView,
+    DestroyAPIView,
+    RetrieveDestroyAPIView,
+    CreateAPIView,
+)
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -8,9 +13,19 @@ from channels.layers import get_channel_layer
 
 from posts.permissions import CommentOwnerOrReadOnly, PostOwnerOrReadOnly
 from posts.models import Post, Like, Comment, View
-from posts.serializers import BasePostCreateSerializer, PhotoPostCreateSerializer, VideoPostCreateSerializer, PaidVideoPostCreateSerializer, \
-    PhotoPostDetailSerializer, VideoPostDetailSerializer, PaidVideoPostDetailSerializer, \
-        ViewSerializer, LikeSerializer, CommentSerializer, CommentCreateSerializer
+from posts.serializers import (
+    BasePostCreateSerializer,
+    PhotoPostCreateSerializer,
+    VideoPostCreateSerializer,
+    PaidVideoPostCreateSerializer,
+    PhotoPostDetailSerializer,
+    VideoPostDetailSerializer,
+    PaidVideoPostDetailSerializer,
+    ViewSerializer,
+    LikeSerializer,
+    CommentSerializer,
+    CommentCreateSerializer,
+)
 from sage_stream.api.views import VideoStreamAPIView, PreviewStreamAPIView
 from utils.paginations import CustomCursorPagination
 from media.models import Video
@@ -33,7 +48,7 @@ class PostViewView(GenericAPIView):
 
         return Response("Post view acknowledged", status.HTTP_202_ACCEPTED)
 
-        
+
 class PostLikeView(GenericAPIView):
     """Like, unlike, or get the number of likes of a post.
     GET to retrieve the number of likes; POST to like; DELETE to unlike."""
@@ -55,11 +70,10 @@ class PostLikeView(GenericAPIView):
         account = request.user
         post = Post.objects.get(public_id=post_id)
 
-        if Like.objects.filter(
-            account = account,
-            post = post
-        ).exists():
-            return Response("User already liked this post.", status.HTTP_400_BAD_REQUEST)
+        if Like.objects.filter(account=account, post=post).exists():
+            return Response(
+                "User already liked this post.", status.HTTP_400_BAD_REQUEST
+            )
 
         Like.objects.create(account=account, post=post)
 
@@ -71,11 +85,10 @@ class PostLikeView(GenericAPIView):
         account = request.user
         post = Post.objects.get(public_id=post_id)
 
-        if not Like.objects.filter(
-            account = account,
-            post = post
-        ).exists():
-            return Response("Like relation does not exist.", status.HTTP_400_BAD_REQUEST)
+        if not Like.objects.filter(account=account, post=post).exists():
+            return Response(
+                "Like relation does not exist.", status.HTTP_400_BAD_REQUEST
+            )
 
         Like.objects.get(account=account, post=post).delete()
 
@@ -91,13 +104,13 @@ class PostLikeView(GenericAPIView):
         likes_number = post.likes_number
         post_id = post.public_id
 
-        async_to_sync(get_channel_layer().group_send)(f"like_count_{post_id}", {
-            "type": "like_count_update",
-            "content": {"like_count": likes_number}
-        })
+        async_to_sync(get_channel_layer().group_send)(
+            f"like_count_{post_id}",
+            {"type": "like_count_update", "content": {"like_count": likes_number}},
+        )
 
 
-class PostCommentView(ListModelMixin,GenericAPIView):
+class PostCommentView(ListModelMixin, GenericAPIView):
     """View comments.
     Accepts GET"""
 
@@ -126,11 +139,10 @@ class CommentCreateView(GenericAPIView):
     lookup_url_kwarg = "post_id"
 
     def post(self, request, post_id, *args, **kwargs):
-
         account = request.user.public_id
         comment_text = request.POST.get("comment_text")
 
-        data = {"account":account, "comment_text":comment_text, "post":post_id}
+        data = {"account": account, "comment_text": comment_text, "post": post_id}
 
         serializer = CommentCreateSerializer(data=data)
 
@@ -141,14 +153,9 @@ class CommentCreateView(GenericAPIView):
 
             post = Post.objects.get(public_id=post_id)
 
-            self.send_new_comment(
-                post,
-                comment_data
-            )
+            self.send_new_comment(post, comment_data)
 
-            self.send_comment_count(
-                post
-            )
+            self.send_comment_count(post)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -162,24 +169,27 @@ class CommentCreateView(GenericAPIView):
         comments_number = post.comments_number
         post_id = post.public_id
 
-        async_to_sync(get_channel_layer().group_send)(f"comment_count_{post_id}", {
-            "type": "comment_count_update",
-            "content": {"comment_count": comments_number}
-        })
+        async_to_sync(get_channel_layer().group_send)(
+            f"comment_count_{post_id}",
+            {
+                "type": "comment_count_update",
+                "content": {"comment_count": comments_number},
+            },
+        )
 
     def send_new_comment(self, post, comment_data):
         """Send new comment to consumers listening for new comment"""
 
         post_id = post.public_id
 
-        async_to_sync(get_channel_layer().group_send)(f"comments_{post_id}", {
-            "type": "comment_update",
-            "content": {
-                "type": "create",
-                "data": comment_data
-            }
-        })
-            
+        async_to_sync(get_channel_layer().group_send)(
+            f"comments_{post_id}",
+            {
+                "type": "comment_update",
+                "content": {"type": "create", "data": comment_data},
+            },
+        )
+
 
 class CommentView(DestroyAPIView):
     """Delete comment.
@@ -192,13 +202,12 @@ class CommentView(DestroyAPIView):
     permission_classes = [CommentOwnerOrReadOnly]
 
     def destroy(self, request, comment_id, *args, **kwargs):
-
         try:
             comment = Comment.objects.get(public_id=comment_id)
 
         except Comment.DoesNotExist:
             return Response("Comment does not exist.", status.HTTP_400_BAD_REQUEST)
-        
+
         comment.delete()
 
         self.send_comment_delete(comment.post, comment)
@@ -214,10 +223,13 @@ class CommentView(DestroyAPIView):
         comments_number = post.comments_number
         post_id = post.public_id
 
-        async_to_sync(get_channel_layer().group_send)(f"comment_count_{post_id}", {
-            "type": "comment_count_update",
-            "content": {"comment_count": comments_number}
-        })
+        async_to_sync(get_channel_layer().group_send)(
+            f"comment_count_{post_id}",
+            {
+                "type": "comment_count_update",
+                "content": {"comment_count": comments_number},
+            },
+        )
 
     def send_comment_delete(self, post, comment):
         """Notify PostCommentsConsumer if a comment is deleted"""
@@ -225,13 +237,13 @@ class CommentView(DestroyAPIView):
         post_id = post.public_id
         comment_id = str(comment.public_id)
 
-        async_to_sync(get_channel_layer().group_send)(f"comments_{post_id}", {
-            "type": "comment_update",
-            "content": {
-                "type": "delete",
-                "data": comment_id
-            }
-        })
+        async_to_sync(get_channel_layer().group_send)(
+            f"comments_{post_id}",
+            {
+                "type": "comment_update",
+                "content": {"type": "delete", "data": comment_id},
+            },
+        )
 
 
 class PostView(RetrieveDestroyAPIView):
@@ -246,12 +258,12 @@ class PostView(RetrieveDestroyAPIView):
     def get_serializer_class(self):
         post = Post.objects.get(public_id=self.kwargs["post_id"])
         post_type = post.post_type
-        
-        if post_type=="photo":
+
+        if post_type == "photo":
             return PhotoPostDetailSerializer
-        elif post_type=="free_video":
+        elif post_type == "free_video":
             return VideoPostDetailSerializer
-        elif post_type=="paid_video":
+        elif post_type == "paid_video":
             return PaidVideoPostDetailSerializer
 
 
@@ -271,42 +283,44 @@ class CreatePostView(CreateAPIView):
         caption = request.data.get("caption")
 
         data = {
-            "post_type": post_type, 
+            "post_type": post_type,
             "uploader": uploader_public_id,
-            "media_item": {
-                "uploader": uploader_public_id,
-                "media": media
-            }, 
-            "caption":caption
+            "media_item": {"uploader": uploader_public_id, "media": media},
+            "caption": caption,
         }
-        
-        #Set serialization process based on post_type
 
-        if post_type=="photo":
+        # Set serialization process based on post_type
+
+        if post_type == "photo":
             serializer = PhotoPostCreateSerializer(data=data)
-            
-        else:
 
-            if post_type=="free_video":
+        else:
+            if post_type == "free_video":
                 serializer = VideoPostCreateSerializer(data=data)
 
-            elif post_type=="paid_video":
-                data["purchase_cost_currency"], data["purchase_cost_amount"] = \
-                    request.data.get("purchase_cost_currency"), request.data.get("purchase_cost_amount")
-                
+            elif post_type == "paid_video":
+                (
+                    data["purchase_cost_currency"],
+                    data["purchase_cost_amount"],
+                ) = request.data.get("purchase_cost_currency"), request.data.get(
+                    "purchase_cost_amount"
+                )
+
                 serializer = PaidVideoPostCreateSerializer(data=data)
 
             else:
-                return Response("Invalid post_type parameter", status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    "Invalid post_type parameter", status=status.HTTP_400_BAD_REQUEST
+                )
 
         if serializer.is_valid():
             new_post = serializer.save()
 
-            if post_type=="photo":
+            if post_type == "photo":
                 serializer = PhotoPostDetailSerializer(new_post)
-            elif post_type=="free_video":
+            elif post_type == "free_video":
                 serializer = VideoPostDetailSerializer(new_post)
-            elif post_type=="paid_video":
+            elif post_type == "paid_video":
                 serializer = PaidVideoPostDetailSerializer(new_post)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -323,8 +337,10 @@ class PostVideoStreamView(VideoStreamAPIView):
         post = Post.objects.get(public_id=post_id)
         video = Video.objects.get(public_id=video_id)
 
-        error_response = Response("You're not authorized to watch this video. Please purchase video or subscribe to creator to unlock.", 
-            status=status.HTTP_401_UNAUTHORIZED)
+        error_response = Response(
+            "You're not authorized to watch this video. Please purchase video or subscribe to creator to unlock.",
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
         if post.media_item != video:
             return error_response
@@ -332,12 +348,15 @@ class PostVideoStreamView(VideoStreamAPIView):
         user = request.user
         post_creator = post.uploader
 
-        if post.post_type=="free_video" or \
-            Subscription.objects.filter(subscribed_to=post_creator, subscriber=user).exists() or \
-                post.buyers.filter(id=user.id).exists() or \
-                    user==post_creator:
-                    
-                    return super().get(request, video_id)
+        if (
+            post.post_type == "free_video"
+            or Subscription.objects.filter(
+                subscribed_to=post_creator, subscriber=user
+            ).exists()
+            or post.buyers.filter(id=user.id).exists()
+            or user == post_creator
+        ):
+            return super().get(request, video_id)
 
         return error_response
 
@@ -347,5 +366,4 @@ class PreviewVideoStreamView(PreviewStreamAPIView):
     Accepts GET"""
 
     def get(self, request, post_id, *args, **kwargs):
-
         return super().get(request, post_id, *args, **kwargs)

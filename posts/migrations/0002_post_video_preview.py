@@ -5,15 +5,16 @@ import media.media_paths
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('posts', '0001_initial'),
+        ("posts", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='post',
-            name='video_preview',
-            field=models.FileField(blank=True, null=True, upload_to=media.media_paths.video_previews_path),
+            model_name="post",
+            name="video_preview",
+            field=models.FileField(
+                blank=True, null=True, upload_to=media.media_paths.video_previews_path
+            ),
         ),
     ]

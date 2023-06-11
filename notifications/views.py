@@ -6,7 +6,10 @@ from rest_framework import status
 
 from utils.paginations import CustomCursorPagination as Pagination
 from notifications.models import Notification
-from notifications.serializers import NotificationSerializer, NotificationSettingsListSerializer
+from notifications.serializers import (
+    NotificationSerializer,
+    NotificationSettingsListSerializer,
+)
 
 
 class NotificationListView(ListAPIView):
@@ -18,13 +21,12 @@ class NotificationListView(ListAPIView):
     ordering_fields = ["-timestamp"]
     ordering = ordering_fields[0]
     pagination_class = Pagination
-    
+
     def get_queryset(self):
         user = self.request.user
-        return  Notification.objects.filter(receiver=user)
+        return Notification.objects.filter(receiver=user)
 
     def list(self, request, *args, **kwargs):
-        
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
@@ -32,7 +34,6 @@ class NotificationListView(ListAPIView):
         def get_data(instances):
             queryset = []
             for instance in instances:
-
                 notification = Notification.format(instance.record)
 
                 notification["public_id"] = instance.public_id
@@ -57,7 +58,6 @@ class NotificationSeenView(APIView):
     Accepts POST"""
 
     def post(self, request, *args, **kwargs):
-
         account = request.user
         account.notification_seen = True
         account.save(update_fields=["notification_seen"])
@@ -71,30 +71,34 @@ class NotificationSettingView(APIView):
     Accepts POST and DELETE"""
 
     def post(self, request, *args, **kwargs):
-
         account = request.user
         setting = self.get_setting(request.path, account)
 
         if setting["value"]:
-            return Response(f"{setting['name']} setting is already activated", status.HTTP_208_ALREADY_REPORTED)
+            return Response(
+                f"{setting['name']} setting is already activated",
+                status.HTTP_208_ALREADY_REPORTED,
+            )
 
         exec(f"account.{setting['name']} = True")
 
-        account.save(update_fields=[setting['name']])
+        account.save(update_fields=[setting["name"]])
 
         return Response(f"{setting['name']} setting activated", status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
-
         account = request.user
         setting = self.get_setting(request.path, account)
 
         if not setting["value"]:
-            return Response(f"{setting['name']} setting is already deactivated", status.HTTP_208_ALREADY_REPORTED)
+            return Response(
+                f"{setting['name']} setting is already deactivated",
+                status.HTTP_208_ALREADY_REPORTED,
+            )
 
         exec(f"account.{setting['name']} = False")
 
-        account.save(update_fields=[setting['name']])
+        account.save(update_fields=[setting["name"]])
 
         return Response(f"{setting['name']} setting deactivated", status.HTTP_200_OK)
 
@@ -102,34 +106,17 @@ class NotificationSettingView(APIView):
         """Get the notification setting to be updated from url"""
 
         match path:
-
             case "/notification/setting/site/messages/":
-
-                return dict(
-                    name = "site_message",
-                    value = account.site_message
-                )
+                return dict(name="site_message", value=account.site_message)
 
             case "/notification/setting/site/promotions/":
-
-                return dict(
-                    name="site_promotion",
-                    value=account.site_promotion
-                )
+                return dict(name="site_promotion", value=account.site_promotion)
 
             case "/notification/setting/email/messages/":
-
-                return dict(
-                    name = "email_message",
-                    value = account.email_message
-                )
+                return dict(name="email_message", value=account.email_message)
 
             case "/notification/setting/email/promotions/":
-
-                return dict(
-                    name = "email_promotion",
-                    value = account.email_promotion
-                )
+                return dict(name="email_promotion", value=account.email_promotion)
 
 
 class NotificationSettingsListView(APIView):
@@ -137,7 +124,6 @@ class NotificationSettingsListView(APIView):
     Accepts GET"""
 
     def get(self, request, *args, **kwargs):
-
         account = request.user
 
         serializer = NotificationSettingsListSerializer(account)

@@ -6,9 +6,17 @@ from videothumbs.helpers import VideoThumbnailHelper
 class VideoThumbnailField(FileField):
     attr_class = VideoThumbnailHelper
 
-    def __init__(self, verbose_name=None, name=None, width_field=None,
-        height_field=None, sizes=None, auto_crop=True, default_size=None, **kwargs):
-
+    def __init__(
+        self,
+        verbose_name=None,
+        name=None,
+        width_field=None,
+        height_field=None,
+        sizes=None,
+        auto_crop=True,
+        default_size=None,
+        **kwargs
+    ):
         self.verbose_name = verbose_name
         self.name = name
         self.width_field = width_field

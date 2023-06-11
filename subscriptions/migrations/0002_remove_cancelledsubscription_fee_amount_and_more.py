@@ -6,47 +6,90 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('subscriptions', '0001_initial'),
+        ("subscriptions", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cancelledsubscription',
-            name='fee_amount',
+            model_name="cancelledsubscription",
+            name="fee_amount",
         ),
         migrations.RemoveField(
-            model_name='cancelledsubscription',
-            name='fee_currency',
+            model_name="cancelledsubscription",
+            name="fee_currency",
         ),
         migrations.RemoveField(
-            model_name='nullifiedsubscription',
-            name='fee_amount',
+            model_name="nullifiedsubscription",
+            name="fee_amount",
         ),
         migrations.RemoveField(
-            model_name='nullifiedsubscription',
-            name='fee_currency',
+            model_name="nullifiedsubscription",
+            name="fee_currency",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='fee_amount',
+            model_name="subscription",
+            name="fee_amount",
         ),
         migrations.RemoveField(
-            model_name='subscription',
-            name='fee_currency',
+            model_name="subscription",
+            name="fee_currency",
         ),
         migrations.CreateModel(
-            name='SubscriptionTransaction',
+            name="SubscriptionTransaction",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('fee_currency', models.CharField(choices=[('usd', 'United States Dollar'), ('btc', 'Bitcoin')], default='usd', max_length=3)),
-                ('fee_amount', models.DecimalField(decimal_places=50, default=0.0, max_digits=100)),
-                ('subscribed_to', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sub_transaction_subscribed_to_set', to=settings.AUTH_USER_MODEL)),
-                ('subscriber', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sub_transaction_subscriber_set', to=settings.AUTH_USER_MODEL)),
-                ('subscription', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='transaction', to='subscriptions.subscription')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                (
+                    "fee_currency",
+                    models.CharField(
+                        choices=[("usd", "United States Dollar"), ("btc", "Bitcoin")],
+                        default="usd",
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "fee_amount",
+                    models.DecimalField(decimal_places=50, default=0.0, max_digits=100),
+                ),
+                (
+                    "subscribed_to",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="sub_transaction_subscribed_to_set",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "subscriber",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="sub_transaction_subscriber_set",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "subscription",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="transaction",
+                        to="subscriptions.subscription",
+                    ),
+                ),
             ],
         ),
     ]

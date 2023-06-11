@@ -1,16 +1,24 @@
 from urllib import parse
 from channels.layers import get_channel_layer
 from channels.db import database_sync_to_async
-from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
+from channels.generic.websocket import (
+    AsyncWebsocketConsumer,
+    AsyncJsonWebsocketConsumer,
+)
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
 from chats.models import Thread, Inbox
-from chats.serializers import \
-    TextMessageDetailSerializer, TextMessageCreateSerializer, \
-        PhotoMessageDetailSerializer, PhotoMessageCreateSerializer, \
-            VideoMessageDetailSerializer, VideoMessageCreateSerializer, \
-                PaidVideoMessageDetailSerializer, PaidVideoMessageCreateSerializer
+from chats.serializers import (
+    TextMessageDetailSerializer,
+    TextMessageCreateSerializer,
+    PhotoMessageDetailSerializer,
+    PhotoMessageCreateSerializer,
+    VideoMessageDetailSerializer,
+    VideoMessageCreateSerializer,
+    PaidVideoMessageDetailSerializer,
+    PaidVideoMessageCreateSerializer,
+)
 
 
 channel_layer = get_channel_layer()
@@ -25,7 +33,7 @@ class TokenAuth(AsyncWebsocketConsumer):
         scope = self.scope
         try:
             # Parse the scope and gets the token
-            query = parse.parse_qs(scope['query_string'].decode("utf-8"))['token'][0]
+            query = parse.parse_qs(scope["query_string"].decode("utf-8"))["token"][0]
             if query:
                 token = Token.objects.get(key=query)
                 # Returns token user
@@ -37,7 +45,6 @@ class TokenAuth(AsyncWebsocketConsumer):
 
 # Determines users Online/Offline Activity
 class OnlineOfflineConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
-
     # Connects Websocket
     async def connect(self):
         # Accepts the connection
@@ -46,20 +53,18 @@ class OnlineOfflineConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         user = await self.get_user()
         # If user is authenticated
         if user is not None:
-            
             status = True
 
             # Update user Status to Online
             await self.update_user_status(user, status)
 
-            #Broadcast user status
+            # Broadcast user status
             await self.broadcast_user_status(user, status)
 
     async def disconnect(self, code):
         # Discard
         user = await self.get_user()
         if user is not None:
-
             status = False
 
             # Update user status to Offline
@@ -77,33 +82,29 @@ class OnlineOfflineConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         public_id = user.public_id
 
         await self.channel_layer.group_send(
-                f"status_{public_id}",
-                {
-                    "type": "status_update",
-                    "content": {"online": status}
-                }
-            )
+            f"status_{public_id}",
+            {"type": "status_update", "content": {"online": status}},
+        )
 
     @database_sync_to_async
     def update_user_status(self, user, status):
         user.online = status
         user.save()
-        
+
         return user
 
 
-#Watch an account's online/offline status
+# Watch an account's online/offline status
 class WatchStatusConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
-
     async def connect(self):
         await self.accept()
         user = await self.get_user()
         if user is not None:
-            public_id = self.scope['url_route']['kwargs']['public_id']
+            public_id = self.scope["url_route"]["kwargs"]["public_id"]
             await self.channel_layer.group_add(f"status_{public_id}", self.channel_name)
 
     async def disconnect(self, code):
-        public_id = self.scope['url_route']['kwargs']['public_id']
+        public_id = self.scope["url_route"]["kwargs"]["public_id"]
         await self.channel_layer.group_discard(f"status_{public_id}", self.channel_name)
 
         return await super().disconnect(code)
@@ -123,7 +124,9 @@ class InboxConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
     # Disconnects
     async def disconnect(self, code):
         user = await self.get_user()
-        await self.channel_layer.group_discard(f"inbox_{user.public_id}", self.channel_name)
+        await self.channel_layer.group_discard(
+            f"inbox_{user.public_id}", self.channel_name
+        )
 
         return await super().disconnect(code)
 
@@ -133,14 +136,13 @@ class InboxConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
 
 
 class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
-
     # Connects To Message Consumer
     async def connect(self):
         user = await self.get_user()
         if user is not None:
-            second_user = self.scope['url_route']['kwargs']['public_id']
+            second_user = self.scope["url_route"]["kwargs"]["public_id"]
             thread = await self.get_thread(user, second_user)
-            #await self.read_user_inbox(user, second_user)
+            # await self.read_user_inbox(user, second_user)
             # Add to channel layer
             await self.channel_layer.group_add(f"thread_{thread.id}", self.channel_name)
             await self.accept()
@@ -148,7 +150,7 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
     # Disconnects
     async def disconnect(self, code):
         user = await self.get_user()
-        second_user = self.scope['url_route']['kwargs']['public_id']
+        second_user = self.scope["url_route"]["kwargs"]["public_id"]
         thread = await self.get_thread(user, second_user)
         await self.channel_layer.group_discard(f"thread_{thread.id}", self.channel_name)
         await self.accept()
@@ -158,33 +160,39 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
     # Receives message from socket
     async def receive_json(self, content, **kwargs):
         user = await self.get_user()
-        second_user = self.scope['url_route']['kwargs']['public_id']
+        second_user = self.scope["url_route"]["kwargs"]["public_id"]
         thread = await self.get_thread(user, second_user)
         inboxes = await self.get_inbox(user, second_user)
-        
+
         try:
-            msg = await self.create_msg(user=user, other_user=second_user, thread=thread, content=content, inbox=inboxes)
+            msg = await self.create_msg(
+                user=user,
+                other_user=second_user,
+                thread=thread,
+                content=content,
+                inbox=inboxes,
+            )
         except ValueError as e:
             await self.send_json(
                 {
                     "type": "error_message",
                     "message": "One or more of your parameters are invalid.",
-                    "detail": e.args[0]
+                    "detail": e.args[0],
                 }
             )
             return
-        
-        #await self.read_user_inbox(user, second_user)
+
+        # await self.read_user_inbox(user, second_user)
 
         message_type = content.get("message_type")
 
-        if message_type=="text":
+        if message_type == "text":
             serializer = TextMessageDetailSerializer(msg)
-        elif message_type=="photo":
+        elif message_type == "photo":
             serializer = PhotoMessageDetailSerializer(msg)
-        elif message_type=="free_video":
+        elif message_type == "free_video":
             serializer = VideoMessageDetailSerializer(msg)
-        elif message_type=="paid_video":
+        elif message_type == "paid_video":
             serializer = PaidVideoMessageDetailSerializer(msg)
 
         @database_sync_to_async
@@ -193,26 +201,24 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
 
         data = await _get_data()
 
-        #Make user and receiver serializabel (they're uuids)
+        # Make user and receiver serializabel (they're uuids)
         data["user"] = str(data["user"])
         data["receiver"] = str(data["receiver"])
 
-        #Make media item public_ids serializable
-        if not message_type=="text":
+        # Make media item public_ids serializable
+        if not message_type == "text":
             data["media_item"]["public_id"] = str(data["media_item"]["public_id"])
             data["media_item"]["uploader"] = str(data["media_item"]["uploader"])
 
-        await self.channel_layer.group_send(f'thread_{thread.id}',
-                                            {
-                                                'type': 'send_msg',
-                                                'content': data
-                                            })
+        await self.channel_layer.group_send(
+            f"thread_{thread.id}", {"type": "send_msg", "content": data}
+        )
 
         return super().receive_json(content, **kwargs)
-        
+
     # Broadcast to channel layer
     async def send_msg(self, event):
-        await self.send_json(event['content'])
+        await self.send_json(event["content"])
 
     @database_sync_to_async
     def get_thread(self, user, other_user):
@@ -222,13 +228,17 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
     def get_inbox(self, user, other_user):
         try:
             second_user = User.objects.get(public_id=other_user)
-            user_inbox, created = Inbox.objects.get_or_create(user=user, second=second_user)
-            other_user_inbox, created = Inbox.objects.get_or_create(user=second_user, second=user)
+            user_inbox, created = Inbox.objects.get_or_create(
+                user=user, second=second_user
+            )
+            other_user_inbox, created = Inbox.objects.get_or_create(
+                user=second_user, second=user
+            )
             return [user_inbox, other_user_inbox]
         except User.DoesNotExist:
             return []
 
-    #Not being used
+    # Not being used
     @database_sync_to_async
     def read_user_inbox(self, user, other_user):
         second_user = User.objects.get(public_id=other_user)
@@ -240,26 +250,22 @@ class MessageConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         second_user_id = other_user
         thread_id = thread.id
 
-        data = {
-            "thread": thread_id,
-            "user": user_id,
-            "receiver": second_user_id
-        }
+        data = {"thread": thread_id, "user": user_id, "receiver": second_user_id}
 
         data.update(content)
 
         message_type = content.get("message_type")
 
-        if message_type=="text":
+        if message_type == "text":
             serializer = TextMessageCreateSerializer(data=data)
 
-        elif message_type=="photo":
+        elif message_type == "photo":
             serializer = PhotoMessageCreateSerializer(data=data)
 
-        elif message_type=="free_video":
+        elif message_type == "free_video":
             serializer = VideoMessageCreateSerializer(data=data)
 
-        elif message_type=="paid_video":
+        elif message_type == "paid_video":
             serializer = PaidVideoMessageCreateSerializer(data=data)
 
         else:

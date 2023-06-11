@@ -21,13 +21,10 @@ class ActiveSubPostFeedView(BaseProfilePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
         subscriptions = get_user_model().objects.filter(subscribers=user)
 
-        return Post.objects.filter(
-            uploader__in = subscriptions
-        ).order_by("-upload_time")
+        return Post.objects.filter(uploader__in=subscriptions).order_by("-upload_time")
 
 
 class ExpiredSubPostFeedView(BaseProfilePostFeedView):
@@ -38,13 +35,10 @@ class ExpiredSubPostFeedView(BaseProfilePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
         subscriptions = get_user_model().objects.filter(cancelled_subscribers=user)
 
-        return Post.objects.filter(
-            uploader__in = subscriptions
-        ).order_by("-upload_time")
+        return Post.objects.filter(uploader__in=subscriptions).order_by("-upload_time")
 
 
 class PurchasedPostFeedView(BaseProfilePostFeedView):
@@ -55,12 +49,9 @@ class PurchasedPostFeedView(BaseProfilePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
 
-        return Post.objects.filter(
-            buyers = user
-        ).order_by("-purchase__time_of_purchase")
+        return Post.objects.filter(buyers=user).order_by("-purchase__time_of_purchase")
 
 
 class SavedPostFeedView(BaseProfilePostFeedView):
@@ -71,9 +62,6 @@ class SavedPostFeedView(BaseProfilePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
 
-        return Post.objects.filter(
-            saves = user
-        ).order_by("-videosave__created")
+        return Post.objects.filter(saves=user).order_by("-videosave__created")

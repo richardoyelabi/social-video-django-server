@@ -10,7 +10,11 @@ from rest_framework.generics import ListAPIView
 from rest_framework_word_filter import FullWordSearchFilter
 from channels.layers import get_channel_layer
 
-from chats.serializers import AccountChatSerializer, MessageDetailSerializer, InboxSerializer
+from chats.serializers import (
+    AccountChatSerializer,
+    MessageDetailSerializer,
+    InboxSerializer,
+)
 from chats.models import Inbox, ChatMessage
 from media.models import Video
 from special_requests.models import MessagePurchase
@@ -25,20 +29,24 @@ class UserInboxView(ModelViewSet):
     serializer_class = AccountChatSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(methods='get', detail=True)
+    @action(methods="get", detail=True)
     def retrieve(self, request, *args, **kwargs):
         try:
-            user_profile = User.objects.get(public_id=self.kwargs.get('public_id'))
-            serializer = self.serializer_class(instance=user_profile, context={'request': request})
+            user_profile = User.objects.get(public_id=self.kwargs.get("public_id"))
+            serializer = self.serializer_class(
+                instance=user_profile, context={"request": request}
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class InboxMessageView(ModelViewSet):
     serializer_class = MessageDetailSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = 'public_id'
+    lookup_field = "public_id"
     filter_backends = [FullWordSearchFilter]
     word_fields = ["message"]
 
@@ -49,8 +57,10 @@ class InboxMessageView(ModelViewSet):
 
     def get_queryset(self):
         try:
-            inbox = Inbox.objects.get(user=self.request.user, second__public_id=self.kwargs.get('public_id'))
-            return ChatMessage.objects.filter(inbox=inbox).order_by('-timestamp')
+            inbox = Inbox.objects.get(
+                user=self.request.user, second__public_id=self.kwargs.get("public_id")
+            )
+            return ChatMessage.objects.filter(inbox=inbox).order_by("-timestamp")
         except Inbox.DoesNotExist:
             return Inbox.objects.none()
 
@@ -67,25 +77,24 @@ class InboxListView(ModelViewSet):
     pagination_class = Pagination
 
     def get_queryset(self):
-        return Inbox.objects.filter(user=self.request.user).order_by('-updated')
+        return Inbox.objects.filter(user=self.request.user).order_by("-updated")
 
 
 class InboxReadView(APIView):
-
     def post(self, request, contact_id, *args, **kwargs):
-
         user = request.user
         inbox = self.get_inbox(user, contact_id)
         inbox.read = True
         inbox.save(update_fields=["read"])
 
         return Response("Inbox view acknowledged", status.HTTP_202_ACCEPTED)
-        
 
     def get_inbox(self, user, other_user):
         try:
             second_user = User.objects.get(public_id=other_user)
-            user_inbox, created = Inbox.objects.get_or_create(user=user, second=second_user)
+            user_inbox, created = Inbox.objects.get_or_create(
+                user=user, second=second_user
+            )
             return user_inbox
         except User.DoesNotExist:
             return None
@@ -107,8 +116,7 @@ class ChatContactsList(ListAPIView):
 
         if user.is_creator:
             return get_user_model().objects.filter(
-                Q(id__in = user.subscriptions.all()) |
-                Q(id__in = user.subscribers.all())
+                Q(id__in=user.subscriptions.all()) | Q(id__in=user.subscribers.all())
             )
         return user.subscriptions.all()
 
@@ -123,8 +131,10 @@ class MessageVideoStreamView(VideoStreamAPIView):
         message = ChatMessage.objects.get(public_id=message_id)
         video = Video.objects.get(public_id=video_id)
 
-        error_response = Response("You're not authorized to watch this video. Please, unlock video to watch.", 
-            status=status.HTTP_401_UNAUTHORIZED)
+        error_response = Response(
+            "You're not authorized to watch this video. Please, unlock video to watch.",
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
         if message.media_item != video:
             return error_response
@@ -132,10 +142,13 @@ class MessageVideoStreamView(VideoStreamAPIView):
         user = request.user
         creator = message.user
 
-        if message.message_type=="free_video" or \
-            MessagePurchase.objects.filter(buyer=user, video_message=message).exists() or \
-                user==creator:
-
-                return super().get(request, video_id)
+        if (
+            message.message_type == "free_video"
+            or MessagePurchase.objects.filter(
+                buyer=user, video_message=message
+            ).exists()
+            or user == creator
+        ):
+            return super().get(request, video_id)
 
         return error_response

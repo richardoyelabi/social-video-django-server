@@ -10,6 +10,7 @@ from sage_stream.utils.stream_services import get_streaming_response
 from media.models import Video
 from posts.models import Post
 
+
 class VideoStreamAPIView(APIView):
     """return StreamingHTTPResponse"""
 
@@ -24,9 +25,9 @@ class VideoStreamAPIView(APIView):
         media_url = django_settings.MEDIA_URL
 
         # get video path & range header
-        range_header = request.META.get('HTTP_RANGE', '').strip()
+        range_header = request.META.get("HTTP_RANGE", "").strip()
         range_re = re.compile(range_re_pattern, re.I)
-        
+
         video_path = Video.objects.get(public_id=video_id).media.url
         video_path = video_path.replace(media_url, media_dir)
         video_path = os.path.join(django_settings.BASE_DIR, video_path)
@@ -34,7 +35,9 @@ class VideoStreamAPIView(APIView):
         # log
         if log_enabled:
             ip = get_request_ip(request)
-            log_watch_request(video_path, request.user.is_authenticated, ip, request.user)
+            log_watch_request(
+                video_path, request.user.is_authenticated, ip, request.user
+            )
 
         # create response
         response = get_streaming_response(
@@ -45,6 +48,7 @@ class VideoStreamAPIView(APIView):
         )
 
         return response
+
 
 class PreviewStreamAPIView(APIView):
     """Simplified VideoStreamAPIView for premium post previews"""
@@ -59,7 +63,7 @@ class PreviewStreamAPIView(APIView):
         media_url = django_settings.MEDIA_URL
 
         # get video path & range header
-        range_header = request.META.get('HTTP_RANGE', '').strip()
+        range_header = request.META.get("HTTP_RANGE", "").strip()
         range_re = re.compile(range_re_pattern, re.I)
 
         video_path = Post.objects.get(public_id=post_id).video_preview.url
@@ -69,7 +73,9 @@ class PreviewStreamAPIView(APIView):
         # log
         if log_enabled:
             ip = get_request_ip(request)
-            log_watch_request(video_path, request.user.is_authenticated, ip, request.user)
+            log_watch_request(
+                video_path, request.user.is_authenticated, ip, request.user
+            )
 
         # create response
         response = get_streaming_response(

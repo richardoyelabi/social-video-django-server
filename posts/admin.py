@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import Post, Like, Comment, View, UniqueView
 
+
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         "public_id",
@@ -16,12 +17,14 @@ class PostAdmin(admin.ModelAdmin):
         "purchase_cost_amount",
     )
 
+
 class LikeAdmin(admin.ModelAdmin):
     list_display = (
         "account",
         "post",
         "time",
     )
+
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = (
@@ -31,19 +34,14 @@ class CommentAdmin(admin.ModelAdmin):
         "time",
     )
 
+
 class ViewAdmin(admin.ModelAdmin):
-    list_display = (
-        "account",
-        "post",
-        "time"
-    )
+    list_display = ("account", "post", "time")
+
 
 class UniqueViewAdmin(admin.ModelAdmin):
-    list_display = (
-        "account",
-        "post",
-        "time"
-    )
+    list_display = ("account", "post", "time")
+
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(Like, LikeAdmin)

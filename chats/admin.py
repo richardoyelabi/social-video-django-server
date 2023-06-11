@@ -24,20 +24,17 @@ class ChatMessageAdmin(admin.ModelAdmin):
 
 class ThreadAdmin(admin.ModelAdmin):
     inlines = [ChatMessageInlineAdmin]
-    list_display = ('first', 'second', 'id', 'timestamp', 'updated')
-    readonly_fields = ('updated', 'timestamp')
+    list_display = ("first", "second", "id", "timestamp", "updated")
+    readonly_fields = ("updated", "timestamp")
 
     class Meta:
         model = Thread
 
 
 class InboxAdmin(admin.ModelAdmin):
-    list_display = ('user', 'second', 'id', 'timestamp', 'updated')
-    fieldsets = (
-        (None, {'fields': ('user', 'second', 'last_message', 'read')}),
-
-    )
-    readonly_fields = ('updated', 'timestamp')
+    list_display = ("user", "second", "id", "timestamp", "updated")
+    fieldsets = ((None, {"fields": ("user", "second", "last_message", "read")}),)
+    readonly_fields = ("updated", "timestamp")
 
     class Meta:
         model = Inbox

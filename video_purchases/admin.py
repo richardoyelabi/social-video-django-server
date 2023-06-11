@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Purchase, CancelledPurchase, NullifiedPurchase
 
+
 class PurchaseAdmin(admin.ModelAdmin):
     list_display = (
         "buyer",
@@ -9,6 +10,7 @@ class PurchaseAdmin(admin.ModelAdmin):
         "fee_currency",
         "fee_amount",
     )
+
 
 class CancelledPurchaseAdmin(admin.ModelAdmin):
     list_display = (
@@ -20,6 +22,7 @@ class CancelledPurchaseAdmin(admin.ModelAdmin):
         "fee_amount",
     )
 
+
 class NullifiedPurchaseAdmin(admin.ModelAdmin):
     list_display = (
         "buyer",
@@ -29,6 +32,7 @@ class NullifiedPurchaseAdmin(admin.ModelAdmin):
         "fee_currency",
         "fee_amount",
     )
+
 
 admin.site.register(Purchase, PurchaseAdmin)
 admin.site.register(CancelledPurchase, CancelledPurchaseAdmin)

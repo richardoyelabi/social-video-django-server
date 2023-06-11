@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Photo, Video
 
+
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -10,6 +11,7 @@ class PhotoAdmin(admin.ModelAdmin):
         "media",
     )
 
+
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -18,6 +20,7 @@ class VideoAdmin(admin.ModelAdmin):
         "upload_time",
         "media",
     )
+
 
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Video, VideoAdmin)

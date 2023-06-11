@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import IdUpload
 
+
 class IdUploadSerializer(serializers.ModelSerializer):
     """Serializer for IdUploadView"""
 

@@ -5,8 +5,8 @@ class IsCreator(BasePermission):
     """Only creators have access"""
 
     def has_permission(self, request, view):
-        if request.user.is_creator==True:
-            if request.user.creatorinfo.is_verified==True:
+        if request.user.is_creator == True:
+            if request.user.creatorinfo.is_verified == True:
                 return True
         return False
 

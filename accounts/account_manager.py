@@ -1,8 +1,9 @@
 from django.contrib.auth.base_user import BaseUserManager
 
+
 class AccountManager(BaseUserManager):
     """Account manager for custom user model in accounts.Account"""
-    
+
     def _create_user(self, email, password, **extra_fields):
         """Create and save an Account with the given email and password."""
         if not email:

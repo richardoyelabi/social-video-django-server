@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('transactions', '0002_withdrawalrequest'),
+        ("transactions", "0002_withdrawalrequest"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='withdrawalrequest',
-            name='handled',
+            model_name="withdrawalrequest",
+            name="handled",
             field=models.BooleanField(default=False),
         ),
     ]

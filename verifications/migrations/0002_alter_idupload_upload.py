@@ -5,15 +5,16 @@ import versatileimagefield.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('verifications', '0001_initial'),
+        ("verifications", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='idupload',
-            name='upload',
-            field=versatileimagefield.fields.VersatileImageField(upload_to='id_uploads'),
+            model_name="idupload",
+            name="upload",
+            field=versatileimagefield.fields.VersatileImageField(
+                upload_to="id_uploads"
+            ),
         ),
     ]

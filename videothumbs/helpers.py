@@ -9,20 +9,19 @@ from django.db.models.fields.files import FieldFile
 
 
 class VideoThumbnailHelper(FieldFile):
-
     def __init__(self, *args, **kwargs):
-        super(VideoThumbnailHelper, self).__init__(*args, **kwargs)      
+        super(VideoThumbnailHelper, self).__init__(*args, **kwargs)
         self.sizes = self.field.sizes
         self.auto_crop = self.field.auto_crop
 
         for size in self.sizes:
-            name = 'url_%sx%s' % size
+            name = "url_%sx%s" % size
             value = self.get_thumbnail_url(size)
             setattr(self, name, value)
 
-    def _generate_thumbnail(self, video, 
-        thumbnail_width, thumbnail_height, crop=True, frames=100):
-
+    def _generate_thumbnail(
+        self, video, thumbnail_width, thumbnail_height, crop=True, frames=100
+    ):
         histogram_list = []
         frame_average = []
 
@@ -33,28 +32,29 @@ class VideoThumbnailHelper(FieldFile):
         # Make sure this directory exists.
         path = "%s/temp/" % settings.MEDIA_ROOT
         if not os.path.isdir(path):
-          os.mkdir(path)
-          
+            os.mkdir(path)
+
         hashable_value = "%s%s" % (full_filename, int(time.time()))
-        hashable_value = hashable_value.encode('utf-8')
+        hashable_value = hashable_value.encode("utf-8")
         filehash = hashlib.md5(hashable_value).hexdigest()
-        
-        frame_args = {'path': path, 'filename': filehash, 'frame': '%d'}
+
+        frame_args = {"path": path, "filename": filehash, "frame": "%d"}
         frame = "%(path)s%(filename)s.%(frame)s.jpg" % frame_args
 
         # Build the ffmpeg shell command and run it via subprocess
-        cmd_args = {'frames': frames, 'video_path': self.path, 'output': frame}
+        cmd_args = {"frames": frames, "video_path": self.path, "output": frame}
         command = "ffmpeg -i %(video_path)s -y -vframes %(frames)d %(output)s"
         command = command % cmd_args
-        response = subprocess.call(command, shell=True,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        response = subprocess.call(
+            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
 
         # Fail silently if ffmpeg is not installed.
         # the ffmpeg commandline tool that is.
         if response != 0:
             return
 
-        # Loop through the generated images, open, and 
+        # Loop through the generated images, open, and
         # generate the image histogram.
         for index in range(1, frames + 1):
             frame_name = frame % index
@@ -66,8 +66,8 @@ class VideoThumbnailHelper(FieldFile):
             image = Image.open(frame_name)
 
             # Convert to RGB if necessary
-            if image.mode not in ('L', 'RGB'):
-                image = image.convert('RGB')
+            if image.mode not in ("L", "RGB"):
+                image = image.convert("RGB")
 
             histogram_list.append(image.histogram())
 
@@ -79,7 +79,7 @@ class VideoThumbnailHelper(FieldFile):
             accumulation = 0.0
             for idy in range(frames):
                 accumulation += histogram_list[idy][idx]
-                average = (float(accumulation) / frames)
+                average = float(accumulation) / frames
             frame_average.append(average)
 
         minn = -1
@@ -96,7 +96,7 @@ class VideoThumbnailHelper(FieldFile):
             rmse = math.sqrt(results)
 
             if minn == -1 or rmse < minRMSE:
-                minn = (idx + 1)
+                minn = idx + 1
                 minRMSE = rmse
 
         frame_path = frame % (minn)
@@ -108,21 +108,16 @@ class VideoThumbnailHelper(FieldFile):
             min_size = min(width, height)
             new_width = (width - min_size) / 2
             new_height = (height - min_size) / 2
-            params = (
-                new_width, new_height, 
-                width - new_width, height - new_height
-            )
+            params = (new_width, new_height, width - new_width, height - new_height)
             image2 = image.crop(params)
             image2.load()
-            image2.thumbnail((thumbnail_width, thumbnail_height),
-                Image.ANTIALIAS)
+            image2.thumbnail((thumbnail_width, thumbnail_height), Image.ANTIALIAS)
         else:
             image2 = image
-            image2.thumbnail((thumbnail_width, thumbnail_height),
-                Image.ANTIALIAS)
+            image2.thumbnail((thumbnail_width, thumbnail_height), Image.ANTIALIAS)
 
         io = BytesIO()
-        image2.save(io, 'jpeg')
+        image2.save(io, "jpeg")
 
         # Unlink temp files.
         for idx in range(frames):
@@ -136,40 +131,49 @@ class VideoThumbnailHelper(FieldFile):
         filename, extension = os.path.splitext(full_filename)
         width, height = size
         path += "/thumbnail/"
-        url = '%(path)s%(filename)s.%(width)sx%(height)s.%(extension)s' % {
-          'path': path, 'filename': filename, 'width': width,
-          'height': height, 'extension': 'jpeg'}
+        url = "%(path)s%(filename)s.%(width)sx%(height)s.%(extension)s" % {
+            "path": path,
+            "filename": filename,
+            "width": width,
+            "height": height,
+            "extension": "jpeg",
+        }
 
         return url
 
     def save(self, name, content, save=True):
         super(VideoThumbnailHelper, self).save(name, content, save)
-        
+
         path, full_filename = os.path.split(self.path)
         filename, extension = os.path.splitext(full_filename)
         path += "/thumbnail/"
-        
+
         # By default thumbnails are stored under upload_to/thumbnails/
         # Make sure this directory exists.
         if not os.path.isdir(path):
-          os.mkdir(path)
+            os.mkdir(path)
 
         # Cycle through the sizes and generate thumbnails.
         for size in self.sizes:
             width, height = size
-            url = '%(path)s%(filename)s.%(width)sx%(height)s.%(extension)s' % {
-              'path': path, 'filename': filename, 'width': width,
-              'height': height, 'extension': 'jpeg'}
+            url = "%(path)s%(filename)s.%(width)sx%(height)s.%(extension)s" % {
+                "path": path,
+                "filename": filename,
+                "width": width,
+                "height": height,
+                "extension": "jpeg",
+            }
 
             data = self._generate_thumbnail(content, width, height)
 
             # Fail silently if there is no data.
             if not data:
-              return
+                return
 
             self.storage.save(url, data)
 
-'''
+
+"""
     def delete(self, save=True):
         path, full_filename = os.path.split(self.url)
         filename, extension = os.path.splitext(full_filename)
@@ -188,4 +192,4 @@ class VideoThumbnailHelper(FieldFile):
                 pass
         
         super(VideoThumbnailHelper, self).delete(save)
-'''
+"""

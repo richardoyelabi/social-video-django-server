@@ -26,36 +26,39 @@ class SubscriptionView(GenericAPIView):
         subscriber = request.user
 
         if Subscription.objects.filter(
-            subscribed_to = subscribed_to,
-            subscriber = subscriber
+            subscribed_to=subscribed_to, subscriber=subscriber
         ).exists():
             return Response("Subscription already exists.", status.HTTP_400_BAD_REQUEST)
 
         try:
-            Subscription.objects.create(subscribed_to=subscribed_to, subscriber=subscriber)
+            Subscription.objects.create(
+                subscribed_to=subscribed_to, subscriber=subscriber
+            )
         except TransactionInsufficientBalanceError as e:
             return Response(str(e), status.HTTP_400_BAD_REQUEST)
-            
+
         return Response("Subscription created.", status.HTTP_201_CREATED)
 
     def delete(self, request, creator_id, *args, **kwargs):
         Account = get_user_model()
         subscribed_to = Account.objects.get(public_id=creator_id)
         subscriber = request.user
-        
+
         if not Subscription.objects.filter(
-            subscribed_to = subscribed_to,
-            subscriber = subscriber
+            subscribed_to=subscribed_to, subscriber=subscriber
         ).exists():
             return Response("Subscription does not exist.", status.HTTP_400_BAD_REQUEST)
 
-        Subscription.objects.get(subscribed_to=subscribed_to, subscriber=subscriber).delete()
+        Subscription.objects.get(
+            subscribed_to=subscribed_to, subscriber=subscriber
+        ).delete()
         return Response("Subscription deleted.", status.HTTP_204_NO_CONTENT)
 
 
 class SetSubscriptionView(GenericAPIView):
     """Set creator's subscription_fee_currency and subscription_fee_amount.
-    Accepts POST with parameters subscription_fee_currency and subscription_fee_amount"""
+    Accepts POST with parameters subscription_fee_currency and subscription_fee_amount
+    """
 
     queryset = CreatorInfo.objects.all()
     serializer_class = SetSubscriptionSerializer
@@ -66,9 +69,9 @@ class SetSubscriptionView(GenericAPIView):
         creator_id = request.user.public_id
 
         data = dict(
-            creator = creator_id,
-            subscription_fee_currency = request.data.get("subscription_fee_currency"),
-            subscription_fee_amount = request.data.get("subscription_fee_amount")
+            creator=creator_id,
+            subscription_fee_currency=request.data.get("subscription_fee_currency"),
+            subscription_fee_amount=request.data.get("subscription_fee_amount"),
         )
 
         creatorinfo = CreatorInfo.objects.get(creator=creator)
@@ -78,5 +81,5 @@ class SetSubscriptionView(GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

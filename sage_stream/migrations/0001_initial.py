@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,19 +14,51 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='WatchLog',
+            name="WatchLog",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('video_path', models.CharField(max_length=255, verbose_name='Video Path')),
-                ('is_authenticated', models.BooleanField(default=False, verbose_name='Is Authenticated')),
-                ('ip', models.GenericIPAddressField(blank=True, null=True, verbose_name='IP Address')),
-                ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created At')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='watch_logs', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "video_path",
+                    models.CharField(max_length=255, verbose_name="Video Path"),
+                ),
+                (
+                    "is_authenticated",
+                    models.BooleanField(default=False, verbose_name="Is Authenticated"),
+                ),
+                (
+                    "ip",
+                    models.GenericIPAddressField(
+                        blank=True, null=True, verbose_name="IP Address"
+                    ),
+                ),
+                (
+                    "created",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created At"),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="watch_logs",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Watch Log',
-                'verbose_name_plural': 'Watch Logs',
-                'ordering': ('-created',),
+                "verbose_name": "Watch Log",
+                "verbose_name_plural": "Watch Logs",
+                "ordering": ("-created",),
             },
         ),
     ]

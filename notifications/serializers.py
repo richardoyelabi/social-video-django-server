@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 
 
 class NotificationSerializer(serializers.Serializer):
-
     public_id = serializers.UUIDField()
     timestamp = serializers.DateTimeField()
     message = serializers.CharField()
@@ -13,7 +12,6 @@ class NotificationSerializer(serializers.Serializer):
 
 
 class NotificationSettingsListSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = get_user_model()
         fields = ["email_message", "email_promotion", "site_message", "site_promotion"]

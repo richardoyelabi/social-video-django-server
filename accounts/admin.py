@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from .forms import AccountCreationForm, AccountChangeForm
 from .models import Account, CreatorInfo
 
+
 class AccountAdmin(UserAdmin):
     add_form = AccountCreationForm
     form = AccountChangeForm
@@ -16,20 +17,20 @@ class AccountAdmin(UserAdmin):
         "display_name",
         "active_subscriptions_number",
         "expired_subscriptions_number",
-        "bio", 
-        "profile_photo", 
+        "bio",
+        "profile_photo",
         "cover_photo",
         "is_creator",
         "public_id",
         "saved_videos_number",
         "purchased_videos_number",
         "btc_wallet_balance",
-        "usd_wallet_balance"
-        ]
+        "usd_wallet_balance",
+    ]
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         (
-            ("Personal info"), 
+            ("Personal info"),
             {
                 "fields": (
                     "display_name",
@@ -39,7 +40,7 @@ class AccountAdmin(UserAdmin):
                     "cover_photo",
                     "is_creator",
                 )
-            }
+            },
         ),
         (
             ("Permissions"),
@@ -56,14 +57,15 @@ class AccountAdmin(UserAdmin):
         (("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
 
-
     add_fieldsets = (
-        (None, {
-            "fields": ("username", "email", "is_creator", "password1", "password2")
-            }),)
+        (
+            None,
+            {"fields": ("username", "email", "is_creator", "password1", "password2")},
+        ),
+    )
+
 
 class CreatorInfoAdmin(admin.ModelAdmin):
-
     @admin.display(description="Creator username")
     def username(self, obj):
         return obj.creator.username
@@ -80,7 +82,7 @@ class CreatorInfoAdmin(admin.ModelAdmin):
         "subscription_fee_amount",
         "is_verified",
         "identity",
-        "feed_score"
+        "feed_score",
     )
 
     fields = (

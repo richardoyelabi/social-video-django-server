@@ -13,9 +13,7 @@ class IdUploadAdmin(admin.ModelAdmin):
         "upload",
     )
 
-    fields = (
-        "reviewed",
-    )
+    fields = ("reviewed",)
 
     search_fields = (
         "creator__username",

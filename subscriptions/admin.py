@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import SubscriptionTransaction, Subscription, CancelledSubscription, NullifiedSubscription
+from .models import (
+    SubscriptionTransaction,
+    Subscription,
+    CancelledSubscription,
+    NullifiedSubscription,
+)
 
 
 class SubscriptionTransactionAdmin(admin.ModelAdmin):
@@ -27,6 +32,7 @@ class CancelledSubscriptionAdmin(admin.ModelAdmin):
         "time_of_cancellation",
         "time_of_initial_subscription",
     )
+
 
 class NullifiedSubscriptionAdmin(admin.ModelAdmin):
     list_display = (

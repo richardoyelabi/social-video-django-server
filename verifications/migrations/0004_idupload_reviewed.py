@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('verifications', '0003_alter_idupload_upload'),
+        ("verifications", "0003_alter_idupload_upload"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='idupload',
-            name='reviewed',
+            model_name="idupload",
+            name="reviewed",
             field=models.BooleanField(default=False),
         ),
     ]

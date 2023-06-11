@@ -12,33 +12,35 @@ class Purchase(models.Model):
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     video_post = models.ForeignKey(Post, on_delete=models.CASCADE)
     time_of_purchase = models.DateTimeField(auto_now_add=True)
-    fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd")
+    fee_currency = models.CharField(
+        max_length=3, choices=Transaction.currency_choices, default="usd"
+    )
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
 
     def save(self, *args, **kwargs):
-
-        #Get purchase fee
+        # Get purchase fee
         video = self.video_post
-        source_currency, self.fee_amount = (video.purchase_cost_currency, video.purchase_cost_amount)
+        source_currency, self.fee_amount = (
+            video.purchase_cost_currency,
+            video.purchase_cost_amount,
+        )
 
         cut = Decimal(float_cut)
         self.fee_amount = Decimal(self.fee_amount)
 
-        #Convert fee_amount to destination currency if needed
+        # Convert fee_amount to destination currency if needed
         self.fee_amount = convert_currency(
-            source=source_currency,
-            target=self.fee_currency,
-            amount=self.fee_amount
+            source=source_currency, target=self.fee_currency, amount=self.fee_amount
         )
-        
-        #Execute required transaction for purchase
+
+        # Execute required transaction for purchase
         Transaction.objects.create(
             transaction_currency=self.fee_currency,
             amount_sent=self.fee_amount,
             sender=self.buyer,
-            platform_fee=cut*self.fee_amount/100,
+            platform_fee=cut * self.fee_amount / 100,
             receiver=self.video_post.uploader,
-            transaction_type="buy"
+            transaction_type="buy",
         )
 
         super().save(*args, **kwargs)
@@ -52,7 +54,9 @@ class CancelledPurchase(models.Model):
     video_post = models.ForeignKey(Post, on_delete=models.CASCADE)
     time_of_cancellation = models.DateTimeField(auto_now_add=True)
     time_of_initial_purchase = models.DateTimeField()
-    fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd")
+    fee_currency = models.CharField(
+        max_length=3, choices=Transaction.currency_choices, default="usd"
+    )
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
 
     def __str__(self):
@@ -64,7 +68,9 @@ class NullifiedPurchase(models.Model):
     video_post = models.ForeignKey(Post, on_delete=models.CASCADE)
     time_of_nullification = models.DateTimeField(auto_now_add=True)
     time_of_initial_purchase = models.DateTimeField()
-    fee_currency = models.CharField(max_length=3, choices=Transaction.currency_choices, default="usd")
+    fee_currency = models.CharField(
+        max_length=3, choices=Transaction.currency_choices, default="usd"
+    )
     fee_amount = models.DecimalField(max_digits=100, decimal_places=50, default=0.00)
 
     def __str__(self):

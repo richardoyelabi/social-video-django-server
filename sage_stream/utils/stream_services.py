@@ -24,7 +24,7 @@ def get_length(first_byte, last_byte):
 
 def get_content_range_header(first_byte, last_byte, size):
     """create Content-Range header"""
-    return 'bytes %s-%s/%s' % (first_byte, last_byte, size)
+    return "bytes %s-%s/%s" % (first_byte, last_byte, size)
 
 
 def get_streaming_response(path, range_header, range_re, max_load_volume):
@@ -35,7 +35,7 @@ def get_streaming_response(path, range_header, range_re, max_load_volume):
     range_match = range_re.match(range_header)
     size = os.path.getsize(path)
     content_type, encoding = mimetypes.guess_type(path)
-    content_type = content_type or 'application/octet-stream'
+    content_type = content_type or "application/octet-stream"
     if range_match:
         first_byte, last_byte = range_match.groups()
         first_byte = get_first_byte(first_byte)
@@ -44,22 +44,17 @@ def get_streaming_response(path, range_header, range_re, max_load_volume):
             last_byte = size - 1
         length = get_length(first_byte, last_byte)
         resp = StreamingHttpResponse(
-            file_iterator(
-                path,
-                offset=first_byte,
-                length=length
-            ),
+            file_iterator(path, offset=first_byte, length=length),
             status=206,
-            content_type=content_type
+            content_type=content_type,
         )
-        resp['Content-Length'] = str(length)
-        resp['Content-Range'] = get_content_range_header(first_byte, last_byte, size)
+        resp["Content-Length"] = str(length)
+        resp["Content-Range"] = get_content_range_header(first_byte, last_byte, size)
     else:
         # when the video stream is not obtained, the entire file is returned in the generator mode to save memory.
         resp = StreamingHttpResponse(
-            FileWrapper(open(path, 'rb')),
-            content_type=content_type
+            FileWrapper(open(path, "rb")), content_type=content_type
         )
-        resp['Content-Length'] = str(size)
-        resp['Accept-Ranges'] = 'bytes'
+        resp["Content-Length"] = str(size)
+        resp["Accept-Ranges"] = "bytes"
     return resp

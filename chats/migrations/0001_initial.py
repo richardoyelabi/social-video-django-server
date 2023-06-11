@@ -7,70 +7,201 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Thread',
+            name="Thread",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('public_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('first', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='chat_thread_first', to=settings.AUTH_USER_MODEL)),
-                ('second', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='chat_thread_second', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                (
+                    "first",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="chat_thread_first",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "second",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="chat_thread_second",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('first', 'second')},
+                "unique_together": {("first", "second")},
             },
         ),
         migrations.CreateModel(
-            name='Inbox',
+            name="Inbox",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('public_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('last_message', models.TextField(blank=True, default='', max_length=2048)),
-                ('read', models.BooleanField(default=False)),
-                ('last_message_from', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='last_message_user', to=settings.AUTH_USER_MODEL)),
-                ('second', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inbox_second_user', to=settings.AUTH_USER_MODEL)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inbox_user', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                (
+                    "last_message",
+                    models.TextField(blank=True, default="", max_length=2048),
+                ),
+                ("read", models.BooleanField(default=False)),
+                (
+                    "last_message_from",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="last_message_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "second",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="inbox_second_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="inbox_user",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'User Inbox',
-                'verbose_name_plural': 'User Inbox',
-                'unique_together': {('user', 'second')},
+                "verbose_name": "User Inbox",
+                "verbose_name_plural": "User Inbox",
+                "unique_together": {("user", "second")},
             },
         ),
         migrations.CreateModel(
-            name='ChatMessage',
+            name="ChatMessage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('public_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('message', models.TextField(blank=True, default='', max_length=2048)),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('message_type', models.CharField(choices=[('text', 'Text'), ('photo', 'Photo'), ('free_video', 'Free video'), ('paid_video', 'Premium video')], max_length=12)),
-                ('media_id', models.PositiveIntegerField(blank=True, null=True)),
-                ('purchase_cost_currency', models.CharField(blank=True, choices=[('usd', 'United States Dollar'), ('btc', 'Bitcoin')], default='usd', max_length=3)),
-                ('purchase_cost_amount', models.DecimalField(blank=True, decimal_places=50, default=0.0, max_digits=100)),
-                ('is_special_request', models.BooleanField(default=False)),
-                ('is_tip_message', models.BooleanField(default=False)),
-                ('inbox', models.ManyToManyField(blank=True, to='chats.inbox')),
-                ('media_type', models.ForeignKey(blank=True, limit_choices_to={'model__in': ('photo', 'video')}, null=True, on_delete=django.db.models.deletion.SET_NULL, to='contenttypes.contenttype')),
-                ('receiver', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='message_receiver', to=settings.AUTH_USER_MODEL, verbose_name='receiver')),
-                ('thread', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='chats.thread')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='message_sender', to=settings.AUTH_USER_MODEL, verbose_name='sender')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("message", models.TextField(blank=True, default="", max_length=2048)),
+                ("timestamp", models.DateTimeField(auto_now_add=True)),
+                (
+                    "message_type",
+                    models.CharField(
+                        choices=[
+                            ("text", "Text"),
+                            ("photo", "Photo"),
+                            ("free_video", "Free video"),
+                            ("paid_video", "Premium video"),
+                        ],
+                        max_length=12,
+                    ),
+                ),
+                ("media_id", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "purchase_cost_currency",
+                    models.CharField(
+                        blank=True,
+                        choices=[("usd", "United States Dollar"), ("btc", "Bitcoin")],
+                        default="usd",
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "purchase_cost_amount",
+                    models.DecimalField(
+                        blank=True, decimal_places=50, default=0.0, max_digits=100
+                    ),
+                ),
+                ("is_special_request", models.BooleanField(default=False)),
+                ("is_tip_message", models.BooleanField(default=False)),
+                ("inbox", models.ManyToManyField(blank=True, to="chats.inbox")),
+                (
+                    "media_type",
+                    models.ForeignKey(
+                        blank=True,
+                        limit_choices_to={"model__in": ("photo", "video")},
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "receiver",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="message_receiver",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="receiver",
+                    ),
+                ),
+                (
+                    "thread",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="chats.thread",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="message_sender",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="sender",
+                    ),
+                ),
             ],
         ),
         migrations.AddIndex(
-            model_name='chatmessage',
-            index=models.Index(fields=['media_type', 'media_id'], name='chats_chatm_media_t_d0df10_idx'),
+            model_name="chatmessage",
+            index=models.Index(
+                fields=["media_type", "media_id"], name="chats_chatm_media_t_d0df10_idx"
+            ),
         ),
     ]

@@ -31,9 +31,7 @@ class WithdrawalRequestAdmin(admin.ModelAdmin):
         "handled",
     )
 
-    fields = (
-        "handled",
-    )
+    fields = ("handled",)
 
 
 class WithdrawalAdmin(admin.ModelAdmin):

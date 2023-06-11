@@ -23,18 +23,20 @@ class TipView(GenericAPIView):
         fee_amount = request.data.get("fee_amount")
 
         if not (fee_currency and fee_amount):
-            return Response("'fee_currency' or 'fee_amount' is missing.", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                "'fee_currency' or 'fee_amount' is missing.",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         data = {
             "sender": sender,
             "receiver": receiver,
             "fee_currency": fee_currency,
-            "fee_amount": fee_amount
+            "fee_amount": fee_amount,
         }
 
         serializer = TipSerializer(data=data)
         if serializer.is_valid():
-            
             try:
                 serializer.save()
             except TransactionInsufficientBalanceError as e:

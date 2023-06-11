@@ -22,13 +22,11 @@ class AllPostFeedView(BasePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
 
-        return Post.objects.all(
-        ).exclude(
-            uniqueview__account = user
-        ).order_by("-feed_score")
+        return (
+            Post.objects.all().exclude(uniqueview__account=user).order_by("-feed_score")
+        )
 
 
 class TopVideoFeedView(BasePostFeedView):
@@ -39,14 +37,13 @@ class TopVideoFeedView(BasePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
 
-        return Post.objects.filter(
-            media_type = ContentType.objects.get_for_model(Video)
-        ).exclude(
-            uniqueview__account = user
-        ).order_by("-feed_score")
+        return (
+            Post.objects.filter(media_type=ContentType.objects.get_for_model(Video))
+            .exclude(uniqueview__account=user)
+            .order_by("-feed_score")
+        )
 
 
 class TopPremiumVideoFeedView(BasePostFeedView):
@@ -57,14 +54,13 @@ class TopPremiumVideoFeedView(BasePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
 
-        return Post.objects.filter(
-            post_type = "paid_video"
-        ).exclude(
-            uniqueview__account = user
-        ).order_by("-feed_score")
+        return (
+            Post.objects.filter(post_type="paid_video")
+            .exclude(uniqueview__account=user)
+            .order_by("-feed_score")
+        )
 
 
 class NewPremiumVideoFeedView(BasePostFeedView):
@@ -75,13 +71,11 @@ class NewPremiumVideoFeedView(BasePostFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
         subscriptions = user.subscriptions.all()
 
-        return Post.objects.filter(
-            post_type = "paid_video",
-            uploader__in = subscriptions
-        ).exclude(
-            uniqueview__account = user
-        ).order_by("-upload_time")
+        return (
+            Post.objects.filter(post_type="paid_video", uploader__in=subscriptions)
+            .exclude(uniqueview__account=user)
+            .order_by("-upload_time")
+        )

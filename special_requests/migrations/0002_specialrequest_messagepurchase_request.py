@@ -6,27 +6,63 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('chats', '0001_initial'),
+        ("chats", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('special_requests', '0001_initial'),
+        ("special_requests", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SpecialRequest',
+            name="SpecialRequest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField()),
-                ('request', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='special_request', to='chats.chatmessage')),
-                ('request_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sent_requests', to=settings.AUTH_USER_MODEL)),
-                ('request_to', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='received_requests', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField()),
+                (
+                    "request",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="special_request",
+                        to="chats.chatmessage",
+                    ),
+                ),
+                (
+                    "request_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="sent_requests",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "request_to",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="received_requests",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='messagepurchase',
-            name='request',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='purchases', to='special_requests.specialrequest'),
+            model_name="messagepurchase",
+            name="request",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="purchases",
+                to="special_requests.specialrequest",
+            ),
         ),
     ]

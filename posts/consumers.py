@@ -1,7 +1,10 @@
 from urllib import parse
 
 from channels.db import database_sync_to_async
-from channels.generic.websocket import AsyncWebsocketConsumer, AsyncJsonWebsocketConsumer
+from channels.generic.websocket import (
+    AsyncWebsocketConsumer,
+    AsyncJsonWebsocketConsumer,
+)
 from rest_framework.authtoken.models import Token
 
 
@@ -12,7 +15,7 @@ class TokenAuth(AsyncWebsocketConsumer):
         scope = self.scope
         try:
             # Parse the scope and gets the token
-            query = parse.parse_qs(scope['query_string'].decode("utf-8"))['token'][0]
+            query = parse.parse_qs(scope["query_string"].decode("utf-8"))["token"][0]
             if query:
                 token = Token.objects.get(key=query)
                 # Returns token user
@@ -23,31 +26,33 @@ class TokenAuth(AsyncWebsocketConsumer):
 
 
 class PostLikeCountConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
-    
     async def connect(self):
         """Connect and add channel to like_count_ group"""
 
         user = await self.get_user()
 
         if user is not None:
-
             await self.accept()
 
             post_id = self.scope["url_route"]["kwargs"]["post_id"]
 
-            await self.channel_layer.group_add(f"like_count_{post_id}", self.channel_name)
+            await self.channel_layer.group_add(
+                f"like_count_{post_id}", self.channel_name
+            )
 
     async def disconnect(self, code):
         """Clean up connection data"""
 
         post_id = self.scope["url_route"]["kwargs"]["post_id"]
-        await self.channel_layer.group_discard(f"like_count_{post_id}", self.channel_name)
+        await self.channel_layer.group_discard(
+            f"like_count_{post_id}", self.channel_name
+        )
         return await super().disconnect(code)
 
     async def like_count_update(self, event):
         await self.send_json(event["content"])
 
-    
+
 class PostCommentCountConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
     async def connect(self):
         """Connect and add channel to comment_count_ group"""
@@ -55,18 +60,21 @@ class PostCommentCountConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         user = await self.get_user()
 
         if user is not None:
-            
             await self.accept()
 
             post_id = self.scope["url_route"]["kwargs"]["post_id"]
 
-            await self.channel_layer.group_add(f"comment_count_{post_id}", self.channel_name)
+            await self.channel_layer.group_add(
+                f"comment_count_{post_id}", self.channel_name
+            )
 
     async def disconnect(self, code):
         """Clean up connection data"""
 
         post_id = self.scope["url_route"]["kwargs"]["post_id"]
-        await self.channel_layer.group_discard(f"comment_count_{post_id}", self.channel_name)
+        await self.channel_layer.group_discard(
+            f"comment_count_{post_id}", self.channel_name
+        )
         return await super().disconnect(code)
 
     async def comment_count_update(self, event):
@@ -80,7 +88,6 @@ class PostCommentConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
         user = await self.get_user()
 
         if user is not None:
-
             await self.accept()
 
             post_id = self.scope["url_route"]["kwargs"]["post_id"]
@@ -97,4 +104,3 @@ class PostCommentConsumer(AsyncJsonWebsocketConsumer, TokenAuth):
 
     async def comment_update(self, event):
         await self.send_json(event["content"])
-

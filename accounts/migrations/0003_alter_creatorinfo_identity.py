@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0002_account_cancelled_subscriptions_account_cover_photo_and_more'),
+        (
+            "accounts",
+            "0002_account_cancelled_subscriptions_account_cover_photo_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='creatorinfo',
-            name='identity',
-            field=models.JSONField(blank=True, default={'age': '', 'legal_name': ''}),
+            model_name="creatorinfo",
+            name="identity",
+            field=models.JSONField(blank=True, default={"age": "", "legal_name": ""}),
         ),
     ]

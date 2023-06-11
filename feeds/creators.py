@@ -20,14 +20,14 @@ class TopCreatorFeedView(BaseCreatorFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
 
-        return get_user_model().objects.filter(
-            is_creator = True
-        ).exclude(
-            subscribers__id = user.id
-        ).order_by("-creatorinfo__subscribers_number")
+        return (
+            get_user_model()
+            .objects.filter(is_creator=True)
+            .exclude(subscribers__id=user.id)
+            .order_by("-creatorinfo__subscribers_number")
+        )
 
 
 class SugCreatorFeedView(BaseCreatorFeedView):
@@ -38,11 +38,11 @@ class SugCreatorFeedView(BaseCreatorFeedView):
     pagination_class = Pagination
 
     def get_queryset(self):
-
         user = self.request.user
 
-        return get_user_model().objects.filter(
-            is_creator = True
-        ).exclude(
-            subscribers__id = user.id
-        ).order_by("-creatorinfo__feed_score")
+        return (
+            get_user_model()
+            .objects.filter(is_creator=True)
+            .exclude(subscribers__id=user.id)
+            .order_by("-creatorinfo__feed_score")
+        )

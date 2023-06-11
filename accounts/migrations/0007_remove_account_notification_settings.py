@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0006_rename_site_notification_account_site_promotion'),
+        ("accounts", "0006_rename_site_notification_account_site_promotion"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='account',
-            name='notification_settings',
+            model_name="account",
+            name="notification_settings",
         ),
     ]

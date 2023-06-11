@@ -11,7 +11,6 @@ import videothumbs.fields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -20,23 +19,72 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Video',
+            name="Video",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('public_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('upload_time', models.DateTimeField(auto_now=True)),
-                ('media', videothumbs.fields.VideoThumbnailField(upload_to=media.media_paths.video_uploads_path, validators=[media.validators.FileMimeValidator()])),
-                ('uploader', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='video_uploads', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("upload_time", models.DateTimeField(auto_now=True)),
+                (
+                    "media",
+                    videothumbs.fields.VideoThumbnailField(
+                        upload_to=media.media_paths.video_uploads_path,
+                        validators=[media.validators.FileMimeValidator()],
+                    ),
+                ),
+                (
+                    "uploader",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="video_uploads",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Photo',
+            name="Photo",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('public_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('upload_time', models.DateTimeField(auto_now=True)),
-                ('media', versatileimagefield.fields.VersatileImageField(upload_to=media.media_paths.photo_uploads_path)),
-                ('uploader', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='photo_uploads', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("upload_time", models.DateTimeField(auto_now=True)),
+                (
+                    "media",
+                    versatileimagefield.fields.VersatileImageField(
+                        upload_to=media.media_paths.photo_uploads_path
+                    ),
+                ),
+                (
+                    "uploader",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="photo_uploads",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

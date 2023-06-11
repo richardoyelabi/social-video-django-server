@@ -28,7 +28,7 @@ class VaultVideoThumbnailSerializer(serializers.FileField):
 
         ret = {
             "video": f"http://{domain}/{video_rel_url}",
-            "thumbnail": f"http://{domain}/{value.url_300x300}/"
+            "thumbnail": f"http://{domain}/{value.url_300x300}/",
         }
         return ret
 
@@ -47,16 +47,14 @@ class VaultListSerializer(serializers.ListSerializer):
     """Custom ListSerializer to implement custom to_representation for each media item in vault"""
 
     def to_representation(self, data):
-
         iterable = data.all() if isinstance(data, models.Manager) else data
-        
+
         to_rep = []
         for item in iterable:
             to_rep += [self.get_to_rep(item)]
         return to_rep
 
     def get_to_rep(self, instance):
-
         model = instance._meta.model
 
         if model == Media:
@@ -67,11 +65,11 @@ class VaultListSerializer(serializers.ListSerializer):
         instance.type = model.__name__.lower()
 
         def get_serializer():
-            if model==Photo:
+            if model == Photo:
                 return VaultPhotoSerializer
             else:
                 return VaultVideoSerializer
-                
+
         serializer = get_serializer()
 
         ret = serializer(instance).to_representation(instance)

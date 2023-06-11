@@ -4,9 +4,14 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from accounts.models import Account
-from accounts.serializers import UserPublicProfileSerializer, UserPrivateProfileSerializer,\
-    CreatorPublicProfileSerializer, CreatorPrivateProfileSerializer
+from accounts.serializers import (
+    UserPublicProfileSerializer,
+    UserPrivateProfileSerializer,
+    CreatorPublicProfileSerializer,
+    CreatorPrivateProfileSerializer,
+)
 from accounts.permissions import OwnerOrReadOnly
+
 
 class ProfileView(RetrieveUpdateAPIView):
     """Profile information for user whose public_id the url points to.
@@ -14,6 +19,7 @@ class ProfileView(RetrieveUpdateAPIView):
     Weird Note: Even with PUT, "profile_photo" and "cover_photo" can be left blank without deleting existing value in database.\
         This is to prevent unnecessary image file overhead in every PUT request.
     """
+
     queryset = Account.objects.all()
     lookup_field = "public_id"
     lookup_url_kwarg = "id"
@@ -37,10 +43,15 @@ class ProfileView(RetrieveUpdateAPIView):
             else:
                 return UserPublicProfileSerializer
 
+
 class MyIdView(APIView):
     """Get id of authenticated user.
     Accepts GET."""
 
     def get(self, request):
         public_id = request.user.public_id
-        return Response({"public_id": public_id,})
+        return Response(
+            {
+                "public_id": public_id,
+            }
+        )

@@ -7,7 +7,6 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -16,14 +15,38 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='IdUpload',
+            name="IdUpload",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('public_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('type', models.CharField(choices=[('selfie', 'Selfie'), ('doc', 'Passport/ Id card')], max_length=10)),
-                ('upload_time', models.DateTimeField(auto_now_add=True)),
-                ('upload', models.ImageField(upload_to='id_uploads')),
-                ('creator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='id_uploads', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[("selfie", "Selfie"), ("doc", "Passport/ Id card")],
+                        max_length=10,
+                    ),
+                ),
+                ("upload_time", models.DateTimeField(auto_now_add=True)),
+                ("upload", models.ImageField(upload_to="id_uploads")),
+                (
+                    "creator",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="id_uploads",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

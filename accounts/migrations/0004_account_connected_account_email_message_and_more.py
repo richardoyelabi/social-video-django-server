@@ -4,35 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0003_alter_creatorinfo_identity'),
+        ("accounts", "0003_alter_creatorinfo_identity"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='account',
-            name='connected',
+            model_name="account",
+            name="connected",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='account',
-            name='email_message',
+            model_name="account",
+            name="email_message",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='account',
-            name='email_promotion',
+            model_name="account",
+            name="email_promotion",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='account',
-            name='site_message',
+            model_name="account",
+            name="site_message",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='account',
-            name='site_notification',
+            model_name="account",
+            name="site_notification",
             field=models.BooleanField(default=True),
         ),
     ]
