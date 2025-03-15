@@ -9,3 +9,4 @@ dump.rdb
 #docker
 redis/
 postgres_data/
+.aider*
